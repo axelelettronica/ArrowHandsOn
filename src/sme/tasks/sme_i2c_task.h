@@ -6,8 +6,8 @@
  */ 
 
 
-#ifndef SME_I2C_H_
-#define SME_I2C_H_
+#ifndef SME_I2C_TASK_H_
+#define SME_I2C_TASK_H_
 
 
 /*

@@ -29,7 +29,7 @@
  */
 
 #include <sme_cmn.h>
-#include <sme_cdc_uart.h>
+#include "sme_cdc_uart.h"
 
 //! Queue for incoming terminal characters
 static xQueueHandle cdc_msg_in_queue;

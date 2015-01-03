@@ -8,7 +8,7 @@
 #include <sme_cmn.h>
 #include <string.h>
 #include "sme_cdc_uart.h"
-#include "sme_i2c.h"
+#include "../tasks/sme_i2c_task.h"
 
 typedef union {
 	// spi_msg

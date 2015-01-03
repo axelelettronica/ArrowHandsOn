@@ -8,7 +8,7 @@
 //#include <stdio.h>
 
 #include "sme_cmn.h"
-#include "sme_i2c.h"
+#include "sme_i2c_task.h"
 
 static void i2c_task(void *params);
 static void i2cInit(void);

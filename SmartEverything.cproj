@@ -286,7 +286,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.edbg</ToolType>
-      <ToolNumber>ATML2130021800003503</ToolNumber>
+      <ToolNumber>ATML2130021800005801</ToolNumber>
       <ToolName>EDBG</ToolName>
     </com_atmel_avrdbg_tool_edbg>
   </PropertyGroup>
@@ -629,9 +629,12 @@
     <Folder Include="src\ASF\thirdparty\freertos\freertos-8.0.1\Source\portable\MemMang\" />
     <Folder Include="src\common\" />
     <Folder Include="src\config\" />
-    <Folder Include="src\controller\" />
-    <Folder Include="src\i2c\" />
-    <Folder Include="src\uart\" />
+    <Folder Include="src\sme" />
+    <Folder Include="src\sme\Devices\" />
+    <Folder Include="src\sme\Devices\I2C\" />
+    <Folder Include="src\sme\Devices\Uart\" />
+    <Folder Include="src\sme\tasks" />
+    <Folder Include="src\sme\uart\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\ASF\common2\components\display\ssd1306\ssd1306.c">
@@ -658,37 +661,37 @@
     <Compile Include="src\common\sme_cmn.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\controller\sme_controller.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\controller\sme_controller.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\i2c\sme_i2c.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\i2c\sme_i2c.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\tasks\sme_controller.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_controller.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_i2c_task.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_i2c_task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_cdc_cmd_parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_cdc_uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_cdc_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\tickless.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\uart\sme_cdc_cmd_parse.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\uart\sme_cdc_uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\uart\sme_cdc_uart.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\uart\sme_uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\uart\sme_uart.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\config\conf_clocks.h">

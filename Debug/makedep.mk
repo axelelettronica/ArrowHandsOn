@@ -8,19 +8,19 @@ src\ASF\sam0\utils\stdio\read.c
 
 src\ASF\sam0\utils\stdio\write.c
 
-src\controller\sme_controller.c
-
-src\i2c\sme_i2c.c
-
 src\main.c
 
+src\sme\tasks\sme_controller.c
+
+src\sme\tasks\sme_i2c_task.c
+
+src\sme\uart\sme_cdc_cmd_parse.c
+
+src\sme\uart\sme_cdc_uart.c
+
+src\sme\uart\sme_uart.c
+
 src\tickless.c
-
-src\uart\sme_cdc_cmd_parse.c
-
-src\uart\sme_cdc_uart.c
-
-src\uart\sme_uart.c
 
 src\ASF\common2\services\delay\sam0\systick_counter.c
 
