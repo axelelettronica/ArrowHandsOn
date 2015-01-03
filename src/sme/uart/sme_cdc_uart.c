@@ -30,6 +30,10 @@
 
 #include <sme_cmn.h>
 #include "sme_cdc_uart.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+#include "task.h"
 
 //! Queue for incoming terminal characters
 static xQueueHandle cdc_msg_in_queue;

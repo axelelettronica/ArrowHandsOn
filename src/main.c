@@ -43,9 +43,11 @@
 
 #include <asf.h>
 #include <sme_cmn.h>
+#include "sme/sme_FreeRTOS.h"
+#include "sme/tasks/sme_controller.h"
+#include "sme/tasks/sme_i2c_task.h"
 
 
-static void main_task(void *params);
 static void init_services(void);
 
 

@@ -73,7 +73,7 @@ sme_cdc_msg_parse (cmd_cb_t *cmd_cb, cdc_queue_msg_t *data, xQueueHandle *queue)
 	}
 	
 	// Just this i2c for now
-	data->i2c_msg.code = allSensorsReadValue;
+	data->i2c_msg.code = justForDebugToBeRemoved;
 	
 	queue = &i2cCommandQueue;
 	return 0;

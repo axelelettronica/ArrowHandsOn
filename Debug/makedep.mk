@@ -4,11 +4,21 @@
 
 src\ASF\common2\components\display\ssd1306\ssd1306.c
 
+src\ASF\sam0\drivers\sercom\i2c\i2c_samd21_r21_d10_d11\i2c_master.c
+
 src\ASF\sam0\utils\stdio\read.c
 
 src\ASF\sam0\utils\stdio\write.c
 
 src\main.c
+
+src\sme\Devices\I2C\Humidity\HTS221.c
+
+src\sme\Devices\I2C\I2C.c
+
+src\sme\Devices\I2C\nfc\nxpNfc.c
+
+src\sme\Devices\I2C\ZXYAxis\ZXYAxis.c
 
 src\sme\tasks\sme_controller.c
 

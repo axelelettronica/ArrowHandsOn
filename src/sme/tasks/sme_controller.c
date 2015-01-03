@@ -7,6 +7,8 @@
 
 #include "sme_cmn.h"
 
+#include "../sme_FreeRTOS.h"
+
 static void control_task(void *params);
 
 int sme_ctrl_init(void)
