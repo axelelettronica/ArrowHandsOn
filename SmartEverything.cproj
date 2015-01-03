@@ -473,8 +473,8 @@
       <Value>../src/controller</Value>
       <Value>../src/i2c</Value>
       <Value>../src/uart</Value>
-      <Value>../../../TICKLESS_XPRO/TICKLESS_XPRO/src/ASF/sam0/utils/stdio/stdio_serial</Value>
       <Value>../src/ASF/common/boards/serial</Value>
+      <Value>../src/ASF/sam0/utils/stdio/stdio_serial</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>

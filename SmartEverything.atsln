@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "SmartEverything", "SmartEverything.cproj", "{B8E372CD-CA55-426B-8745-B69289224F97}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Release|ARM = Release|ARM
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8E372CD-CA55-426B-8745-B69289224F97}.Debug|ARM.ActiveCfg = Debug|ARM
+		{B8E372CD-CA55-426B-8745-B69289224F97}.Debug|ARM.Build.0 = Debug|ARM
+		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.ActiveCfg = Release|ARM
+		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.Build.0 = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
