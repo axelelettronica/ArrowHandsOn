@@ -13,9 +13,6 @@
 static struct i2c_master_module i2c_master_instance;
 static struct i2c_master_packet master_packet;
 
-
-/** Read buffer */
-static uint8_t read_buffer[1024];
 /**
 * \brief Function for configuring I2C master module
 *
@@ -61,7 +58,7 @@ uint8_t readRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *data)
 
 	/** Get the register value */
 	master_packet.data_length     = 1;
-	master_packet.data            = read_buffer;
+	master_packet.data            = data;
 	while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
 	STATUS_OK) {
 		/* Increment timeout counter and check if timed out. */
@@ -70,7 +67,7 @@ uint8_t readRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *data)
 		}
 	}
 
-	*data = read_buffer[0];
+	//*data = read_buffer[0];
 	
 	return true;
 }
@@ -132,19 +129,6 @@ bool writeRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite){
 		if (timeout++ == TIMEOUT) {
 			return false;
 		}
-	}
-	
-	/** Get the register value */
-	master_packet.data_length     = 1;
-	master_packet.data            = read_buffer;
-	while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
-	STATUS_OK) {
-		/* Increment timeout counter and check if timed out. */
-		if (timeout++ == TIMEOUT) {
-			return false;
-		}
-	}
-
-	
+	}			
 	return true;
 }

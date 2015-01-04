@@ -6,14 +6,14 @@
  */ 
 
 
-#ifndef HTS221_H_
-#define HTS221_H_
+#ifndef LPS25H_H_
+#define LPS25H_H_
 
 #include <stdbool.h>
 
-bool HTS221nit(void);
-bool HTS221getCalibration(void);
-bool HTS221getValues(char *buffer);
+bool LPS25Hnit(void);
+bool LPS25HgetCalibration(void);
+bool LPS25HgetValues(char *buffer);
 
 
 

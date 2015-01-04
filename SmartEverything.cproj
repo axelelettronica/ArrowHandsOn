@@ -451,6 +451,7 @@
       <Value>USART_CALLBACK_MODE=true</Value>
       <Value>SYSTICK_MODE</Value>
       <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
+      <Value>NOT_SENSOR</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
@@ -662,14 +663,13 @@
     <Folder Include="src\common\" />
     <Folder Include="src\config\" />
     <Folder Include="src\sme" />
-    <Folder Include="src\sme\debug\tasks" />
     <Folder Include="src\sme\Devices\" />
     <Folder Include="src\sme\Devices\I2C\" />
     <Folder Include="src\sme\Devices\I2C\Humidity\" />
+    <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
     <Folder Include="src\sme\Devices\Uart\" />
-    <Folder Include="src\sme\debug" />
     <Folder Include="src\sme\tasks" />
     <Folder Include="src\sme\uart\" />
   </ItemGroup>
@@ -719,12 +719,6 @@
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\debug\tasks\buttonTask.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\debug\tasks\buttonTask.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
       <SubType>compile</SubType>
     </Compile>
@@ -741,6 +735,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\nxpNfc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\Pressure\LPS25H.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\Pressure\LPS25H.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\ZXYAxis\privateZXYAxis.h">

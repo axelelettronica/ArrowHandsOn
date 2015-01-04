@@ -47,6 +47,6 @@ typedef struct {
 extern xQueueHandle i2cCommandQueue;
 
 
-int sme_i2c_mgr_init(void);
+BaseType_t sme_i2c_mgr_init(void);
 
 #endif /* SME_I2C_H_ */

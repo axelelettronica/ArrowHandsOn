@@ -12,34 +12,35 @@
 #include "..\Devices\I2C\ZXYAxis\ZXYAxis.h"
 #include "..\Devices\I2C\I2C.h"
 #include "..\Devices\I2C\Humidity\HTS221.h"
-
-
-static void i2cInit(void);
-
-
-
-
-#define MAX_I2C_SENSORS 3
+#include "..\Devices\I2C\Pressure\LPS25H.h"
 
 #define I2C_TASK_DELAY     (1000 / portTICK_RATE_MS)
 
-static bool sensorInitialized[MAX_I2C_SENSORS];
+#define MAX_I2C_SENSORS 4
+
 // function pointer for the readValues functions on all sensor
 typedef bool (*readValue)(char*);
-readValue sensorValue[MAX_I2C_SENSORS];
-
+// function pointer for the initialization of sensor
 typedef bool (*initSensor)(void);
-initSensor sensorInit[MAX_I2C_SENSORS];
+
+
+typedef struct {
+	bool sensorInitialized;
+	initSensor sensorInit;
+	readValue sensorValue;
+} sensorTaskStr;
+
+static sensorTaskStr sensors[MAX_I2C_SENSORS];
 
 xQueueHandle i2cCommandQueue;
 
 
-char buffer[1024];
+char buffer[10];
 static void readAllValues(void){
 	
 	for(int i=0; i<MAX_I2C_SENSORS; i++) {
-		if (sensorInitialized[i] == true)
-		sensorValue[i](buffer);
+		if (sensors[i].sensorInitialized == true)
+		sensors[i].sensorValue(buffer);
 	}
 	
 	/*if (isZXYAxis){
@@ -84,24 +85,28 @@ static void readSensorValue(messageU command){
 		return;
 	}
 	
-	sensorValue[i2CId](buffer);
+	sensors[i2CId].sensorValue(buffer);
 }
 
 static void i2cInit(void) {
 	/* Configure the I2C master module */
 	configure_i2c_master();
 	
-	sensorInit[0] = ZXYInit;
-	sensorValue[0] = MMA8452getAccelData;
+	sensors[0].sensorInit  = ZXYInit;
+	sensors[0].sensorValue = MMA8452getAccelData;
 	
-	sensorValue[1] = getNxpUserData;
-	sensorInit[1] = readManufactoringData;
+	sensors[1].sensorValue = getNxpUserData;
+	sensors[1].sensorInit  = readManufactoringData;
 	
-	sensorInit[2] = HTS221nit;
+	sensors[2].sensorInit  = HTS221nit;
+	sensors[2].sensorValue = HTS221getValues;
+	
+	sensors[3].sensorInit  = LPS25Hnit;
+	sensors[3].sensorValue = LPS25HgetValues;
 	
 	for(int i=0; i<MAX_I2C_SENSORS; i++) {
-		if (sensorInit[i]())
-		sensorInitialized[i]=1;
+		if (sensors[i].sensorInit())
+		sensors[i].sensorInitialized=1;
 	}
 	
 }
@@ -171,7 +176,7 @@ static void i2cTask(void *params)
 	}
 }
 
-int sme_i2c_mgr_init(void)
+BaseType_t sme_i2c_mgr_init(void)
 {
 	i2cInit();
 	
@@ -179,7 +184,7 @@ int sme_i2c_mgr_init(void)
 	i2cCommandQueue = xQueueCreate(64, sizeof(i2cQueueS));
 	
 	// create the I2C Task
-	xTaskCreate(i2cTask,
+	return xTaskCreate(i2cTask,
 	(const char *) "I2C",
 	configMINIMAL_STACK_SIZE,
 	NULL,

@@ -18,6 +18,8 @@ src\sme\Devices\I2C\I2C.c
 
 src\sme\Devices\I2C\nfc\nxpNfc.c
 
+src\sme\Devices\I2C\Pressure\LPS25H.c
+
 src\sme\Devices\I2C\ZXYAxis\ZXYAxis.c
 
 src\sme\tasks\sme_controller.c
