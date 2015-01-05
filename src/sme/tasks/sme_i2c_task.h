@@ -10,23 +10,31 @@
 #define SME_I2C_TASK_H_
 
 
+#include "../sme_FreeRTOS.h"
+
+#define I2C_TASK_NAME (const char *)"I2C"
+#define I2C_STACK_SIZE (configMINIMAL_STACK_SIZE*2)
+#define I2C_TASK_PRIORITY  (tskIDLE_PRIORITY + 1)
+
 /*
 * Possible command for the I2C sensors.
 * some of the command need an extra buffer to be completed
 */
 typedef enum {
+	justForDebugToBeRemoved,
 	allSensorsReadValue,
 	sensorReadValue,
 	sensorReadRegister,
 	sensorWriteRegister
 } sensorCommandE;
 
+#define SME_CDC_MAX_DATA_LEN  20
 typedef union {
 	struct {
 		uint8_t sensorId;
 		uint8_t i2cRegister;
 		uint8_t r_w;
-		uint8_t *data;
+		uint8_t data[SME_CDC_MAX_DATA_LEN];
 	}fields;
 	uint8_t message[5];
 }messageU;
@@ -40,8 +48,6 @@ typedef struct {
 extern xQueueHandle i2cCommandQueue;
 
 
-
-
-
+BaseType_t sme_i2c_mgr_init(void);
 
 #endif /* SME_I2C_H_ */

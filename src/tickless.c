@@ -42,7 +42,7 @@
  */
 
 #include <asf.h>
-//#include <conf_demo.h>
+#include "sme/sme_FreeRTOS.h"
 //! Timer/Counter instance to use as tick timer
 #define TICK_TC TC6
 

@@ -7,112 +7,161 @@
 
 //#include <stdio.h>
 
-#include "sme_cmn.h"
 #include "sme_i2c_task.h"
+#include "..\Devices\I2C\nfc\nxpNfc.h"
+#include "..\Devices\I2C\ZXYAxis\ZXYAxis.h"
+#include "..\Devices\I2C\I2C.h"
+#include "..\Devices\I2C\Humidity\HTS221.h"
+#include "..\Devices\I2C\Pressure\LPS25H.h"
 
-static void i2c_task(void *params);
-static void i2cInit(void);
+#define I2C_TASK_DELAY     (1000 / portTICK_RATE_MS)
+
+#define MAX_I2C_SENSORS 4
+
+// function pointer for the readValues functions on all sensor
+typedef bool (*readValue)(char*);
+// function pointer for the initialization of sensor
+typedef bool (*initSensor)(void);
 
 
+typedef struct {
+	bool sensorInitialized;
+	initSensor sensorInit;
+	readValue sensorValue;
+} sensorTaskStr;
 
-//#include "..\..\TestSerial\src\ASF\sam0\drivers\port\port.h"
-//#include "..\..\TestSerial\src\ASF\sam0\boards\samd21_xplained_pro\samd21_xplained_pro.h"
-//#include "..\i2c\I2C.h"
-//#include "..\i2c\ZXYAxis\ZXYAxis.h"
-//#include "..\i2c\nfc\nxpNfc.h"
+static sensorTaskStr sensors[MAX_I2C_SENSORS];
 
-static xSemaphoreHandle i2c_mutex;
 xQueueHandle i2cCommandQueue;
-static bool isZXYAxis=false;
-static char debug[255];
 
 
-
-int sme_i2c_mgr_init(void)
-{
-	i2cInit();
-	
-	xTaskCreate(i2c_task,
-	(const char *) "I2C",
-	configMINIMAL_STACK_SIZE,
-	NULL,
-	I2C_TASK_PRIORITY,
-	NULL);
-
-
-
-	// Suspend these since the main task will control their execution
-	//vTaskSuspend(terminal_task_handle);
-}
-
-
-
+char buffer[10];
 static void readAllValues(void){
 	
-	if (isZXYAxis){
-		//uint8_t conf = MMA8452Configure();
-		
-		if (isZXYAxis==1)
-		sprintf(debug, "ZXY initialized = TRUE\r");
-		else
-		sprintf(debug, "ZXY initialized = FALSE\r");
-		
-		//if (conf==1)
-		sprintf(debug, "ZXY Configured = TRUE");
-		//else
-		//sprintf(debug, "ZXY Configured = FALSE");
+	for(int i=0; i<MAX_I2C_SENSORS; i++) {
+		if (sensors[i].sensorInitialized == true)
+		sensors[i].sensorValue(buffer);
 	}
-	/*
+	
+	/*if (isZXYAxis){
+	
+	uint8_t conf = MMA8452Configure();
+	
+	if (isZXYAxis==1)
+	sprintf(buffer, "ZXY initialized = TRUE\r");
+	else
+	sprintf(buffer, "ZXY initialized = FALSE\r");
+	
+	if (conf==1)
+	sprintf(buffer, "ZXY Configured = TRUE");
+	else
+	sprintf(buffer, "ZXY Configured = FALSE");
+	}
+	
 	if (readManufactoringData()) {
-		getNxpSerialNumber(&debug[30]);
-		sprintf(debug, "NXP S/N = %s\r", &debug[30]);
-		readUserData();
-		readSRAM();
-		getNxpUserData(debug);
-		} else {
-		sprintf(debug, "NXP does not work");
-	}
-	*/
+	getNxpSerialNumber(&buffer[30]);
+	sprintf(buffer, "NXP S/N = %s\r", &buffer[30]);
+	readUserData();
+	readSRAM();
+	getNxpUserData(buffer);
+	} else {
+	sprintf(buffer, "NXP does not work");
+	}*/
 }
 
+volatile static	uint8_t i2CId=0;
+static void readSensorValue(messageU command){
+
+	switch (command.fields.sensorId) {
+		case NXPNFC_ADDRESS:
+		i2CId = 1;
+		break;
+		
+		case MMA8452_ADDRESS:
+		i2CId = 0;
+		break;
+		
+		default:
+		return;
+	}
+	
+	sensors[i2CId].sensorValue(buffer);
+}
 
 static void i2cInit(void) {
 	/* Configure the I2C master module */
-	//configure_i2c_master();
-	//i2cCommandQueue = xQueueCreate(64, sizeof(i2cQueueS));
-	i2cCommandQueue = xQueueCreate(64, sizeof(i2cQueueS *));
-	i2c_mutex = xSemaphoreCreateMutex();
-	//isZXYAxis =ZXYInit();
+	configure_i2c_master();
+	
+	sensors[0].sensorInit  = ZXYInit;
+	sensors[0].sensorValue = MMA8452getAccelData;
+	
+	sensors[1].sensorValue = getNxpUserData;
+	sensors[1].sensorInit  = readManufactoringData;
+	
+	sensors[2].sensorInit  = HTS221nit;
+	sensors[2].sensorValue = HTS221getValues;
+	
+	sensors[3].sensorInit  = LPS25Hnit;
+	sensors[3].sensorValue = LPS25HgetValues;
+	
+	for(int i=0; i<MAX_I2C_SENSORS; i++) {
+		if (sensors[i].sensorInit())
+		sensors[i].sensorInitialized=1;
+	}
+	
 }
 
-
+static uint8_t debugState;
+static void debugRemove(i2cQueueS *current_message){
+	switch(debugState) {
+		case 1:
+		current_message->command.fields.sensorId= MMA8452_ADDRESS;
+		readSensorValue(current_message->command);
+		debugState++;
+		break;
+		
+		case 2:
+		current_message->command.fields.sensorId= NXPNFC_ADDRESS;
+		readSensorValue(current_message->command);
+		debugState = 0;
+		break;
+		
+		case 0:
+		readAllValues();
+		debugState++;
+		break;
+	}
+}
 
 /**
- * \brief i2c mng task
- *
- *
- * \param params Parameters for the task. (Not used.)
- */
-
-static void i2c_task(void *params)
+* \brief Terminal task
+*
+* This task prints the terminal text buffer to the display.
+*
+* \param params Parameters for the task. (Not used.)
+*/
+static void i2cTask(void *params)
 {
-	i2cQueueS *current_message;
 	
+	i2cQueueS current_message;
 	for (;;) {
-		//if (xSemaphoreTake(button_mutex, portMAX_DELAY)) {
-			
-		xSemaphoreTake(i2c_mutex, portMAX_DELAY);
-		if (xQueueReceive(i2cCommandQueue, &current_message, I2C_TASK_DELAY)) {
-		//while(xQueueReceive(i2cCommandQueue, &current_message, 0)) {
 
+		if (xQueueReceive(i2cCommandQueue, &current_message, I2C_TASK_DELAY)) {
+			
 			//xSemaphoreTake(i2c_mutex, portMAX_DELAY);
-			 
-			switch (current_message->code){
+			
+			switch (current_message.code){
+				
+				case justForDebugToBeRemoved:
+				debugRemove(&current_message);
+				break;
+				
 				case allSensorsReadValue:
 				readAllValues();
 				break;
 				
 				case sensorReadValue:
+				readSensorValue(current_message.command);
 				break;
 				
 				case sensorReadRegister:
@@ -120,19 +169,26 @@ static void i2c_task(void *params)
 				
 				case sensorWriteRegister:
 				break;
-				
-				default:
-				break;
 			}
-			
-			
-			//xSemaphoreGive(i2c_mutex);
-			//xSemaphoreGive(button_mutex);
+
 		}
-		
-		xSemaphoreGive(i2c_mutex);
-		//vTaskDelay(I2C_TASK_DELAY);
+
 	}
 }
 
+BaseType_t sme_i2c_mgr_init(void)
+{
+	i2cInit();
+	
+	// create the I2c Queue
+	i2cCommandQueue = xQueueCreate(64, sizeof(i2cQueueS));
+	
+	// create the I2C Task
+	return xTaskCreate(i2cTask,
+	(const char *) "I2C",
+	configMINIMAL_STACK_SIZE,
+	NULL,
+	I2C_TASK_PRIORITY,
+	NULL);
 
+}

@@ -7,6 +7,8 @@
 
 #include "sme_cmn.h"
 
+#include "../sme_FreeRTOS.h"
+
 static void control_task(void *params);
 
 int sme_ctrl_init(void)
@@ -22,6 +24,8 @@ int sme_ctrl_init(void)
 
 	// Suspend these since the main task will control their execution
 	//vTaskSuspend(terminal_task_handle);
+	
+	return 0;
 }
 
 

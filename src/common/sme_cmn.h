@@ -10,6 +10,8 @@
 
 #include <asf.h>
 #include <stdio_serial.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
 /* Mapping error codes */
 #define SME_OK           0
@@ -34,10 +36,6 @@
 
 #define CONTROL_TASK_PRIORITY      (tskIDLE_PRIORITY + 2)
 #define CONTROL_TASK_DELAY         (100 / portTICK_RATE_MS)
-
-#define I2C_TASK_PRIORITY     (tskIDLE_PRIORITY + 1)
-#define I2C_TASK_DELAY        (50 / portTICK_RATE_MS)
-
 
 //@}
 
@@ -75,7 +73,6 @@ extern bool volatile tickless_enable;
 
 int sme_cdc_mgr_init(void);
 int sme_uart_mgr_init(void);
-int sme_i2c_mgr_init(void);
 int sme_ctrl_init(void);
 
 /** @} */

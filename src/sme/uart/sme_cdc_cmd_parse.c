@@ -17,7 +17,8 @@ typedef union {
 } cdc_queue_msg_t;
 
 
-typedef cdc_queue_msg_t* (*cmd_callback) (__VA_ARGS__);
+//typedef cdc_queue_msg_t* (*cmd_callback) (__VA_ARGS__);
+typedef int (*cmd_callback) (cdc_queue_msg_t *data, xQueueHandle *queue, ...);
 
 static int cdc_parser_show(void);
 static int cdc_parser_help(void);
@@ -136,6 +137,14 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 		// print help
 		return SME_EINVAL;
 	}
+
+
+
+
+
+	// Just this i2c for now
+	data->i2c_msg.code = justForDebugToBeRemoved;
+
 	
 	queue = &i2cCommandQueue;
 	return SME_OK;
@@ -145,7 +154,6 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb)
 {
 	xQueueHandle    queue;
-    int err = 0;
 	
 	// Fill queue_msg form msg
 	if (!cmd_cb) {
@@ -174,8 +182,9 @@ sme_cdc_cmd_parse (uint8_t token_num)
 	uint8_t len;
 	
 	for (i = 0; i < CDC_CMD_MAX; ++i) {
-		len = strlen(cmd_cb[i].cmd_str);
-		if (!strncmp(cmd_cb[i].cmd_str, sme_cli_msg.token[0], len)) {
+		len = strlen((int8_t *)cmd_cb[i].cmd_str);
+		if (!strncmp((int8_t *)cmd_cb[i].cmd_str, 
+		             (int8_t *)sme_cli_msg.token[0], len)) {
 			sme_cdc_cmd_execute(&cmd_cb[i]);
 			break;
 		}
