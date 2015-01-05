@@ -56,4 +56,13 @@
 
 int sme_cdc_cmd_parse (uint8_t token_num);
 
-extern uint8_t cdc_msg_buffer[MAX_TOKEN_NUM][MAX_TOKEN_LEN];
+
+typedef  struct  {
+	//! Buffer for terminal text
+	uint8_t token[MAX_TOKEN_NUM][MAX_TOKEN_LEN];
+	//! Index of latest token (first to be printed)
+	uint8_t token_idx;
+} sme_cli_msg_t;
+
+
+extern sme_cli_msg_t sme_cli_msg;
