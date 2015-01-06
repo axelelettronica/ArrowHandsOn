@@ -43,14 +43,11 @@ typedef enum {
 } sme_cdc_cmd_t;
 
 
-#define CDC_MAX_PARAM_NUM    8
 
 typedef struct {
 	sme_cdc_cmd_t cmd;
 	uint8_t *cmd_str;
 	cmd_callback func;
-	uint8_t params_num;
-	sme_cdc_param_t params[CDC_MAX_PARAM_NUM];
 } cmd_cb_t;
 
 
@@ -61,18 +58,19 @@ typedef struct {
 
 
 cmd_cb_t  cmd_cb[] = {
-	CDC_HELP, "help", cdc_parser_help, 0, {CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0},
-	CDC_SHOW, "show", cdc_parser_show, 0, {CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0, CDC_0},
-    /* I.E. i2c <address> [r/w] <register> <datalen> <data> */
-    CDC_D_I2C, "i2c" , cdc_parser_dbg_i2c, 0, {CDC_8, CDC_C, CDC_32, CDC_8, CDC_32, CDC_32, CDC_32, CDC_0}
+	CDC_HELP,   "help",  cdc_parser_help,
+	CDC_SHOW,   "show",  cdc_parser_show,
+    /* I.E. i2c <address> [r/w] <register> <data> */
+    CDC_D_I2C,  "i2c" ,  cdc_parser_dbg_i2c
 };
 
 
-cdc_queue_msg_t data;
+cdc_queue_msg_t cdc_q_buffer;
 
 /*****************************************************************************/
 /*                            Utilities functions                            */
 /*****************************************************************************/
+
 
 inline int sme_int_str_to_uint8(uint8_t *s, uint8_t *value) 
 {
@@ -94,6 +92,37 @@ inline int sme_hex_str_to_uint8(uint8_t *s, uint8_t *value)
 	return SME_OK;
 }
 
+int sme_hex_str_to_data(uint8_t *s, uint8_t *data, uint8_t *datalen) 
+{   uint8_t substr[3];
+	uint8_t i = 0;
+	uint8_t j = 0;
+	if(!s) {
+		return SME_EINVAL;
+	}
+	
+	substr[0] = substr[1] = substr[2] = 0;
+	while (*s) {
+		substr[j] = *s;
+		++j;
+		if (i && !((i+1)%2)) {
+			*data = (int)strtol(substr, NULL, 
+		                ((substr[0] == '0') && (substr[1] == 'x')) ? 0: 16);
+			++data;
+			++(*datalen);
+	    	if(*datalen >= (SME_CDC_MAX_DATA_LEN-1)) {
+		        return SME_EINVAL;
+	        }	
+			j = 0;
+			substr[0] = substr[1] = 0;
+		}
+		s++;
+	    i++;
+	}
+
+						
+	return SME_OK;
+}
+
 
 /*****************************************************************************/
 /*                          I2C Parsing functions                            */
@@ -111,11 +140,11 @@ int cdc_parser_show()
 
 int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 {
-	/* I.E. i2c <hex-addressd> [r/w] <hex-register> <len> <hex-data> */
+	/* I.E. i2c <hex-addressd> [r/w] <hex-register> <hex-data> */
 	messageU  *msg = &(data->i2c_msg.command);
 	int err = SME_OK;
 	
-	err |= sme_int_str_to_uint8(sme_cli_msg.token[1], 
+	err |= sme_hex_str_to_uint8(sme_cli_msg.token[1], 
                                 &(msg->fields.sensorId));
 	
 	// read operation
@@ -123,30 +152,26 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 		data->i2c_msg.code = sensorReadRegister;
 	} else if (sme_cli_msg.token[2][0] == 'w') {
         data->i2c_msg.code = sensorWriteRegister;
-		err |= sme_int_str_to_uint8(sme_cli_msg.token[4], &(msg->fields.data));
+		err |= sme_hex_str_to_data(sme_cli_msg.token[4], msg->fields.data,
+		                           &(msg->fields.datalen));
 	} else {
 		// print help
-		return SME_EINVAL;
+		//return SME_EINVAL;	
+			
+	    // Just this i2c for now
+	    data->i2c_msg.code = justForDebugToBeRemoved;
+    	*queue = i2cCommandQueue;
+		return SME_OK;
 	}
 
 	err |= sme_hex_str_to_uint8(sme_cli_msg.token[3], &(msg->fields.i2cRegister));
-	err |= sme_hex_str_to_uint8(sme_cli_msg.token[1], &(msg->fields.sensorId));
-	//msg->fields.r_w         = sme_int_str_to_uint8(cdc_msg_buffer[1]);
 
 	if (err) {
 		// print help
 		return SME_EINVAL;
 	}
-
-
-
-
-
-	// Just this i2c for now
-	data->i2c_msg.code = justForDebugToBeRemoved;
-
 	
-	queue = &i2cCommandQueue;
+	*queue = i2cCommandQueue;
 	return SME_OK;
 }
 
@@ -160,14 +185,14 @@ int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb)
 		return SME_EINVAL;
 	}
 		
-	memset(&data,0, sizeof(cdc_queue_msg_t));
+	memset(&cdc_q_buffer,0, sizeof(cdc_queue_msg_t));
 	
-	if (cmd_cb->func(&data, &queue)) {
+	if (cmd_cb->func(&cdc_q_buffer, &queue)) {
 			return SME_EINVAL;
 	}
 
 	// send to the proper queue
-	if (!xQueueSend(queue, (void *)&data, NULL) != pdPASS) {
+	if (!xQueueSend(queue, (void *)&cdc_q_buffer, NULL) != pdPASS) {
 		// Error: could not enqueue character
 		return SME_EBUSY;
    }

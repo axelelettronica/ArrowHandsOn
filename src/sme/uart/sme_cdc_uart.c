@@ -52,7 +52,6 @@ static struct usart_module cdc_usart;
 sme_cli_msg_t sme_cli_msg = {};
 
 static void cdc_task(void *params);
-
 /*
  * cdc_rx_init to be commented out in a second time  (TX is not working yet
  */
@@ -100,8 +99,6 @@ static inline void cdc_rx_init(struct usart_module *const usart,
 
 	// ..and the RX Complete interrupt
 	((SercomUsart *)EDBG_CDC_MODULE)->INTENSET.reg = SERCOM_USART_INTFLAG_RXC;
-		// ..and the RX Complete interrupt
-
 }
 
 

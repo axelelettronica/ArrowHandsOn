@@ -159,12 +159,10 @@ static void i2cTask(void *params)
 				case allSensorsReadValue:
 				readAllValues();
 				break;
-				
+	
+				case sensorReadRegister:			
 				case sensorReadValue:
 				readSensorValue(current_message.command);
-				break;
-				
-				case sensorReadRegister:
 				break;
 				
 				case sensorWriteRegister:

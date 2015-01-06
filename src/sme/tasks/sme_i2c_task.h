@@ -33,7 +33,8 @@ typedef union {
 	struct {
 		uint8_t sensorId;
 		uint8_t i2cRegister;
-		uint8_t r_w;
+		//uint8_t r_w;
+		uint8_t datalen;
 		uint8_t data[SME_CDC_MAX_DATA_LEN];
 	}fields;
 	uint8_t message[5];
