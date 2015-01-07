@@ -12,8 +12,11 @@
 #include <stdbool.h>
 
 bool LPS25Hnit(void);
-bool LPS25HgetCalibration(void);
+bool LPS25HActivate(void);
+bool LPS25HDeactivate(void);
 bool LPS25HgetValues(char *buffer);
+bool LPS25HBDUDeactivate(void);
+bool LPS25HBDUActivate(void);
 
 
 

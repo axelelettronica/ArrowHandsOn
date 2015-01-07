@@ -16,6 +16,8 @@ src\sme\Devices\I2C\Humidity\HTS221.c
 
 src\sme\Devices\I2C\I2C.c
 
+src\sme\Devices\I2C\Accelerometer\LSM9DS1.c
+
 src\sme\Devices\I2C\nfc\nxpNfc.c
 
 src\sme\Devices\I2C\Pressure\LPS25H.c

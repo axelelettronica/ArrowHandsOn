@@ -15,33 +15,54 @@
 //Define a few of the registers that we will be accessing on the MMA8452
 
 #define WHO_AM_I    0x0D
-#define WHO_AM_I_RETURN 0x2A 
+#define WHO_AM_I_RETURN 0x2A
 
 #define AVERAGE_REG 0x10
 #define AVERAGE_DEFAULT 0x1B
 
 
+/*
+* [7] PD: power down control
+* (0: power-down mode; 1: active mode)
+*
+* [6:3] Reserved
+*
+* [2] BDU: block data update
+* (0: continuous update; 1: output registers not updated until MSB and LSB reading)
+The BDU bit is used to inhibit the output register update between the reading of the upper
+and lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+updated continuously. If it is not certain whether the read will be faster than output data rate,
+it is recommended to set the BDU bit to ‘1’. In this way, after the reading of the lower (upper)
+register part, the content of that output register is not updated until the upper (lower) part is
+read also.
+*
+* [1:0] ODR1, ODR0: output data rate selection (see table 17)
+*/
 #define CTRL_REG1   0x20
+#define POWER_UP    0x80
+#define BDU_SET     0x4
+
+
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
 #define REG_DEFAULT 0x00
 
 
-/* 
- * Status register; the content of this register is updated every one-shot reading, and
- * after completion of every ODR cycle, regardless of BDU value in CTRL_REG1.
- * 
- * [7:2] Reserved
- * 
- * [1] H_DA: Humidity data available.
- * (0: new data for Humidity is not yet available; 1: new data for Humidity is available)
- * H_DA is set to 1 whenever a new humidity sample is available. H_DA is cleared anytime
- * HUMIDITY_OUT_H (29h) register is read.
- *
- * [0] T_DA: Temperature data available.
- * (0: new data for temperature is not yet available; 1: new data for temperature is available) 
- * T_DA is set to 1 whenever a new temperature sample is available. T_DA is cleared anytime
- * TEMP_OUT_H (2Bh) register is read.
+/*
+* Status register; the content of this register is updated every one-shot reading, and
+* after completion of every ODR cycle, regardless of BDU value in CTRL_REG1.
+*
+* [7:2] Reserved
+*
+* [1] H_DA: Humidity data available.
+* (0: new data for Humidity is not yet available; 1: new data for Humidity is available)
+* H_DA is set to 1 whenever a new humidity sample is available. H_DA is cleared anytime
+* HUMIDITY_OUT_H (29h) register is read.
+*
+* [0] T_DA: Temperature data available.
+* (0: new data for temperature is not yet available; 1: new data for temperature is available)
+* T_DA is set to 1 whenever a new temperature sample is available. T_DA is cleared anytime
+* TEMP_OUT_H (2Bh) register is read.
 */
 #define STATUS_REG  0x0D
 #define TEMPERATURE_READY 0xA
@@ -67,13 +88,33 @@
 
 //Define a few of the registers that we will be accessing on the HTS221
 #define WHO_AM_I    0x0F
-#define WHO_AM_I_RETURN 0xBC //This read-only register contains the device identifier, set to BCh 
+#define WHO_AM_I_RETURN 0xBC //This read-only register contains the device identifier, set to BCh
 
 #define AVERAGE_REG 0x10	// To configure humidity/temperature average.
 #define AVERAGE_DEFAULT 0x1B
 
-
+/*
+* [7] PD: power down control
+* (0: power-down mode; 1: active mode)
+*
+* [6:3] Reserved
+*
+* [2] BDU: block data update
+* (0: continuous update; 1: output registers not updated until MSB and LSB reading)
+The BDU bit is used to inhibit the output register update between the reading of the upper
+and lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+updated continuously. If it is not certain whether the read will be faster than output data rate,
+it is recommended to set the BDU bit to ‘1’. In this way, after the reading of the lower (upper)
+register part, the content of that output register is not updated until the upper (lower) part is
+read also.
+*
+* [1:0] ODR1, ODR0: output data rate selection (see table 17)
+*/
 #define CTRL_REG1   0x20
+#define POWER_UP    0x80
+#define BDU_SET     0x4
+
+
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
 #define REG_DEFAULT 0x00
@@ -109,11 +150,13 @@ static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
 bool HTS221nit(void) {
 	uint8_t data;
 	if (readRegister(HTS221_ADDRESS, WHO_AM_I, &data)) {
-		if (data == WHO_AM_I_RETURN);
-		return HTS221getCalibration();
-		} else {
-		return false;
+		if (data == WHO_AM_I_RETURN){
+			if (HTS221Activate())
+			return HTS221getCalibration();
+		}
 	}
+
+	return false;
 }
 
 bool HTS221getCalibration(void) {
@@ -189,6 +232,48 @@ bool HTS221getCalibration(void) {
 		}
 	}
 	return true;
+}
+
+bool HTS221BDUActivate(void) {
+	uint8_t data;
+	if (readRegister(HTS221_ADDRESS, CTRL_REG1, &data)) {
+		data |= BDU_SET;
+		if (writeRegister(HTS221_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
+}
+
+bool HTS221BDUDeactivate(void) {
+	uint8_t data;
+	
+	if (readRegister(HTS221_ADDRESS, CTRL_REG1, &data)) {
+		data &= ~BDU_SET;
+		if (writeRegister(HTS221_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
+}
+
+bool HTS221Activate(void) {
+	uint8_t data;
+	if (readRegister(HTS221_ADDRESS, CTRL_REG1, &data)) {
+		data |= POWER_UP;
+		if (writeRegister(HTS221_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
+}
+
+bool HTS221Deactivate(void) {
+	uint8_t data;
+	
+	if (readRegister(HTS221_ADDRESS, CTRL_REG1, &data)) {
+		data &= ~POWER_UP;
+		if (writeRegister(HTS221_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
 }
 
 

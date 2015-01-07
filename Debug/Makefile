@@ -127,6 +127,7 @@ SUBDIRS :=  \
 ../src/sme/Devices/ \
 ../src/sme/Devices/I2C/ \
 ../src/sme/Devices/I2C/Humidity/ \
+../src/sme/Devices/I2C/Accelerometer \
 ../src/sme/Devices/I2C/Pressure \
 ../src/sme/Devices/I2C/ZXYAxis \
 ../src/sme/Devices/I2C/nfc \
@@ -144,6 +145,7 @@ C_SRCS +=  \
 ../src/main.c \
 ../src/sme/Devices/I2C/Humidity/HTS221.c \
 ../src/sme/Devices/I2C/I2C.c \
+../src/sme/Devices/I2C/Accelerometer/LSM9DS1.c \
 ../src/sme/Devices/I2C/nfc/nxpNfc.c \
 ../src/sme/Devices/I2C/Pressure/LPS25H.c \
 ../src/sme/Devices/I2C/ZXYAxis/ZXYAxis.c \
@@ -202,6 +204,7 @@ src/ASF/sam0/utils/stdio/write.o \
 src/main.o \
 src/sme/Devices/I2C/Humidity/HTS221.o \
 src/sme/Devices/I2C/I2C.o \
+src/sme/Devices/I2C/Accelerometer/LSM9DS1.o \
 src/sme/Devices/I2C/nfc/nxpNfc.o \
 src/sme/Devices/I2C/Pressure/LPS25H.o \
 src/sme/Devices/I2C/ZXYAxis/ZXYAxis.o \
@@ -253,6 +256,7 @@ src/ASF/sam0/utils/stdio/write.o \
 src/main.o \
 src/sme/Devices/I2C/Humidity/HTS221.o \
 src/sme/Devices/I2C/I2C.o \
+src/sme/Devices/I2C/Accelerometer/LSM9DS1.o \
 src/sme/Devices/I2C/nfc/nxpNfc.o \
 src/sme/Devices/I2C/Pressure/LPS25H.o \
 src/sme/Devices/I2C/ZXYAxis/ZXYAxis.o \
@@ -304,6 +308,7 @@ src/ASF/sam0/utils/stdio/write.d \
 src/main.d \
 src/sme/Devices/I2C/Humidity/HTS221.d \
 src/sme/Devices/I2C/I2C.d \
+src/sme/Devices/I2C/Accelerometer/LSM9DS1.d \
 src/sme/Devices/I2C/nfc/nxpNfc.d \
 src/sme/Devices/I2C/Pressure/LPS25H.d \
 src/sme/Devices/I2C/ZXYAxis/ZXYAxis.d \
@@ -355,6 +360,7 @@ src/ASF/sam0/utils/stdio/write.d \
 src/main.d \
 src/sme/Devices/I2C/Humidity/HTS221.d \
 src/sme/Devices/I2C/I2C.d \
+src/sme/Devices/I2C/Accelerometer/LSM9DS1.d \
 src/sme/Devices/I2C/nfc/nxpNfc.d \
 src/sme/Devices/I2C/Pressure/LPS25H.d \
 src/sme/Devices/I2C/ZXYAxis/ZXYAxis.d \
@@ -512,6 +518,8 @@ LINKER_SCRIPT_DEP+=  \
 
 
 
+
+
 src/ASF/common2/components/display/ssd1306/%.o: ../src/ASF/common2/components/display/ssd1306/%.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 4.8.4
@@ -548,6 +556,13 @@ src/sme/Devices/I2C/Humidity/%.o: ../src/sme/Devices/I2C/Humidity/%.c
 	
 
 src/sme/Devices/I2C/%.o: ../src/sme/Devices/I2C/%.c
+	@echo Building file: $<
+	@echo Invoking: ARM/GNU C Compiler : 4.8.4
+	$(QUOTE)C:\My Program Files\SW\Atmel Toolchain\ARM GCC\Native\4.8.1437\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMD21J18A__ -DDEBUG -DBOARD=SAMD21_XPLAINED_PRO -D__SAMD21J18A__ -DTC_ASYNC=true -DGFX_MONO_UG_2832HSWEG04=1 -DARM_MATH_CM0=true -D__FREERTOS__ -DGFX_MONO_LCD_HEIGHT=64 -DSPI_CALLBACK_MODE=true -DUSART_CALLBACK_MODE=true -DSYSTICK_MODE -DI2C_MASTER_CALLBACK_MODE=false -DNOT_SENSOR  -I"../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro" -I"../src/ASF/common2/components/display/ssd1306" -I"../src/ASF/sam0/utils/header_files" -I"../src/ASF/sam0/drivers/tc" -I"../src/ASF/common/utils" -I"../src/ASF/sam0/drivers/system/pinmux" -I"../src/ASF/common2/services/delay/sam0" -I"../src/ASF/common/boards" -I"../src/ASF/sam0/drivers/sercom/spi" -I"../src/ASF/sam0/drivers/port" -I"../src/ASF/common2/services/delay" -I"../src/ASF/sam0/drivers/system/clock/clock_samd21_r21" -I"../src/ASF/sam0/boards" -I"../src/ASF/thirdparty/freertos/demo/oled1_tickless_xpro_example" -I"../src/ASF/sam0/drivers/sercom/usart" -I"../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/include" -I"../src/ASF/sam0/utils" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/config" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samd21" -I"../src/ASF/sam0/boards/samd21_xplained_pro" -I"../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/portable/GCC/ARM_CM0" -I"../src" -I"../src/ASF/sam0/drivers/sercom" -I"../src/ASF/sam0/utils/preprocessor" -I"../src/ASF/sam0/utils/cmsis/samd21/include" -I"../src/ASF/sam0/drivers/system" -I"../src/ASF/common2/services/gfx_mono" -I"../src/ASF/sam0/utils/cmsis/samd21/source" -I"../src/ASF/sam0/drivers/system/clock" -I"../src/ASF/sam0/drivers/system/interrupt" -I"../src/common" -I"../src/controller" -I"../src/i2c" -I"../src/uart" -I"../src/ASF/common/boards/serial" -I"../src/ASF/sam0/utils/stdio/stdio_serial" -I"../src/ASF/sam0/drivers/sercom/i2c" -I"../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m0plus -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/sme/Devices/I2C/Accelerometer/%.o: ../src/sme/Devices/I2C/Accelerometer/%.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 4.8.4
 	$(QUOTE)C:\My Program Files\SW\Atmel Toolchain\ARM GCC\Native\4.8.1437\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMD21J18A__ -DDEBUG -DBOARD=SAMD21_XPLAINED_PRO -D__SAMD21J18A__ -DTC_ASYNC=true -DGFX_MONO_UG_2832HSWEG04=1 -DARM_MATH_CM0=true -D__FREERTOS__ -DGFX_MONO_LCD_HEIGHT=64 -DSPI_CALLBACK_MODE=true -DUSART_CALLBACK_MODE=true -DSYSTICK_MODE -DI2C_MASTER_CALLBACK_MODE=false -DNOT_SENSOR  -I"../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro" -I"../src/ASF/common2/components/display/ssd1306" -I"../src/ASF/sam0/utils/header_files" -I"../src/ASF/sam0/drivers/tc" -I"../src/ASF/common/utils" -I"../src/ASF/sam0/drivers/system/pinmux" -I"../src/ASF/common2/services/delay/sam0" -I"../src/ASF/common/boards" -I"../src/ASF/sam0/drivers/sercom/spi" -I"../src/ASF/sam0/drivers/port" -I"../src/ASF/common2/services/delay" -I"../src/ASF/sam0/drivers/system/clock/clock_samd21_r21" -I"../src/ASF/sam0/boards" -I"../src/ASF/thirdparty/freertos/demo/oled1_tickless_xpro_example" -I"../src/ASF/sam0/drivers/sercom/usart" -I"../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/include" -I"../src/ASF/sam0/utils" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/config" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samd21" -I"../src/ASF/sam0/boards/samd21_xplained_pro" -I"../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/portable/GCC/ARM_CM0" -I"../src" -I"../src/ASF/sam0/drivers/sercom" -I"../src/ASF/sam0/utils/preprocessor" -I"../src/ASF/sam0/utils/cmsis/samd21/include" -I"../src/ASF/sam0/drivers/system" -I"../src/ASF/common2/services/gfx_mono" -I"../src/ASF/sam0/utils/cmsis/samd21/source" -I"../src/ASF/sam0/drivers/system/clock" -I"../src/ASF/sam0/drivers/system/interrupt" -I"../src/common" -I"../src/controller" -I"../src/i2c" -I"../src/uart" -I"../src/ASF/common/boards/serial" -I"../src/ASF/sam0/utils/stdio/stdio_serial" -I"../src/ASF/sam0/drivers/sercom/i2c" -I"../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m0plus -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

@@ -17,8 +17,41 @@
 #define WHO_AM_I    0x00
 #define WHO_AM_I_RETURN 0x04 // WHO_AM_I should always be 0x2A
 
-
+/*
+ * [7] PD: power down control.
+ * Default value: 0
+ * (0: power-down mode; 1: active mode)
+ *
+ * [6:4] ODR2, ODR1, ODR0: output data rate selection.
+ * Default value: 00
+ * 
+ * [3] DIFF_EN: Interrupt circuit enable.
+ * Default value: 0
+ * (0: interrupt generation disabled; 1: interrupt circuit enabled)
+ * 
+ * [2] BDU: block data update.
+ * Default value: 0
+ * (0: continuous update; 1: output registers not updated until MSB and LSB reading)
+ BDU bit is used to inhibit the output registers update between the reading of upper and
+ lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+ updated continuously. If it is not sure to read faster than output data rate, it is recommended
+ to set BDU bit to ‘1’. In this way, after the reading of the lower (upper) register part, the
+ content of that output registers is not updated until the upper (lower) part
+ * 
+ * [1] RESET_AZ: Reset AutoZero function. Reset REF_P reg, set pressure to default value in RPDS
+ * register (@0x39/A)
+ * (1: Reset. 0: disable)
+ * 
+ * [0] SIM: SPI Serial Interface Mode selection.
+ * Default value: 0
+ * (0: 4-wire interface; 1: 3-wire interface)
+ */
 #define CTRL_REG1   0x20
+#define POWER_UP    0x80 
+#define BDU_SET     0x04
+
+
+
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
 #define REG_DEFAULT 0x00
@@ -50,7 +83,41 @@
 #define RES_CONF_DEFAULT 0x05  
 
 
+/*
+ * [7] PD: power down control.
+ * Default value: 0
+ * (0: power-down mode; 1: active mode)
+ *
+ * [6:4] ODR2, ODR1, ODR0: output data rate selection.
+ * Default value: 00
+ * 
+ * [3] DIFF_EN: Interrupt circuit enable.
+ * Default value: 0
+ * (0: interrupt generation disabled; 1: interrupt circuit enabled)
+ * 
+ * [2] BDU: block data update.
+ * Default value: 0
+ * (0: continuous update; 1: output registers not updated until MSB and LSB reading)
+ BDU bit is used to inhibit the output registers update between the reading of upper and
+ lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+ updated continuously. If it is not sure to read faster than output data rate, it is recommended
+ to set BDU bit to ‘1’. In this way, after the reading of the lower (upper) register part, the
+ content of that output registers is not updated until the upper (lower) part
+ * 
+ * [1] RESET_AZ: Reset AutoZero function. Reset REF_P reg, set pressure to default value in RPDS
+ * register (@0x39/A)
+ * (1: Reset. 0: disable)
+ * 
+ * [0] SIM: SPI Serial Interface Mode selection.
+ * Default value: 0
+ * (0: 4-wire interface; 1: 3-wire interface)
+ */
 #define CTRL_REG1   0x20
+#define POWER_UP    0x80 
+#define BDU_SET     0x04
+
+
+
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
 #define REG_DEFAULT 0x00
@@ -124,17 +191,33 @@ bool LPS25Hnit(void) {
 	uint8_t data;
 	if (readRegister(LPS25H_ADDRESS, WHO_AM_I, &data)) {
 		if (data == WHO_AM_I_RETURN);
-		return LPS25HgetCalibration();
+		return LPS25HActivate();
 		} else {
 		return false;
 	}
 }
 
-bool LPS25HgetCalibration(void) {
+bool LPS25HActivate(void) {
+	uint8_t data;
 	
-	return true;
+	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
+		data |= POWER_UP;
+		if (writeRegister(LPS25H_ADDRESS, CTRL_REG1, data))
+			return true;
+	}
+	return false;
 }
 
+bool LPS25HDeactivate(void) {
+	uint8_t data;
+	
+	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
+		data &= ~POWER_UP;
+		if (writeRegister(LPS25H_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
+}
 
 bool LPS25HgetValues(char *buffer){
 	uint8_t data;
@@ -153,5 +236,26 @@ bool LPS25HgetValues(char *buffer){
 		}
 		return true;
 	} else
+	return false;
+}
+
+bool LPS25HBDUActivate(void) {
+	uint8_t data;
+	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
+		data |= BDU_SET;
+		if (writeRegister(LPS25H_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
+	return false;
+}
+
+bool LPS25HBDUDeactivate(void) {
+	uint8_t data;
+	
+	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
+		data &= ~BDU_SET;
+		if (writeRegister(LPS25H_ADDRESS, CTRL_REG1, data))
+		return true;
+	}
 	return false;
 }
