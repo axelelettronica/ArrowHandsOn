@@ -24,6 +24,8 @@ int sme_ctrl_init(void)
 
 	// Suspend these since the main task will control their execution
 	//vTaskSuspend(terminal_task_handle);
+	
+	return 0;
 }
 
 

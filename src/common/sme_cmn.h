@@ -10,9 +10,20 @@
 
 #include <asf.h>
 #include <stdio_serial.h>
-
 #include "FreeRTOS.h"
 #include "task.h"
+
+/* Mapping error codes */
+#define SME_OK           0
+#define SME_EPERM        1  /* Operation not permitted */
+#define SME_EIO          5  /* I/O error */
+#define SME_ENXIO        6  /* No such device or address */
+#define SME_ENOMEM      12  /* Out of memory */
+
+#define SME_EBUSY       16  /* Device or resource busy */
+#define SME_ENODEV      19  /* No such device */
+#define SME_EINVAL      22  /* Invalid argument */
+
 
 //! \name Task configuration
 //@{

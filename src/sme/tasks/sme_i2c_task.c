@@ -5,7 +5,6 @@
  *  Author: speirano
  */ 
 
-//#include <stdio.h>
 
 #include "sme_i2c_task.h"
 #include "..\Devices\I2C\nfc\nxpNfc.h"
@@ -42,31 +41,6 @@ static void readAllValues(void){
 		if (sensors[i].sensorInitialized == true)
 		sensors[i].sensorValue(buffer);
 	}
-	
-	/*if (isZXYAxis){
-	
-	uint8_t conf = MMA8452Configure();
-	
-	if (isZXYAxis==1)
-	sprintf(buffer, "ZXY initialized = TRUE\r");
-	else
-	sprintf(buffer, "ZXY initialized = FALSE\r");
-	
-	if (conf==1)
-	sprintf(buffer, "ZXY Configured = TRUE");
-	else
-	sprintf(buffer, "ZXY Configured = FALSE");
-	}
-	
-	if (readManufactoringData()) {
-	getNxpSerialNumber(&buffer[30]);
-	sprintf(buffer, "NXP S/N = %s\r", &buffer[30]);
-	readUserData();
-	readSRAM();
-	getNxpUserData(buffer);
-	} else {
-	sprintf(buffer, "NXP does not work");
-	}*/
 }
 
 volatile static	uint8_t i2CId=0;
@@ -159,12 +133,10 @@ static void i2cTask(void *params)
 				case allSensorsReadValue:
 				readAllValues();
 				break;
-				
+	
+				case sensorReadRegister:			
 				case sensorReadValue:
 				readSensorValue(current_message.command);
-				break;
-				
-				case sensorReadRegister:
 				break;
 				
 				case sensorWriteRegister:
@@ -185,8 +157,8 @@ BaseType_t sme_i2c_mgr_init(void)
 	
 	// create the I2C Task
 	return xTaskCreate(i2cTask,
-	(const char *) "I2C",
-	configMINIMAL_STACK_SIZE,
+	I2C_TASK_NAME,
+	I2C_STACK_SIZE,
 	NULL,
 	I2C_TASK_PRIORITY,
 	NULL);

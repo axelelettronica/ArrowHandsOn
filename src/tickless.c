@@ -43,7 +43,6 @@
 
 #include <asf.h>
 #include "sme/sme_FreeRTOS.h"
-
 //! Timer/Counter instance to use as tick timer
 #define TICK_TC TC6
 
@@ -67,7 +66,6 @@
 
 //! \name Timer Constants
 //@{
-
 
 //! Frequency of timer
 #define TIMER_HZ                            ( configCPU_CLOCK_HZ )

@@ -1,6 +1,6 @@
 #include "..\I2C.h"
 #include "nxpNfc.h"
-#include <..\..\..\..\..\..\..\..\My Program Files\SW\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\avr\include\string.h>
+#include <string.h>
 /*
 * nxpNfc.c
 *
@@ -71,10 +71,11 @@ bool readSRAM(void){
 	return ret;
 }
 
-
+#define JUST_FOR_DEBUG 9
 bool getNxpUserData(char* buffer) {
 	if (readUserData()) {
-	memcpy(buffer, userData, USER_DATA_LEN)	;
+		memcpy(buffer, userData, JUST_FOR_DEBUG)	;
+	//memcpy(buffer, userData, USER_DATA_LEN)	;
 	return true;
 	} else 
 	return false;

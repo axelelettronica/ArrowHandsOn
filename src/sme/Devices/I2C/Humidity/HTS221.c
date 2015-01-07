@@ -146,16 +146,16 @@ static inline bool temperatureReady(uint8_t data) {
 static uint8_t h0_rH, h1_rH;
 static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
 
-
 bool HTS221nit(void) {
 	uint8_t data;
 	if (readRegister(HTS221_ADDRESS, WHO_AM_I, &data)) {
 		if (data == WHO_AM_I_RETURN){
-			if (HTS221Activate())
-			return HTS221getCalibration();
+			if (HTS221Activate()){
+				return HTS221getCalibration();
+			}			
 		}
 	}
-
+	
 	return false;
 }
 

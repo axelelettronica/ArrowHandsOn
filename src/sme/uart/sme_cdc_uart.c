@@ -49,15 +49,9 @@ static void cdc_rx_handler(uint8_t instance);
 static struct usart_module cdc_usart;
 
 
-//! Buffer for terminal text
-uint8_t cdc_msg_buffer[MAX_TOKEN_NUM][MAX_TOKEN_LEN];
-
-//! Index of latest token (first to be printed)
-static uint8_t cdc_token_offset;
-
+sme_cli_msg_t sme_cli_msg = {};
 
 static void cdc_task(void *params);
-
 /*
  * cdc_rx_init to be commented out in a second time  (TX is not working yet
  */
@@ -105,8 +99,6 @@ static inline void cdc_rx_init(struct usart_module *const usart,
 
 	// ..and the RX Complete interrupt
 	((SercomUsart *)EDBG_CDC_MODULE)->INTENSET.reg = SERCOM_USART_INTFLAG_RXC;
-		// ..and the RX Complete interrupt
-
 }
 
 
@@ -243,7 +235,7 @@ static void cdc_task(void *params)
 		// Grab terminal mutex
 		xSemaphoreTake(cdc_msg_mutex, portMAX_DELAY);
 
-		current_token_ptr = cdc_msg_buffer[cdc_token_offset];
+		current_token_ptr = sme_cli_msg.token[sme_cli_msg.token_idx];
 		current_char_ptr = current_token_ptr + current_column;
 
 		while (xQueueReceive(cdc_msg_in_queue, current_char_ptr, 0)) {
@@ -255,16 +247,16 @@ static void cdc_task(void *params)
 			switch (*current_char_ptr) {
 			case ' ':
 			
-			    if(cdc_msg_buffer[cdc_token_offset][0] == ' ') {
+			    if(sme_cli_msg.token[sme_cli_msg.token_idx][0] == ' ') {
 					break;
 				}
 				// Replace \r with \0 and move head to next line
 				*current_char_ptr = '\0';
 
 				current_column = 0;
-				cdc_token_offset = (cdc_token_offset + 1)
+				sme_cli_msg.token_idx = (sme_cli_msg.token_idx + 1)
 						% MAX_TOKEN_NUM;
-				current_token_ptr = cdc_msg_buffer[cdc_token_offset];
+				current_token_ptr = sme_cli_msg.token[sme_cli_msg.token_idx];
 				current_char_ptr = current_token_ptr + current_column;
 				break;
 				
@@ -273,16 +265,16 @@ static void cdc_task(void *params)
 			   	*current_char_ptr = '\0';
 
 			   	current_column = 0;
-			   	cdc_token_offset = (cdc_token_offset + 1)
+			   	sme_cli_msg.token_idx = (sme_cli_msg.token_idx + 1)
 			   				% MAX_TOKEN_NUM;
-			   	current_token_ptr = cdc_msg_buffer[cdc_token_offset];
+			   	current_token_ptr = sme_cli_msg.token[sme_cli_msg.token_idx];
 			   	current_char_ptr = current_token_ptr + current_column;
 				
-				sme_cdc_cmd_parse(cdc_token_offset);
+				sme_cdc_cmd_parse(sme_cli_msg.token_idx);
 				
 				// clean
 				//sme_clean_msg_buffer();
-				cdc_token_offset = 0;
+				sme_cli_msg.token_idx = 0;
 	            current_column = 0;
 				
 			    break;
@@ -306,9 +298,9 @@ static void cdc_task(void *params)
 				current_column++;
 				if (current_column >= (MAX_TOKEN_LEN-1)) {
 					current_column = 0;
-					cdc_token_offset = (cdc_token_offset + 1)
+					sme_cli_msg.token_idx = (sme_cli_msg.token_idx + 1)
 							% MAX_TOKEN_NUM;
-					current_token_ptr = cdc_msg_buffer[cdc_token_offset];
+					current_token_ptr = sme_cli_msg.token[sme_cli_msg.token_idx];
 				}
 				current_char_ptr = current_token_ptr + current_column;
 				//dbg_info("\r\nreceived %c \r\n", *current_char_ptr);
