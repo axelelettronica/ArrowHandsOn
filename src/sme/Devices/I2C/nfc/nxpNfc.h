@@ -19,7 +19,8 @@
 
 #define SRAM_START_REG 0xF8
 #define SRAM_END_REG   0xFB // just the first 8 bytes
-
+#define CONFIG_REG	   0x3A
+#define SESSION_REG	   0xFE
 
 
 
@@ -27,7 +28,9 @@ bool readManufactoringData(void);
 void getNxpSerialNumber(char* buffer);
 bool readUserData(void);
 bool getNxpUserData(char* buffer);
-
+bool getConfiguration(void);
 bool readSRAM(void);
+bool getSessionReg(void);
+bool nxpInit(void);
 
 #endif /* NFC_H_ */

@@ -69,8 +69,8 @@ static void i2cInit(void) {
 	sensors[0].sensorInit  = ZXYInit;
 	sensors[0].sensorValue = MMA8452getAccelData;
 	
-	sensors[1].sensorValue = getNxpUserData;
-	sensors[1].sensorInit  = readManufactoringData;
+	sensors[1].sensorValue = /*getNxpUserData*/readSRAM;
+	sensors[1].sensorInit  = nxpInit;
 	
 	sensors[2].sensorInit  = HTS221nit;
 	sensors[2].sensorValue = HTS221getValues;

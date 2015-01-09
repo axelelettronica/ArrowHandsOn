@@ -1,9 +1,9 @@
 /**
  * \file
  *
- * \brief FreeRTOS demo application main function.
+ * \brief SAM External Interrupt Driver Configuration Header
  *
- * Copyright (C) 2013 Atmel Corporation. All rights reserved.
+ * Copyright (C) 2013-2014 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
@@ -40,55 +40,9 @@
  * \asf_license_stop
  *
  */
+#ifndef CONF_EXTINT_H_INCLUDED
+#define CONF_EXTINT_H_INCLUDED
 
-#include <asf.h>
-#include <sme_cmn.h>
-#include "sme/sme_FreeRTOS.h"
-#include "sme/tasks/sme_controller.h"
-#include "sme/tasks/sme_i2c_task.h"
-#include "sme/interrupt/interrupt.h"
+#  define EXTINT_CLOCK_SOURCE      GCLK_GENERATOR_0
 
-
-static void init_services(void);
-
-
-//! Handle for terminal output task
-//static xTaskHandle terminal_task_handle;
-
-
-
-/**
- * \brief Initialize tasks and resources for demo
- *
- * This function initializes the \ref oled1_xpro_io_group instance and the
- * \ref edbg_cdc_rx_group instance for reception, then creates all
- * the objects for FreeRTOS to run the demo.
- */
-static void init_services(void)
-{
-	sme_cdc_mgr_init();
-	sme_uart_mgr_init();
-	sme_i2c_mgr_init();
-	sme_ctrl_init();
-	sme_init_isr_global();
-}
-
-
-
-
-int main (void)//
-{
-	system_init();
-	//gfx_mono_init();
-
-	// Initialize the demo..
-	init_services();
-
-	
-	// ..and let FreeRTOS run tasks!
-	vTaskStartScheduler();
-
-	do {
-		// Intentionally left empty
-	} while (true);
-}
+#endif

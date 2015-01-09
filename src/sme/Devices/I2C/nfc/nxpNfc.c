@@ -26,7 +26,7 @@ static uint8_t userData[900];
 bool readManufactoringData(void) {
 	bool ret = false;
 	
-	ret = readBufferRegister(NXPNFC_ADDRESS, MANUFACTORING_DATA_REG, manuf.pagemanufr, sizeof(pageBuffer));
+	ret = readBufferRegister(NXPNFC_ADDRESS, MANUFACTORING_DATA_REG, manuf.pagemanufr, sizeof(manuf.pagemanufr));
 	return ret;
 	
 }
@@ -35,6 +35,21 @@ void getNxpSerialNumber(char* buffer) {
 	for(int i=0; i<6; i++) {
 		buffer[i] = manuf.manufS.serialNumber[i];
 	}
+}
+
+
+bool nxpInit(void){
+	readManufactoringData();
+	getConfiguration();
+	getSessionReg();
+}
+
+bool getConfiguration(void) {
+	return readBufferRegister(NXPNFC_ADDRESS, CONFIG_REG, pageBuffer, sizeof(pageBuffer));
+}
+
+bool getSessionReg(void) {
+	return readBufferRegister(NXPNFC_ADDRESS, SESSION_REG, pageBuffer, sizeof(pageBuffer));
 }
 
 bool readUserData(void){

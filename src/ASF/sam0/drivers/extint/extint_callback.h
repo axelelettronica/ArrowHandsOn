@@ -1,9 +1,9 @@
 /**
  * \file
  *
- * \brief FreeRTOS demo application main function.
+ * \brief SAM External Interrupt Driver
  *
- * Copyright (C) 2013 Atmel Corporation. All rights reserved.
+ * Copyright (C) 2012-2014 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
@@ -40,55 +40,66 @@
  * \asf_license_stop
  *
  */
+#ifndef EXTINT_CALLBACK_H_INCLUDED
+#define EXTINT_CALLBACK_H_INCLUDED
 
-#include <asf.h>
-#include <sme_cmn.h>
-#include "sme/sme_FreeRTOS.h"
-#include "sme/tasks/sme_controller.h"
-#include "sme/tasks/sme_i2c_task.h"
-#include "sme/interrupt/interrupt.h"
+#include <compiler.h>
 
-
-static void init_services(void);
-
-
-//! Handle for terminal output task
-//static xTaskHandle terminal_task_handle;
-
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
- * \brief Initialize tasks and resources for demo
+ * \addtogroup asfdoc_sam0_extint_group
  *
- * This function initializes the \ref oled1_xpro_io_group instance and the
- * \ref edbg_cdc_rx_group instance for reception, then creates all
- * the objects for FreeRTOS to run the demo.
+ * @{
  */
-static void init_services(void)
+
+/** \name Callback configuration and initialization
+ * @{
+ */
+
+/** Enum for the possible callback types for the EXTINT module. */
+enum extint_callback_type
 {
-	sme_cdc_mgr_init();
-	sme_uart_mgr_init();
-	sme_i2c_mgr_init();
-	sme_ctrl_init();
-	sme_init_isr_global();
+	/** Callback type for when an external interrupt detects the configured
+	 *  channel criteria (i.e. edge or level detection)
+	 */
+	EXTINT_CALLBACK_TYPE_DETECT,
+};
+
+enum status_code extint_register_callback(
+	const extint_callback_t callback,
+	const uint8_t channel,
+	const enum extint_callback_type type);
+
+enum status_code extint_unregister_callback(
+	const extint_callback_t callback,
+	const uint8_t channel,
+	const enum extint_callback_type type);
+
+uint8_t extint_get_current_channel(void);
+
+/** @} */
+
+/** \name Callback enabling and disabling (channel)
+ * @{
+ */
+
+enum status_code extint_chan_enable_callback(
+	const uint8_t channel,
+	const enum extint_callback_type type);
+
+enum status_code extint_chan_disable_callback(
+	const uint8_t channel,
+	const enum extint_callback_type type);
+
+/** @} */
+
+/** @} */
+
+#ifdef __cplusplus
 }
+#endif
 
-
-
-
-int main (void)//
-{
-	system_init();
-	//gfx_mono_init();
-
-	// Initialize the demo..
-	init_services();
-
-	
-	// ..and let FreeRTOS run tasks!
-	vTaskStartScheduler();
-
-	do {
-		// Intentionally left empty
-	} while (true);
-}
+#endif
