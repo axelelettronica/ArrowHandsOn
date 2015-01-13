@@ -41,8 +41,8 @@
  *
  */
 
-#ifndef SME_CDC_H
-#define SME_CDC_H
+#ifndef SME_CDC_UART_H
+#define SME_CDC_UART_H
 
 #include <board.h>
 #include <usart_interrupt.h>
@@ -54,6 +54,8 @@
 #define MAX_TOKEN_LEN         11
 #endif // SME_CDC_H
 
+
+#define EDBG_CDC_SIGFOX_BAUDRATE 115200
 int sme_cdc_cmd_parse (uint8_t token_num);
 
 

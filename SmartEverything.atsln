@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "SmartEverything", "SmartEverything.cproj", "{B8E372CD-CA55-426B-8745-B69289224F97}"
 EndProject
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "FREERTOS_Interrupt", "FREERTOS_Interrupt\FREERTOS_Interrupt.cproj", "{2BDE4E9E-AB90-404C-8089-22E3702911BF}"
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "USART_callback", "USART_callback\USART_callback.cproj", "{2F5DFF8C-8679-47A0-AE4C-BA2F8A6C5688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,10 @@ Global
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Debug|ARM.Build.0 = Debug|ARM
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.ActiveCfg = Release|ARM
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.Build.0 = Release|ARM
-		{2BDE4E9E-AB90-404C-8089-22E3702911BF}.Debug|ARM.ActiveCfg = Debug|ARM
-		{2BDE4E9E-AB90-404C-8089-22E3702911BF}.Debug|ARM.Build.0 = Debug|ARM
-		{2BDE4E9E-AB90-404C-8089-22E3702911BF}.Release|ARM.ActiveCfg = Release|ARM
-		{2BDE4E9E-AB90-404C-8089-22E3702911BF}.Release|ARM.Build.0 = Release|ARM
+		{2F5DFF8C-8679-47A0-AE4C-BA2F8A6C5688}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2F5DFF8C-8679-47A0-AE4C-BA2F8A6C5688}.Debug|ARM.Build.0 = Debug|ARM
+		{2F5DFF8C-8679-47A0-AE4C-BA2F8A6C5688}.Release|ARM.ActiveCfg = Release|ARM
+		{2F5DFF8C-8679-47A0-AE4C-BA2F8A6C5688}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

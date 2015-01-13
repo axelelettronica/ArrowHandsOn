@@ -122,8 +122,6 @@ static void i2cTask(void *params)
 
 		if (xQueueReceive(i2cCommandQueue, &current_message, I2C_TASK_DELAY)) {
 			
-			//xSemaphoreTake(i2c_mutex, portMAX_DELAY);
-			
 			switch (current_message.code){
 				
 				case justForDebugToBeRemoved:

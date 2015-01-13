@@ -22,8 +22,9 @@ static void extint15_detection_callback(void)
 
 static void extint0_detection_callback(void)
 {
+
 	pin_state = port_pin_get_input_level(BUTTON_0_PIN);
-	port_pin_set_output_level(LED_0_PIN, false);
+	port_pin_set_output_level(LED_0_PIN, false);		
 }
 
 static void configure_extint_channel(void)

@@ -673,9 +673,11 @@
     <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
-    <Folder Include="src\sme\Devices\Uart\" />
+    <Folder Include="src\sme\Devices\uart" />
+    <Folder Include="src\sme\Devices\uart\sigFox" />
     <Folder Include="src\sme\interrupt" />
     <Folder Include="src\sme\tasks" />
+    <Folder Include="src\sme\tasks\uart" />
     <Folder Include="src\sme\uart\" />
   </ItemGroup>
   <ItemGroup>
@@ -778,6 +780,12 @@
     <Compile Include="src\sme\Devices\I2C\ZXYAxis\ZXYAxis.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_usart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_usart.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\interrupt\interrupt.c">
       <SubType>compile</SubType>
     </Compile>
@@ -799,13 +807,40 @@
     <Compile Include="src\sme\tasks\sme_i2c_task.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\tasks\sme_sigfox_task.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_sigfox_task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\uart\sme_sigfox_execute.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\uart\sme_sigfox_execute.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\uart\sme_cdc_cmd_parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_cdc_cmd_parse.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_cdc_uart.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_cdc_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_sigfox_parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_sigfox_parse.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_uart.c">

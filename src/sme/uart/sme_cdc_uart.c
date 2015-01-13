@@ -82,7 +82,7 @@ static inline void cdc_rx_init(struct usart_module *const usart,
 	config_struct.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
 	config_struct.pinmux_pad2 = EDBG_CDC_SERCOM_PINMUX_PAD2;
 	config_struct.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
-	config_struct.baudrate    = 38400;
+	config_struct.baudrate    = EDBG_CDC_SIGFOX_BAUDRATE;
 
 	while (usart_init(usart, EDBG_CDC_MODULE, &config_struct) != STATUS_OK) {
 		// Intentionally left empty

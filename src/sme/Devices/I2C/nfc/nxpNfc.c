@@ -42,6 +42,7 @@ bool nxpInit(void){
 	readManufactoringData();
 	getConfiguration();
 	getSessionReg();
+	return true;
 }
 
 bool getConfiguration(void) {

@@ -28,15 +28,25 @@ src\sme\Devices\I2C\Pressure\LPS25H.c
 
 src\sme\Devices\I2C\ZXYAxis\ZXYAxis.c
 
+src\sme\Devices\uart\sigFox\sme_sigfox_usart.c
+
 src\sme\interrupt\interrupt.c
 
 src\sme\tasks\sme_controller.c
 
 src\sme\tasks\sme_i2c_task.c
 
+src\sme\tasks\sme_sigfox_task.c
+
+src\sme\tasks\uart\sme_sigfox_execute.c
+
+src\sme\tasks\uart\sme_usart_tx_task.c
+
 src\sme\uart\sme_cdc_cmd_parse.c
 
 src\sme\uart\sme_cdc_uart.c
+
+src\sme\uart\sme_sigfox_parse.c
 
 src\sme\uart\sme_uart.c
 

@@ -29,6 +29,7 @@ typedef enum {
 } sensorCommandE;
 
 #define SME_CDC_MAX_DATA_LEN  20
+
 typedef union {
 	struct {
 		uint8_t sensorId;
