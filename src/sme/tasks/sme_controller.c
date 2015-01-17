@@ -58,7 +58,6 @@ static void control_task(void *params)
 			//if (temp_task_handle) {
 			//	vTaskResume(temp_task_handle);
 			//}
-        dbg("control_task Loop\r\n");
 		vTaskDelay(CONTROL_TASK_DELAY);
 	}
 }

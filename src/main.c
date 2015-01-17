@@ -72,9 +72,9 @@ static void init_services(void)
 	sme_uart_mgr_init();
 	sme_i2c_mgr_init();
 	sme_ctrl_init();
-	sme_init_isr_global();
-	sme_sigfox_mgr_init();
-	sme_usart_init();
+	//sme_init_isr_global();
+	//sme_sigfox_mgr_init();
+	//sme_usart_init();
 }
 
 

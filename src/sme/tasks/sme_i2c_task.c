@@ -5,7 +5,7 @@
  *  Author: speirano
  */ 
 
-
+#include <sme_cmn.h>
 #include "sme_i2c_task.h"
 #include "..\Devices\I2C\nfc\nxpNfc.h"
 #include "..\Devices\I2C\ZXYAxis\ZXYAxis.h"
@@ -121,7 +121,7 @@ static void i2cTask(void *params)
 	for (;;) {
 
 		if (xQueueReceive(i2cCommandQueue, &current_message, I2C_TASK_DELAY)) {
-			
+			//print_dbg("received message\r\n");
 			switch (current_message.code){
 				
 				case justForDebugToBeRemoved:

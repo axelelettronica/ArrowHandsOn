@@ -17,9 +17,14 @@ typedef int (*cmd_callback) (cdc_queue_msg_t *data, xQueueHandle *queue, ...);
 
 static int cdc_parser_show(void);
 static int cdc_parser_help(void);
+static int cdc_parser_dbg (void);
 static int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue);
 static int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue);
 
+static char CDC_HELP_DBG[]="Help: dbg <verbose dump level>:\r\n\tdbg e|d: "
+                           "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
+static char CDC_HELP_I2C[]="Help: i2c <hex-addressd> [r/w] <hex-register> <hex-data>\r\n";
+static char CDC_HELP_SIGFOX[]="Help: sf [c/d] ...\r\n";
 
 typedef enum {
 	CDC_0,
@@ -33,6 +38,7 @@ typedef enum {
 typedef enum {
 	CDC_HELP,
 	CDC_SHOW,
+    CDC_DBG,
 	CDC_D_I2C,
 	CDC_SIGFOX,
 	CDC_CMD_MAX,
@@ -56,6 +62,8 @@ typedef struct {
 cmd_cb_t  cmd_cb[] = {
 	CDC_HELP,   "help",  cdc_parser_help,
 	CDC_SHOW,   "show",  cdc_parser_show,
+    /* I.E. dbg <dbg_strng>  */
+    CDC_DBG,    "dbg" ,  cdc_parser_dbg,
 	/* I.E. i2c <address> [r/w] <register> <data> */
 	CDC_D_I2C,  "i2c" ,  cdc_parser_dbg_i2c,
 	/* I.E. see sme_sigfox_parse for command example */
@@ -115,6 +123,41 @@ int cdc_parser_show()
 	return SME_OK;
 }
 
+/* dbg  <dbgstring>   (this enable the related verbose dbg level)
+ * <dbg string>:
+ *   e  : enable Errors, d  : enable Debug, ed: enable Error & Debug
+ *   0  : disable all 
+ */
+int cdc_parser_dbg (void)
+{
+	int i = 0;
+    bool wrong = true;
+    while (sme_cli_msg.token[1][i]) {
+        switch(sme_cli_msg.token[1][i]) {
+        case 'e':
+             sme_err_enable = true;
+             wrong = false;
+             break;
+        case 'd':
+             sme_dbg_enable = true;
+             wrong = false;
+             break;
+        case '0':
+             sme_dbg_enable = false;
+             sme_err_enable = false;
+             return SME_OK;
+             break;
+        default: 
+             break;
+        }
+        i++;
+    }
+    if (wrong)
+        print_out(CDC_HELP_DBG);
+
+   	return SME_OK;
+}
+
 int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 {
 	/* I.E. i2c <hex-addressd> [r/w] <hex-register> <hex-data> */
@@ -125,16 +168,13 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 	&(msg->fields.sensorId));
 	
 	// read operation
-	if (sme_cli_msg.token[2][0] == 'r') {
+    if (sme_cli_msg.token[2][0] == 'r') {
 		data->i2c_msg.code = sensorReadRegister;
-		} else if (sme_cli_msg.token[2][0] == 'w') {
+    } else if (sme_cli_msg.token[2][0] == 'w') {
 		data->i2c_msg.code = sensorWriteRegister;
 		err |= sme_hex_str_to_data(sme_cli_msg.token[4], msg->fields.data,
 		&(msg->fields.datalen));
-		} else {
-		// print help
-		//return SME_EINVAL;
-		
+    } else {	
 		// Just this i2c for now
 		data->i2c_msg.code = justForDebugToBeRemoved;
 		*queue = i2cCommandQueue;
@@ -145,6 +185,7 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 
 	if (err) {
 		// print help
+        print_out(CDC_HELP_I2C);
 		return SME_EINVAL;
 	}
 	
@@ -162,8 +203,11 @@ int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
 	data->uart_msg.code = sigFox; 
 	
 	err  |= parseSigFoxMsg(&data->uart_msg.componentStruct);	 
-		
-	return SME_OK;
+	
+    if (err) {
+        print_out(CDC_HELP_SIGFOX);
+	}	
+	return err;
 }
 
 int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb)

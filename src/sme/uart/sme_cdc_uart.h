@@ -47,17 +47,13 @@
 #include <board.h>
 #include <usart_interrupt.h>
 
+#define EDBG_CDC_SIGFOX_BAUDRATE 115200
+
 
 //! Character lines in terminal buffer
 #define MAX_TOKEN_NUM         11
 //! Character columns in terminal buffer
 #define MAX_TOKEN_LEN         11
-#endif // SME_CDC_H
-
-
-#define EDBG_CDC_SIGFOX_BAUDRATE 115200
-int sme_cdc_cmd_parse (uint8_t token_num);
-
 
 typedef  struct  {
 	//! Buffer for terminal text
@@ -66,5 +62,11 @@ typedef  struct  {
 	uint8_t token_idx;
 } sme_cli_msg_t;
 
-
 extern sme_cli_msg_t sme_cli_msg;
+
+int sme_cdc_cmd_parse (uint8_t token_num);
+
+
+
+
+#endif // SME_CDC_UART_H
