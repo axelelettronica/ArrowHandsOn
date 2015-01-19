@@ -30,9 +30,6 @@ static struct usart_module usart_sigfox;
 volatile uint8_t rx_buffer[MAX_RX_BUFFER_LENGTH];
 /* interrupt USART variables */
 
-volatile uint32_t test=0;
-
-
 static void usart_sigfox_read_callback(const struct usart_module *const usart_module)
 {
 	
@@ -42,14 +39,12 @@ static void usart_sigfox_read_callback(const struct usart_module *const usart_mo
 	    /* If xHigherPriorityTaskWoken was set to true you
     we should yield.  The actual macro used here is 
     port specific. */
-    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
-	
-	/*usart_write_buffer_job(&usart_sigfox,
-	(uint8_t *)rx_buffer, MAX_RX_BUFFER_LENGTH);*/
+    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );		
 }
+
 static void usart_sigfox_write_callback(const struct usart_module *const usart_module)
 {
-	test+=10;
+
 	port_pin_toggle_output_level(LED_0_PIN);
 
 }
@@ -81,10 +76,12 @@ void sigFoxInit(void) {
 	usart_enable_callback(&usart_sigfox, USART_CALLBACK_BUFFER_RECEIVED);
 	// endsigfox usart configuration
 }
+
 status_code_genare_t sigfoxSendMessage(uint8_t *msg, uint8_t len) {
 	memset(rx_buffer,0,MAX_RX_BUFFER_LENGTH);
 	return usart_write_buffer_job(&usart_sigfox, msg, len);
 }
+
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){ 
 	status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_RX_BUFFER_LENGTH);
 	if (ret == STATUS_OK) {

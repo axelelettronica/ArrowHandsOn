@@ -1,65 +1,93 @@
 /*
- * controller.c
- *
- * Created: 02/01/2015 01:47:55
- *  Author: speirano
- */ 
+* controller.c
+*
+* Created: 02/01/2015 01:47:55
+*  Author: speirano
+*/
 
 #include "sme_cmn.h"
-
-#include "../sme_FreeRTOS.h"
+#include "sme_controller.h"
+#include "..\Devices\I2C\Humidity\HTS221.h"
+#include "..\Devices\I2C\Pressure\LPS25H.h"
+#include "uart\sme_sigfox_execute.h"
 
 static void control_task(void *params);
+xQueueHandle controllerQueue;
 
 int sme_ctrl_init(void)
 {
-	xTaskCreate(control_task,
-	(const char *) "Control",
-	configMINIMAL_STACK_SIZE,
-	NULL,
-	CONTROL_TASK_PRIORITY,
-	NULL);
 
-
-
-	// Suspend these since the main task will control their execution
-	//vTaskSuspend(terminal_task_handle);
+	controllerQueue = xQueueCreate(64, sizeof(controllerQueueS));
+	if( controllerQueue != 0 )
+	{
+		xTaskCreate(control_task,
+		(const char *) "Control",
+		configMINIMAL_STACK_SIZE,
+		NULL,
+		CONTROL_TASK_PRIORITY,
+		NULL);
+	}
 	
 	return 0;
 }
 
 
+/*
+* Send the Sensor value to SigFox.
+* If it is required add the GPS Location
+*/
+static void sendValueToSigFox(uint8_t value, char withGPS){
+	
+	sigFoxT sigFoxMsg;
+	executeSigFox(&sigFoxMsg);
+}
+
+static bool prepareNfcSensorValues(const controllerQueueS *current_message, uint8_t *value) {
+
+	bool valueRead=false;
+	switch (current_message->intSensor.nfc.sensor) {
+		case humidityValue:
+		valueRead = HTS221getValues(value);
+		break;
+		
+		case pressureValue:
+		valueRead = LPS25HgetValues(value);
+		break;
+	}
+	return valueRead;
+}
+
+
+
 /**
- * \brief control task
- *
- * This task keeps track of which screen the user has selected, which tasks
- * to resume/suspend to draw the selected screen, and also draws the menu bar.
- *
- * This task is the board controller.
- * This manage the SmartEverything controller as required
- *
- * \param params Parameters for the task. (Not used.)
- */
+*
+* This task is the board controller.
+* This manage the SmartEverything controller as required
+*
+* \param params Parameters for the task. (Not used.)
+*/
 static void control_task(void *params)
 {
-	//xTaskHandle temp_task_handle = NULL;
-
+	bool valueRead=false;
+	controllerQueueS current_message;
+	uint8_t value;
 	for(;;) {
-			// We can now safely suspend the previously resumed task
-			//if (temp_task_handle) {
-			//	vTaskSuspend(temp_task_handle);
-			//	temp_task_handle = NULL;
-			//}
-
-
-			//xSemaphoreGive(display_mutex);
-
-			// If a task handle was specified, resume it now
-			//if (temp_task_handle) {
-			//	vTaskResume(temp_task_handle);
-			//}
-        dbg("control_task Loop\r\n");
-		vTaskDelay(CONTROL_TASK_DELAY);
+		if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
+			
+			interruptE intType = current_message.intE;
+			switch (intType) {
+				case nfcInt:
+				prepareNfcSensorValues(&current_message, &value);
+				break;
+				
+				default:
+				break;
+			}
+		}
+		
+		if (valueRead) {
+			sendValueToSigFox(value, current_message.withGPS);
+		}
 	}
 }
 

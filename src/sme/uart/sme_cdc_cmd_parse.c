@@ -58,7 +58,7 @@ cmd_cb_t  cmd_cb[] = {
 	CDC_SHOW,   "show",  cdc_parser_show,
 	/* I.E. i2c <address> [r/w] <register> <data> */
 	CDC_D_I2C,  "i2c" ,  cdc_parser_dbg_i2c,
-	/* I.E. see sme_sigfox_parse for command example */
+	/* I.E. see sme_sigfox_parse.h for command example */
 	CDC_SIGFOX,  "sf" ,  cdc_parser_dbg_sigfox
 };
 
@@ -163,7 +163,7 @@ int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
 	
 	err  |= parseSigFoxMsg(&data->uart_msg.componentStruct);	 
 		
-	return SME_OK;
+	return err;
 }
 
 int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb)

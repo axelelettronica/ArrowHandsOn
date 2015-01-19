@@ -42,4 +42,5 @@ inline int sme_hex_str_to_uint8(uint8_t *s, uint8_t *value)
 	((s[0] == '0') && (s[1] == 'x')) ? 0: 16);
 	return SME_OK;
 }
+
 #endif /* SME_CDC_CMD_PARSE_H_ */

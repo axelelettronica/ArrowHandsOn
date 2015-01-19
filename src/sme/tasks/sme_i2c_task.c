@@ -114,6 +114,7 @@ static void debugRemove(i2cQueueS *current_message){
 *
 * \param params Parameters for the task. (Not used.)
 */
+extern char debugController;
 static void i2cTask(void *params)
 {
 	
