@@ -13,14 +13,14 @@
 
 static void control_task(void *params);
 xQueueHandle controllerQueue;
-
-int sme_ctrl_init(void)
+BaseType_t sme_ctrl_init(void)
 {
 
+	BaseType_t err;
 	controllerQueue = xQueueCreate(64, sizeof(controllerQueueS));
 	if( controllerQueue != 0 )
 	{
-		xTaskCreate(control_task,
+		err= xTaskCreate(control_task,
 		(const char *) "Control",
 		configMINIMAL_STACK_SIZE,
 		NULL,
@@ -28,7 +28,7 @@ int sme_ctrl_init(void)
 		NULL);
 	}
 	
-	return 0;
+	return err;
 }
 
 
@@ -41,6 +41,7 @@ static void sendValueToSigFox(uint8_t value, char withGPS){
 	sigFoxT sigFoxMsg;
 	executeSigFox(&sigFoxMsg);
 }
+
 
 static bool prepareNfcSensorValues(const controllerQueueS *current_message, uint8_t *value) {
 
@@ -66,14 +67,17 @@ static bool prepareNfcSensorValues(const controllerQueueS *current_message, uint
 *
 * \param params Parameters for the task. (Not used.)
 */
+
 static void control_task(void *params)
 {
 	bool valueRead=false;
 	controllerQueueS current_message;
 	uint8_t value;
+	
+
 	for(;;) {
 		if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
-			
+
 			interruptE intType = current_message.intE;
 			switch (intType) {
 				case nfcInt:

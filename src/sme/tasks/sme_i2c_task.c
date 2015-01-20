@@ -1,11 +1,11 @@
 /*
- * controller.c
- *
- * Created: 02/01/2015 01:47:55
- *  Author: speirano
- */ 
+* controller.c
+*
+* Created: 02/01/2015 01:47:55
+*  Author: speirano
+*/
 
-
+#include <sme_cmn.h>
 #include "sme_i2c_task.h"
 #include "..\Devices\I2C\nfc\nxpNfc.h"
 #include "..\Devices\I2C\ZXYAxis\ZXYAxis.h"
@@ -114,15 +114,15 @@ static void debugRemove(i2cQueueS *current_message){
 *
 * \param params Parameters for the task. (Not used.)
 */
-extern char debugController;
+volatile char debugController;
 static void i2cTask(void *params)
 {
-	
 	i2cQueueS current_message;
+	debugController++;
 	for (;;) {
 
 		if (xQueueReceive(i2cCommandQueue, &current_message, I2C_TASK_DELAY)) {
-			
+			//print_dbg("received message\r\n");
 			switch (current_message.code){
 				
 				case justForDebugToBeRemoved:
@@ -132,8 +132,8 @@ static void i2cTask(void *params)
 				case allSensorsReadValue:
 				readAllValues();
 				break;
-	
-				case sensorReadRegister:			
+				
+				case sensorReadRegister:
 				case sensorReadValue:
 				readSensorValue(current_message.command);
 				break;
@@ -151,15 +151,17 @@ BaseType_t sme_i2c_mgr_init(void)
 {
 	i2cInit();
 	
+	BaseType_t err;
 	// create the I2c Queue
 	i2cCommandQueue = xQueueCreate(64, sizeof(i2cQueueS));
 	
 	// create the I2C Task
-	return xTaskCreate(i2cTask,
+	err= xTaskCreate(i2cTask,
 	I2C_TASK_NAME,
 	I2C_STACK_SIZE,
 	NULL,
 	I2C_TASK_PRIORITY,
 	NULL);
-
+	
+	return err;
 }

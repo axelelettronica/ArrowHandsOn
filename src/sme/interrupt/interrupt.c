@@ -14,20 +14,25 @@
 controllerQueueS queueData;
 
 volatile bool pin_state;
+volatile dbg=0;
 static void extint15_detection_callback(void)
 {
 	pin_state = port_pin_get_input_level(BUTTON_0_PIN);
 	port_pin_set_output_level(LED_0_PIN, pin_state);
-	BaseType_t  err;
+	
 	BaseType_t xHigherPriorityTaskWoken;
+	BaseType_t  err;
 	queueData.intE=nfcInt;
 	queueData.intSensor.nfc.sensor=humidityValue;
 	queueData.withGPS = 1;
 	/* We have not woken a task at the start of the ISR. */
 	xHigherPriorityTaskWoken = pdFALSE;
 	
-	err = xQueueSendFromISR(controllerQueue, (void *) &queueData, NULL/*&xHigherPriorityTaskWoken*/);
-	
+	if (xQueueSendFromISR(controllerQueue, (void *) &queueData, NULL/*&xHigherPriorityTaskWoken*/) != pdPASS) {
+		dbg=pdFALSE;
+	} else {
+		dbg = pdPASS;
+	}
 	
 	/* Now the buffer is empty we can switch context if necessary.
 	if( xHigherPriorityTaskWoken )
@@ -52,7 +57,7 @@ static void extint15_detection_callback(void)
 	xHigherPriorityTaskWoken = pdFALSE;
 	
 	err = xQueueSendFromISR(controllerQueue, (void *) &queueData, NULL/*&xHigherPriorityTaskWoken*/);
-	
+	dbg=err;
 	
 	/* Now the buffer is empty we can switch context if necessary.
 	if( xHigherPriorityTaskWoken )

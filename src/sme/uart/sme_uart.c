@@ -340,7 +340,6 @@ static void uart_task(void *params)
 			//if (temp_task_handle) {
 			//	vTaskResume(temp_task_handle);
 			//}
-        dbg("uart Loop\r\n");
 		vTaskDelay(UART_TASK_DELAY);
 	}
 }

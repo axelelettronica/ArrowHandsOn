@@ -46,7 +46,7 @@ static xSemaphoreHandle cdc_msg_mutex;
 static void cdc_rx_handler(uint8_t instance);
 
 //! Instance for \ref edbg_cdc_rx_group
-static struct usart_module cdc_usart;
+struct usart_module cdc_usart;
 
 
 sme_cli_msg_t sme_cli_msg = {};

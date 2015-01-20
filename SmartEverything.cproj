@@ -732,6 +732,9 @@
     <Compile Include="src\common\asf.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\common\sme_cdc_io.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\common\sme_cmn.h">
       <SubType>compile</SubType>
     </Compile>
@@ -823,6 +826,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\printf-stdarg.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_cdc_cmd_parse.c">

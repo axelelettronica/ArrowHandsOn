@@ -162,6 +162,7 @@ C_SRCS +=  \
 ../src/sme/tasks/sme_sigfox_task.c \
 ../src/sme/tasks/uart/sme_sigfox_execute.c \
 ../src/sme/tasks/uart/sme_usart_tx_task.c \
+../src/sme/uart/printf-stdarg.c \
 ../src/sme/uart/sme_cdc_cmd_parse.c \
 ../src/sme/uart/sme_cdc_uart.c \
 ../src/sme/uart/sme_sigfox_parse.c \
@@ -229,6 +230,7 @@ src/sme/tasks/sme_i2c_task.o \
 src/sme/tasks/sme_sigfox_task.o \
 src/sme/tasks/uart/sme_sigfox_execute.o \
 src/sme/tasks/uart/sme_usart_tx_task.o \
+src/sme/uart/printf-stdarg.o \
 src/sme/uart/sme_cdc_cmd_parse.o \
 src/sme/uart/sme_cdc_uart.o \
 src/sme/uart/sme_sigfox_parse.o \
@@ -289,6 +291,7 @@ src/sme/tasks/sme_i2c_task.o \
 src/sme/tasks/sme_sigfox_task.o \
 src/sme/tasks/uart/sme_sigfox_execute.o \
 src/sme/tasks/uart/sme_usart_tx_task.o \
+src/sme/uart/printf-stdarg.o \
 src/sme/uart/sme_cdc_cmd_parse.o \
 src/sme/uart/sme_cdc_uart.o \
 src/sme/uart/sme_sigfox_parse.o \
@@ -349,6 +352,7 @@ src/sme/tasks/sme_i2c_task.d \
 src/sme/tasks/sme_sigfox_task.d \
 src/sme/tasks/uart/sme_sigfox_execute.d \
 src/sme/tasks/uart/sme_usart_tx_task.d \
+src/sme/uart/printf-stdarg.d \
 src/sme/uart/sme_cdc_cmd_parse.d \
 src/sme/uart/sme_cdc_uart.d \
 src/sme/uart/sme_sigfox_parse.d \
@@ -409,6 +413,7 @@ src/sme/tasks/sme_i2c_task.d \
 src/sme/tasks/sme_sigfox_task.d \
 src/sme/tasks/uart/sme_sigfox_execute.d \
 src/sme/tasks/uart/sme_usart_tx_task.d \
+src/sme/uart/printf-stdarg.d \
 src/sme/uart/sme_cdc_cmd_parse.d \
 src/sme/uart/sme_cdc_uart.d \
 src/sme/uart/sme_sigfox_parse.d \
@@ -463,6 +468,8 @@ LINKER_SCRIPT_DEP+=  \
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
