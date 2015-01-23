@@ -45,10 +45,11 @@
 #include <sme_cmn.h>
 #include "sme/sme_FreeRTOS.h"
 #include "sme/tasks/sme_controller.h"
-#include "sme/tasks/sme_i2c_task.h"
 #include "sme/interrupt/interrupt.h"
 #include "sme/tasks/sme_sigfox_task.h"
 #include "sme/tasks/uart/sme_usart_tx_task.h"
+#include "sme/interrupt/interruptHandle.h"
+#include "sme/model/sme_model_i2c.h"
 
 
 static void init_services(void);
@@ -75,6 +76,9 @@ static void init_services(void)
 	sme_init_isr_global();
 	sme_sigfox_mgr_init();
 	sme_usart_init();
+
+
+    interruptValueInitializzation();
 }
 
 
@@ -85,7 +89,7 @@ int main (void)//
 	system_init();
 	//gfx_mono_init();
 
-	// Initialize the demo..
+	// Initialize the Board..
 	init_services();
 
 	

@@ -6,6 +6,11 @@
  */ 
 
 
+ /*
+ *
+ * https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/MMA8452Q-rev8.1.pdf
+ */
+
 #ifndef ZXYAXIS_H_
 #define ZXYAXIS_H_
 

@@ -39,10 +39,12 @@ void getNxpSerialNumber(char* buffer) {
 
 
 bool nxpInit(void){
-	readManufactoringData();
-	getConfiguration();
-	getSessionReg();
-	return true;
+bool ret=true;
+
+	ret &= readManufactoringData();
+	ret &= getConfiguration();
+	//ret &= getSessionReg();
+	return ret;
 }
 
 bool getConfiguration(void) {

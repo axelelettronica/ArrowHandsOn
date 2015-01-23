@@ -33,9 +33,9 @@
  * Default value: 0
  * (0: continuous update; 1: output registers not updated until MSB and LSB reading)
  BDU bit is used to inhibit the output registers update between the reading of upper and
- lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+ lower register parts. In default mode (BDU = ?0?), the lower and upper register parts are
  updated continuously. If it is not sure to read faster than output data rate, it is recommended
- to set BDU bit to ‘1’. In this way, after the reading of the lower (upper) register part, the
+ to set BDU bit to ?1?. In this way, after the reading of the lower (upper) register part, the
  content of that output registers is not updated until the upper (lower) part
  * 
  * [1] RESET_AZ: Reset AutoZero function. Reset REF_P reg, set pressure to default value in RPDS
@@ -99,9 +99,9 @@
  * Default value: 0
  * (0: continuous update; 1: output registers not updated until MSB and LSB reading)
  BDU bit is used to inhibit the output registers update between the reading of upper and
- lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+ lower register parts. In default mode (BDU = ?0?), the lower and upper register parts are
  updated continuously. If it is not sure to read faster than output data rate, it is recommended
- to set BDU bit to ‘1’. In this way, after the reading of the lower (upper) register part, the
+ to set BDU bit to ?1?. In this way, after the reading of the lower (upper) register part, the
  content of that output registers is not updated until the upper (lower) part
  * 
  * [1] RESET_AZ: Reset AutoZero function. Reset REF_P reg, set pressure to default value in RPDS
@@ -135,7 +135,7 @@
  * the previous ODR cycle and not cleared. 
  * P_OR is cleared when PRESS_OUT_H (2Ah) register is read.
  *
- * T_OR is set to ‘1’ whenever new temperature data is available and T_DA was set in
+ * T_OR is set to ?1? whenever new temperature data is available and T_DA was set in
  * the previous ODR cycle and not cleared.
  * T_OR is cleared when TEMP_OUT_H (2Ch) register is read.
  * 

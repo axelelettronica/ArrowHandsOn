@@ -9,6 +9,9 @@
 #ifndef I2C_H_
 #define I2C_H_
 #include <asf.h>
+#include "../../sme_FreeRTOS.h"
+
+extern xSemaphoreHandle i2c_sem;
 
 /* Number of times to try to send packet if failed. */
 #define TIMEOUT 3

@@ -7,6 +7,7 @@
 
 #include "ZXYAxis.h"
 #include "../I2C.h"
+#include "sme_cmn.h"
 
 bool ZXYInit(void){
 	uint8_t ret;

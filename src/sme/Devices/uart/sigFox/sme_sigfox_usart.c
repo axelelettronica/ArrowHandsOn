@@ -9,6 +9,7 @@
 #include "..\..\..\sme_FreeRTOS.h"
 
 #include "sme\tasks\sme_sigfox_task.h"
+#include "sme\model\sme_model_sigfox.h"
 
 /** \name Embedded debugger CDC Gateway USART interface definitions
 * @{
@@ -79,7 +80,12 @@ void sigFoxInit(void) {
 
 status_code_genare_t sigfoxSendMessage(uint8_t *msg, uint8_t len) {
 	memset(rx_buffer,0,MAX_RX_BUFFER_LENGTH);
-	return usart_write_buffer_job(&usart_sigfox, msg, len);
+	status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, msg, len);
+
+    // sigfox message send w or w/ success, is it possible to release now the semaphore
+    // and let other message take the huge memory
+    xSemaphoreGive(sf_sem);
+    return err;
 }
 
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){ 

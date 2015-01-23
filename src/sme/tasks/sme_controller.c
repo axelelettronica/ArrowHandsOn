@@ -7,91 +7,84 @@
 
 #include "sme_cmn.h"
 #include "sme_controller.h"
-#include "..\Devices\I2C\Humidity\HTS221.h"
-#include "..\Devices\I2C\Pressure\LPS25H.h"
-#include "uart\sme_sigfox_execute.h"
+#include "..\interrupt\interruptHandle.h"
+#include "..\Devices\I2C\Accelerometer\LSM9DS1.h"
+#include "..\model\sme_model_sigfox.h"
 
 static void control_task(void *params);
 xQueueHandle controllerQueue;
 BaseType_t sme_ctrl_init(void)
 {
 
-	BaseType_t err;
-	controllerQueue = xQueueCreate(64, sizeof(controllerQueueS));
-	if( controllerQueue != 0 )
-	{
-		err= xTaskCreate(control_task,
-		(const char *) "Control",
-		configMINIMAL_STACK_SIZE,
-		NULL,
-		CONTROL_TASK_PRIORITY,
-		NULL);
-	}
-	
-	return err;
+    BaseType_t err;
+    controllerQueue = xQueueCreate(64, sizeof(controllerQueueS));
+    if( controllerQueue != 0 )
+    {
+        err= xTaskCreate(control_task,
+        (const char *) "Control",
+        configMINIMAL_STACK_SIZE,
+        NULL,
+        CONTROL_TASK_PRIORITY,
+        NULL);
+    }
+    
+    return err;
 }
 
+
+static void sendToSigFox(uint8_t sensorData){
+    sigFoxT *sfModel= getSigFoxModel();
+}
 
 /*
-* Send the Sensor value to SigFox.
-* If it is required add the GPS Location
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
 */
-static void sendValueToSigFox(uint8_t value, char withGPS){
-	
-	sigFoxT sigFoxMsg;
-	executeSigFox(&sigFoxMsg);
-}
+static void performExecution( uint16_t detection) {
+    uint8_t data;
+    #if NOT_SENSOR
+    if (1) {
+        // point 1
+        LSM9DS1getValues(&data);
 
+        //point 2 (could be a FSM because has to be wait the GSM wake-up)
+        // getPosition();
 
-static bool prepareNfcSensorValues(const controllerQueueS *current_message, uint8_t *value) {
+        //point 3
+        sendToSigFox(data);
 
-	bool valueRead=false;
-	switch (current_message->intSensor.nfc.sensor) {
-		case humidityValue:
-		valueRead = HTS221getValues(value);
-		break;
-		
-		case pressureValue:
-		valueRead = LPS25HgetValues(value);
-		break;
-	}
-	return valueRead;
-}
+        #else
+        if ((detection & NFC_FD) == NFC_FD) {
+            #endif
 
+        }
+    }
 
+    /**
+    *
+    * This task is the board controller.
+    * This manage the SmartEverything controller as required
+    *
+    * \param params Parameters for the task. (Not used.)
+    */
+    static void control_task(void *params)
+    {
+        bool valueRead=false;
+        controllerQueueS current_message;
+        uint8_t value;
+        
 
-/**
-*
-* This task is the board controller.
-* This manage the SmartEverything controller as required
-*
-* \param params Parameters for the task. (Not used.)
-*/
-
-static void control_task(void *params)
-{
-	bool valueRead=false;
-	controllerQueueS current_message;
-	uint8_t value;
-	
-
-	for(;;) {
-		if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
-
-			interruptE intType = current_message.intE;
-			switch (intType) {
-				case nfcInt:
-				prepareNfcSensorValues(&current_message, &value);
-				break;
-				
-				default:
-				break;
-			}
-		}
-		
-		if (valueRead) {
-			sendValueToSigFox(value, current_message.withGPS);
-		}
-	}
-}
+        for(;;) {
+            if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
+                switch(current_message.intE) {
+                    case interruptDetected:
+                    performExecution(interruptDetection());
+                    break;
+                }
+            }
+        }
+    }
 

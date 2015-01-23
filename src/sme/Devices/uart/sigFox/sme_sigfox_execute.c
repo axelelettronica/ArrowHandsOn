@@ -9,8 +9,7 @@
 #include "sme\Devices\Uart\sigFox\sme_sigfox_usart.h"
 #include "samd21_xplained_pro.h"
 #include "portmacro.h"
-#include "../../sme_FreeRTOS.h"
-#include "../sme_controller.h"
+#include "../../../sme_FreeRTOS.h"
 
 #define ENTER_CONF_MODE     "+++"
 #define ENTER_DATA_MODE     "ATX"

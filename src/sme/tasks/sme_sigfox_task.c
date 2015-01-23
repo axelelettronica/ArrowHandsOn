@@ -49,11 +49,9 @@ static void sigFoxTask(void *params)
 
 BaseType_t sme_sigfox_mgr_init(void)
 {
-
-	
 	// create the sigFox semaphore
 	sigfox_sem = xSemaphoreCreateBinary();
-	
+		
 	// create the sigFox Task
 	return xTaskCreate(sigFoxTask,
 	SIGFOX_TASK_NAME,

@@ -1,18 +1,16 @@
-/*
-* sme_sigfox_execute.h
-*
-* Created: 12/01/2015 20:43:40
-*  Author: mfontane
-*
-* This the file that execute  the command on sigfox component according with
-* the information are present on the sigFoxT structure
-*/
-
-
-#ifndef SME_SIGFOX_EXECUTE_H_
-#define SME_SIGFOX_EXECUTE_H_
 #include <stdint-gcc.h>
-#include <stdbool.h>
+/*
+ * sme_model_sigfox.h
+ *
+ * Created: 1/22/2015 11:18:32 PM
+ *  Author: mfontane
+ */ 
+
+
+#ifndef SME_MODEL_SIGFOX_H_
+#define SME_MODEL_SIGFOX_H_
+
+
 
 
 #define SIGFOX_REGISTER_READ 'R'
@@ -74,12 +72,11 @@ typedef struct {
     sigFoxMessageU     message;
 }sigFoxT;
 
+#include "sme/sme_FreeRTOS.h"
 
-extern uint8_t sequenceNumber;
+extern xSemaphoreHandle sf_sem;
 
-inline uint8_t getNewSequenceNumber(void) {
-    return sequenceNumber++;
-}
+sigFoxT* getSigFoxModel(void);
+void initSigFoxModel(void);
 
-bool executeSigFox(const sigFoxT *msg);
-#endif /* SME_SIGFOX_EXECUTE_H_ */
+#endif /* SME_MODEL_SIGFOX_H_ */

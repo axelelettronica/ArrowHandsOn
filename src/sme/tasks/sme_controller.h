@@ -11,31 +11,13 @@
 #define SME_CONTROLLER_H_
 
 typedef enum {
-	nfcInt,
-	bteInt
-}interruptE;
-
-
-
-typedef enum {
-	humidityValue,
-	pressureValue,
-} nfcSensorValueE;
+    interruptDetected,
+    nfcInt,
+    bteInt
+}eventE;
 
 typedef struct {
-	nfcSensorValueE sensor;
-}nfcStructS;
-
-
-typedef union {
-	nfcStructS nfc;
-}intS;
-
-
-typedef struct {
-	interruptE intE; // which is the interrupt that sends the message
-	intS intSensor;		 // specific interrupt structure
-	char withGPS;		// values will be send with GPS location
+    eventE intE; // which is the interrupt that sends the message  
 }controllerQueueS;
 
 //! Queue for incoming execution command
