@@ -670,12 +670,14 @@
     <Folder Include="src\sme\Devices\I2C\" />
     <Folder Include="src\sme\Devices\I2C\Humidity\" />
     <Folder Include="src\sme\Devices\I2C\Accelerometer" />
+    <Folder Include="src\sme\Devices\I2C\IOExpander" />
     <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
     <Folder Include="src\sme\Devices\uart" />
     <Folder Include="src\sme\Devices\uart\sigFox" />
     <Folder Include="src\sme\interrupt" />
+    <Folder Include="src\sme\model" />
     <Folder Include="src\sme\tasks" />
     <Folder Include="src\sme\tasks\uart" />
     <Folder Include="src\sme\uart\" />
@@ -744,6 +746,18 @@
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_execute.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_execute.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\model\sme_model_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\model\sme_model_i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
       <SubType>compile</SubType>
     </Compile>
@@ -760,6 +774,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Accelerometer\LSM9DS1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\IOExpander\tca6416a.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\IOExpander\tca6416a.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\nxpNfc.c">
@@ -795,6 +815,18 @@
     <Compile Include="src\sme\interrupt\interrupt.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\interrupt\interruptHandle.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\interrupt\interruptHandle.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\model\sme_model_sigfox.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\model\sme_model_sigfox.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\sme_FreeRTOS.h">
       <SubType>compile</SubType>
     </Compile>
@@ -804,22 +836,10 @@
     <Compile Include="src\sme\tasks\sme_controller.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\sme_i2c_task.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\tasks\sme_i2c_task.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_sigfox_execute.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_sigfox_execute.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.c">
@@ -841,6 +861,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_cdc_uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_i2c_parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_i2c_parse.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_sigfox_parse.c">
