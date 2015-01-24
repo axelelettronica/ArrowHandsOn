@@ -22,23 +22,27 @@ typedef union {
 
 
 int sme_hex_str_to_data(uint8_t *s, uint8_t *data, uint8_t *datalen);
+inline int sme_int_str_to_uint8(uint8_t *s, uint8_t *value);
+inline int sme_hex_str_to_uint8(uint8_t *s, uint8_t *value);
+
+
 
 inline int sme_int_str_to_uint8(uint8_t *s, uint8_t *value)
 {
-	if(!s) {
+	if(!s || !s[0]) {
 		return SME_EINVAL;
 	}
-	*value = atoi(s);
+	*value = atoi((char *)s);
 	
 	return SME_OK;
 }
 
 inline int sme_hex_str_to_uint8(uint8_t *s, uint8_t *value)
 {
-	if(!s) {
+	if(!s || !s[0]) {
 		return SME_EINVAL;
 	}
-	*value = (int)strtol(s, NULL,
+	*value = (int)strtol((char *)s, NULL,
 	((s[0] == '0') && (s[1] == 'x')) ? 0: 16);
 	return SME_OK;
 }

@@ -25,13 +25,13 @@ uint8_t message[sizeof(sigFoxDataMessage)];
 uint8_t sequenceNumber;
 
 
-static void sendSigFoxMsg(uint8_t *msg, uint8_t len) {
+static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
     port_pin_toggle_output_level(LED_0_PIN); // just for debug
     sigfoxSendMessage(msg, len);
 }
 
 static bool  sendSigFoxConfiguration(const sigFoxConfT *configuration) {
-    int msgLen = sprintf(message, CONF_REGISTER);
+    int msgLen = sprintf((char *)message, CONF_REGISTER);
     for (int i=0; i<SIG_FOX_MAX_REGISTER_LEN; i++) {
         message[msgLen++] = configuration->registerAddr[i];
     }
@@ -79,7 +79,7 @@ bool executeSigFox(const sigFoxT *msg) {
     switch (msg->messageType){
         
         case enterConfMode:
-        sendSigFoxMsg(ENTER_CONF_MODE,  sizeof(ENTER_CONF_MODE)-1);
+        sendSigFoxMsg((uint8_t *)ENTER_CONF_MODE,  sizeof(ENTER_CONF_MODE)-1);
         break;
         
         case confMessage:
@@ -91,7 +91,7 @@ bool executeSigFox(const sigFoxT *msg) {
         break;
         
         case enterDataMode:
-        sendSigFoxMsg(ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
+        sendSigFoxMsg((uint8_t *)ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
         break;
         
         default:

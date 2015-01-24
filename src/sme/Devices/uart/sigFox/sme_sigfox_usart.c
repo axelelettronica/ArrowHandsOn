@@ -78,9 +78,9 @@ void sigFoxInit(void) {
 	// endsigfox usart configuration
 }
 
-status_code_genare_t sigfoxSendMessage(uint8_t *msg, uint8_t len) {
-	memset(rx_buffer,0,MAX_RX_BUFFER_LENGTH);
-	status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, msg, len);
+status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
+	memset((char *)rx_buffer,0,MAX_RX_BUFFER_LENGTH);
+	status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, (uint8_t *)msg, len);
 
     // sigfox message send w or w/ success, is it possible to release now the semaphore
     // and let other message take the huge memory
@@ -91,7 +91,7 @@ status_code_genare_t sigfoxSendMessage(uint8_t *msg, uint8_t len) {
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){ 
 	status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_RX_BUFFER_LENGTH);
 	if (ret == STATUS_OK) {
-		memcpy(msg, rx_buffer, MAX_RX_BUFFER_LENGTH);
+		memcpy((char *)msg, (char *)rx_buffer, MAX_RX_BUFFER_LENGTH);
 	}
 	return ret;
 }

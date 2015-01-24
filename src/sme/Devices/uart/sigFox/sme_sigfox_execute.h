@@ -17,6 +17,8 @@
 
 extern uint8_t sequenceNumber;
 
+inline uint8_t getNewSequenceNumber(void);
+
 inline uint8_t getNewSequenceNumber(void) {
     return sequenceNumber++;
 }

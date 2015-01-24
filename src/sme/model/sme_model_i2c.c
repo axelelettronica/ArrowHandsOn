@@ -44,7 +44,7 @@ static void readAllValues(void){
     }
 }
 
-volatile static	uint8_t i2CId=0;
+static volatile	uint8_t i2CId=0;
 static void readSensorValue(messageU command){
 
     switch (command.fields.sensorId) {
@@ -117,7 +117,7 @@ void sme_i2c_mgr_init(void) {
     sensors[0].sensorInit  = ZXYInit;
     sensors[0].sensorValue = MMA8452getAccelData;
     
-    sensors[1].sensorValue = /*getNxpUserData*/readSRAM;
+    sensors[1].sensorValue = /*getNxpUserData*/(readValue)readSRAM;
     sensors[1].sensorInit  = nxpInit;
     
     sensors[2].sensorInit  = HTS221nit;

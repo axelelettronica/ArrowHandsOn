@@ -22,15 +22,19 @@
      if you have a working putchar, leave it commented out.
      If not, uncomment the define below and
      replace outbyte(c) by your own function call.
-
- #define putchar(c) outbyte(c)
- */
+*/
+ #define putchar(c) c
+ 
 
 #include <stdarg.h>
+int print( char **out, const char *format, va_list args );
+int printf(const char *format, ...);
+int sprintf(char *out, const char *format, ...);
+int snprintf( char *buf, unsigned int count, const char *format, ... );
 
 static void printchar(char **str, int c)
 {
-     extern int putchar(int c);
+     //extern int putchar(int c);
      
      if (str) {
          **str = c;

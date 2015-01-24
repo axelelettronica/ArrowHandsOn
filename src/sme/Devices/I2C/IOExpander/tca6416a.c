@@ -38,7 +38,8 @@
 
 #endif
 
-volatile uint8_t ret=0x10;
+//volatile uint8_t ret=0x10;
+uint8_t ret=0x10;
 bool TCA6416aInit(void) {
 
     readRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, &ret); //debug
@@ -55,21 +56,21 @@ bool TCA6416aInit(void) {
 
 
 bool TCA6416aPort0Values(char *buffer) {
-    readRegister(TCA6416A_ADDRESS, INPUT_PORT_0, buffer);
+    readRegister(TCA6416A_ADDRESS, INPUT_PORT_0, (uint8_t *)buffer);
     return false;
 }
 
 bool TCA6416aPort1Values(char *buffer) {
-    readRegister(TCA6416A_ADDRESS, INPUT_PORT_1, buffer);
+    readRegister(TCA6416A_ADDRESS, INPUT_PORT_1, (uint8_t *)buffer);
     return false;
 }
 
 bool TCA6416aPortsValues(uint16_t *buffer) {
     uint8_t portValue;
-    TCA6416aPort0Values(&portValue);
+    TCA6416aPort0Values((char *)&portValue);
     ((char*)buffer)[0] = portValue;
 
-    TCA6416aPort1Values(&portValue);
+    TCA6416aPort1Values((char *)&portValue);
     ((char*)buffer)[1] = portValue;
     return false;
 }
