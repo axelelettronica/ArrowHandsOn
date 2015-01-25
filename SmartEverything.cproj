@@ -752,6 +752,12 @@
     <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_execute.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_rx_fsm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_rx_fsm.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\model\sme_model_i2c.c">
       <SubType>compile</SubType>
     </Compile>
@@ -836,7 +842,7 @@
     <Compile Include="src\sme\tasks\sme_controller.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\sme_sigfox_task.c">
+    <Compile Include="src\sme\tasks\sme_sigfox_rx_task.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.h">

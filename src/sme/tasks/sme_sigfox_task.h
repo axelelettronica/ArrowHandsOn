@@ -19,8 +19,7 @@
 extern xSemaphoreHandle sigfox_sem;
 
 
-
-BaseType_t sme_sigfox_mgr_init(void);
+BaseType_t sme_sigfox_rx_mgr_init(void);
 
 
 #endif /* SME_SIGFOX_CONTROLLER_H_ */
