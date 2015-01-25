@@ -12,11 +12,15 @@
 #include "..\model\sme_model_sigfox.h"
 
 static void control_task(void *params);
+
 xQueueHandle controllerQueue;
-BaseType_t sme_ctrl_init(void)
+
+
+int sme_ctrl_init(void)
 {
 
-    BaseType_t err;
+    int err = SME_OK;
+
     controllerQueue = xQueueCreate(64, sizeof(controllerQueueS));
     if( controllerQueue != 0 )
     {
@@ -33,7 +37,9 @@ BaseType_t sme_ctrl_init(void)
 
 
 static void sendToSigFox(uint8_t sensorData){
-    sigFoxT *sfModel= getSigFoxModel();
+    //sigFoxT *sfModel= 
+    getSigFoxModel();
+    
 }
 
 /*
@@ -48,7 +54,7 @@ static void performExecution( uint16_t detection) {
     #if NOT_SENSOR
     if (1) {
         // point 1
-        LSM9DS1getValues(&data);
+        LSM9DS1getValues((char *)&data);
 
         //point 2 (could be a FSM because has to be wait the GSM wake-up)
         // getPosition();
@@ -72,17 +78,20 @@ static void performExecution( uint16_t detection) {
     */
     static void control_task(void *params)
     {
-        bool valueRead=false;
+        //bool valueRead=false;
         controllerQueueS current_message;
-        uint8_t value;
+        //uint8_t value;
         
 
         for(;;) {
             if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
                 switch(current_message.intE) {
                     case interruptDetected:
+                    print_dbg("interruptDetected %d\n", current_message.intE);
                     performExecution(interruptDetection());
                     break;
+                    default:
+                        print_dbg("Not Handled\n");
                 }
             }
         }

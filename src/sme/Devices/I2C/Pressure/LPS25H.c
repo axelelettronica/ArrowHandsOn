@@ -183,8 +183,8 @@ static inline bool temperatureReady(uint8_t data) {
 	return (data & 0x01);
 }
 
-static uint8_t h0_rH, h1_rH;
-static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
+//static uint8_t h0_rH, h1_rH;
+//static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
 
 
 bool LPS25Hnit(void) {

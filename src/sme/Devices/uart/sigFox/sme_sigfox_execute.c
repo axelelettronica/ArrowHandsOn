@@ -19,13 +19,13 @@ uint8_t message[sizeof(sigFoxDataMessage)];
 uint8_t sequenceNumber;
 
 
-static void sendSigFoxMsg(uint8_t *msg, uint8_t len) {
+static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
     port_pin_toggle_output_level(LED_0_PIN); // just for debug
     sigfoxSendMessage(msg, len);
 }
 
 static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConfT *configuration) {
-    int msgLen = sprintf(message, CONF_REGISTER);
+    int msgLen = sprintf((char *)message, CONF_REGISTER);
 
     // set the RX FSM that SFX is in control mode
     set_sgf_fsm(msgType);
@@ -33,7 +33,7 @@ static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxCon
 
     switch (msgType){
         case enterConfMode:
-        sendSigFoxMsg(ENTER_CONF_MODE,  sizeof(ENTER_CONF_MODE)-1);
+        sendSigFoxMsg((uint8_t *)ENTER_CONF_MODE,  sizeof(ENTER_CONF_MODE)-1);
         break;
 
         case confCdcMessage:
@@ -101,7 +101,7 @@ static bool  sendSigFoxDataMessage(sigFoxMessageTypeE msgType, const sigFoxDataM
         break;
         
         case enterDataMode:
-        sendSigFoxMsg(ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
+        sendSigFoxMsg((uint8_t *)ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
         break;
     }
 
@@ -117,7 +117,6 @@ bool executeSigFox(const sigFoxT *msg) {
         case confCdcMessage:
         ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
         break;
-        
         
         case enterDataMode:
         case dataCdcMessage:

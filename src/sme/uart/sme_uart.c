@@ -69,12 +69,12 @@ static void uart_task(void *params);
  * Called by USART driver when receiving is complete.
  *
  * * \param module USART module causing the interrupt (not used)
- */
+ *
 static void usart_callback(const struct usart_module *const module)
 {
 	transfer_complete = true;
 }
-
+*/
 
 /**
  * \internal
@@ -84,22 +84,22 @@ static void usart_callback(const struct usart_module *const module)
  * on the other end.
  *
  * \param test Current test case.
- */
+ *
 static void run_transfer_single_8bit_char_test(const struct test_case *test)
 {
 	uint16_t tx_char = 0x53;
 	volatile uint16_t rx_char = 0;
 
-	/* Write and read the data */
+	/ Write and read the data /
 	usart_write_wait(&usart_tx_module, tx_char);
 	usart_read_wait(&usart_rx_module, (uint16_t*)&rx_char);
 
-	/* Make sure we received what we sent */
+	/ Make sure we received what we sent /
 	//test_assert_true(test, tx_char==rx_char,
 	//		"Failed receiving sent byte. TX=%d, RX=%d", tx_char, rx_char);
 
 }
-
+*/
 /**
  * \internal
  * \brief Test single 9-bit character send and receive.
@@ -108,45 +108,45 @@ static void run_transfer_single_8bit_char_test(const struct test_case *test)
  * on the other end.
  *
  * \param test Current test case.
- */
+ *
 static void run_transfer_single_9bit_char_test(const struct test_case *test)
 {
 	uint16_t tx_char = 0x166;
 	uint16_t rx_char;
 
-	/* Re-configure RX USART to operate with 9 bit character size */
+	/ Re-configure RX USART to operate with 9 bit character size /
 	usart_disable(&usart_rx_module);
 	usart_rx_config.character_size = USART_CHARACTER_SIZE_9BIT;
 	usart_init(&usart_rx_module, CONF_RX_USART,	&usart_rx_config);
 	usart_enable(&usart_rx_module);
 
-	/* Re-configure TX USART to operate with 9 bit character size */
+	/ Re-configure TX USART to operate with 9 bit character size /
 	usart_disable(&usart_tx_module);
 	usart_tx_config.character_size = USART_CHARACTER_SIZE_9BIT;
 	usart_init(&usart_tx_module, CONF_TX_USART,	&usart_tx_config);
 	usart_enable(&usart_tx_module);
 
-	/* Write and read the data */
+	/ Write and read the data /
 	usart_write_wait(&usart_tx_module, tx_char);
 	usart_read_wait(&usart_rx_module, &rx_char);
 
-	/* Make sure we received what we sent */
+	/ Make sure we received what we sent /
 	//test_assert_true(test, tx_char==rx_char,
 	//		"Failed receiving sent byte. TX=%d, RX=%d", tx_char, rx_char);
 
-	/* Put RX USART back in 8 bit mode */
+	/ Put RX USART back in 8 bit mode /
 	usart_disable(&usart_rx_module);
 	usart_rx_config.character_size = USART_CHARACTER_SIZE_8BIT;
 	usart_init(&usart_rx_module, CONF_RX_USART,	&usart_rx_config);
 	usart_enable(&usart_rx_module);
 
-	/* Put TX USART back in 8 bit mode */
+	 Put TX USART back in 8 bit mode /
 	usart_disable(&usart_tx_module);
 	usart_tx_config.character_size = USART_CHARACTER_SIZE_8BIT;
 	usart_init(&usart_tx_module, CONF_TX_USART,	&usart_tx_config);
 	usart_enable(&usart_tx_module);
 }
-
+*/
 
 /**
  * \internal
@@ -156,30 +156,30 @@ static void run_transfer_single_9bit_char_test(const struct test_case *test)
  * It's sent using a blocking write, while it's received using interrupts.
  *
  * \param test Current test case.
- */
+ *
 static void run_buffer_write_blocking_read_interrupt_test(const struct test_case *test)
 {
 	uint8_t tx_string[TEST_STRING_LEN] = TEST_STRING;
 	volatile uint8_t rx_string[TEST_STRING_LEN] = "";
 	int16_t result;
 
-	/* We will read back the buffer using interrupt */
+	/ We will read back the buffer using interrupt /
 	usart_register_callback(&usart_rx_module, usart_callback,
 			USART_CALLBACK_BUFFER_RECEIVED);
 	usart_enable_callback(&usart_rx_module, USART_CALLBACK_BUFFER_RECEIVED);
 
-	/* Start receiving */
+	/ Start receiving /
 	transfer_complete = false;
 	usart_read_buffer_job(&usart_rx_module, (uint8_t*)rx_string,
 			TEST_STRING_LEN);
 
-	/* Send the string */
+	/ Send the string /
 	usart_write_buffer_wait(&usart_tx_module, tx_string,
 			TEST_STRING_LEN );
 
 	uint16_t timeout_cycles = 0xFFFF;
 
-	/* Wait until reception completes */
+	/ Wait until reception completes /
 	do {
 		timeout_cycles--;
 		if (transfer_complete) {
@@ -193,18 +193,18 @@ static void run_buffer_write_blocking_read_interrupt_test(const struct test_case
 	usart_disable_callback(&usart_rx_module, USART_CALLBACK_BUFFER_RECEIVED);
 	usart_unregister_callback(&usart_rx_module, USART_CALLBACK_BUFFER_RECEIVED);
 
-	/* Compare strings */
+	/ Compare strings /
 	result = strcmp((char*)tx_string, (char*)rx_string);
 
-	/* Make sure we 0-terminate the received string in case it's
-		gibberish and we have to print it */
+	/ Make sure we 0-terminate the received string in case it's
+		gibberish and we have to print it /
 	rx_string[TEST_STRING_LEN-1] = 0;
 
 	//test_assert_false(test, result,
 	//		"Failed receiving string. TX='%s', RX='%s'", tx_string, rx_string);
 }
 
-/**
+/
  * \internal
  * \brief Test sending and receiving a string using interrupts.
  *
@@ -212,7 +212,7 @@ static void run_buffer_write_blocking_read_interrupt_test(const struct test_case
  * Both the send and receive is done using interrupts.
  *
  * \param test Current test case.
- */
+ *
 static void run_buffer_read_write_interrupt_test(const struct test_case *test)
 {
 	volatile uint8_t tx_string[TEST_STRING_LEN] = TEST_STRING;
@@ -223,7 +223,7 @@ static void run_buffer_read_write_interrupt_test(const struct test_case *test)
 			USART_CALLBACK_BUFFER_RECEIVED);
 	usart_enable_callback(&usart_rx_module, USART_CALLBACK_BUFFER_RECEIVED);
 
-	/* start send */
+	/ start send /
 	transfer_complete = false;
 
 	usart_write_buffer_job(&usart_tx_module, (uint8_t*)tx_string,
@@ -233,7 +233,7 @@ static void run_buffer_read_write_interrupt_test(const struct test_case *test)
 
 	uint16_t timeout_cycles = 0xFFFF;
 
-	/* Wait until reception completes */
+	/ Wait until reception completes /
 	do {
 		timeout_cycles--;
 		if (transfer_complete) {
@@ -244,17 +244,17 @@ static void run_buffer_read_write_interrupt_test(const struct test_case *test)
 	//test_assert_true(test, timeout_cycles > 0,
 	//		"Timeout in send/receive");
 
-	/* Compare strings */
+	/ Compare strings /
 	result = strcmp((char*)tx_string, (char*)rx_string);
 
-	/* Make sure we 0-terminate the received string in case it's
-		gibberish and we have to print it */
+	/ Make sure we 0-terminate the received string in case it's
+		gibberish and we have to print it /
 	rx_string[TEST_STRING_LEN-1] = 0;
 
 	//test_assert_false(test, result,
 	//		"Failed receiving string. TX='%s', RX='%s'", tx_string, rx_string);
 }
-
+*/
 
 
 

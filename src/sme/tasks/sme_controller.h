@@ -23,5 +23,5 @@ typedef struct {
 //! Queue for incoming execution command
 extern xQueueHandle controllerQueue;
 
-BaseType_t sme_ctrl_init(void);
+int sme_ctrl_init(void);
 #endif /* SME_CONTROLLER_H_ */

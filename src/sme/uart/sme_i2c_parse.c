@@ -18,6 +18,9 @@ int parseI2CMsg(cdc_queue_msg_t *data) {
     err |= sme_hex_str_to_uint8(sme_cli_msg.token[1],
     &(msg->fields.sensorId));
     
+    if (err != SME_OK) {
+        return err;
+    }
     // read operation
     if (sme_cli_msg.token[2][0] == 'r') {
         data->i2c_msg.code = sensorReadRegister;
@@ -34,11 +37,5 @@ int parseI2CMsg(cdc_queue_msg_t *data) {
         return SME_OK;
     }
 
-    err |= sme_hex_str_to_uint8(sme_cli_msg.token[3], &(msg->fields.i2cRegister));
-
-    if (err) {
-        // print help
-        print_out(CDC_HELP_I2C);
-        return SME_EINVAL;
-    }
+    return sme_hex_str_to_uint8(sme_cli_msg.token[3], &(msg->fields.i2cRegister));
 }

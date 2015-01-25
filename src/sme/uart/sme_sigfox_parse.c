@@ -45,7 +45,7 @@ static int parseCommandToken(sigFoxT *usartMsg){
         if (sme_cli_msg.token_idx < 5) {
             return SME_EINVAL;
         } else {
-        int len = strlen(sme_cli_msg.token[4]);
+        int len = strlen((char *)sme_cli_msg.token[4]);
             for (int i=0;i<len;i++) {
                 usartMsg->message.confMode.data[i] = sme_cli_msg.token[4][i]; 
             }

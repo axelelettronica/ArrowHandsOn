@@ -15,7 +15,7 @@
 #define MAX_SIGFOX_RX_BUFFER_LENGTH   1
 
 void sigFoxInit(void);
-status_code_genare_t sigfoxSendMessage(uint8_t *msg, uint8_t len);
+status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len);
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len);
 
 #endif /* SME_SIGFOX_USART_H_ */

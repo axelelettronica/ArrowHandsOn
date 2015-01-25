@@ -12,10 +12,10 @@
 #include <stdint-gcc.h>
 
 
-#define I9AX_INT_POS      0
-#define I9AX_INT_POS      1
+#define I9AX_INT_0_POS    0
+#define I9AX_INT_1_POS    1
 #define I9AX_DRDY_POS     2
-#define I9AX_INT_POS      3
+#define I9AX_INT_3_POS    3
 #define PRE_INT_POS       4
 #define HUT_DRDY_POS      5
 #define ALS_GPIO1_POS     6
