@@ -862,7 +862,6 @@
     <Compile Include="src\sme\tasks\sme_controller.h">
       <SubType>compile</SubType>
     </Compile>
-<<<<<<< HEAD
     <Compile Include="src\sme\tasks\sme_gps_task.c">
       <SubType>compile</SubType>
     </Compile>
@@ -870,9 +869,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.c">
-=======
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_rx_task.c">
->>>>>>> cf7b94df1859b39f5ac7b9c6be60b345edeb8c1b
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.h">
