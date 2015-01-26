@@ -676,6 +676,7 @@
     <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
     <Folder Include="src\sme\Devices\uart" />
+    <Folder Include="src\sme\Devices\uart\gps\" />
     <Folder Include="src\sme\Devices\uart\sigFox" />
     <Folder Include="src\sme\interrupt" />
     <Folder Include="src\sme\model" />
@@ -745,6 +746,18 @@
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_execute.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_execute.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_config_usart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_usart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_execute.c">
@@ -828,6 +841,12 @@
     <Compile Include="src\sme\model\sme_model_sigfox.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\model\sme_model_sl868v2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\model\sme_model_sl868v2.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\sme_FreeRTOS.h">
       <SubType>compile</SubType>
     </Compile>
@@ -835,6 +854,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_controller.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_gps_task.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\tasks\sme_gps_task.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_task.c">
@@ -874,6 +899,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_sigfox_parse.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_sl868v2_parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\uart\sme_sl868v2_parse.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_uart.c">
