@@ -18,9 +18,8 @@
 #define SIGFOX_CONFIRM_C  'C'
 
 
-static int parseCommandToken(void){
+static int parseCommandToken(sigFoxT *usartMsg){
     int ret = SME_OK;
-    sigFoxT *usartMsg = getSigFoxModel();
 
     //  request of command without parameters prepare to send "+++"
     if (sme_cli_msg.token_idx == 2) {
@@ -28,7 +27,7 @@ static int parseCommandToken(void){
         return ret;
     }
     
-    usartMsg->messageType = confMessage;
+    usartMsg->messageType = confCdcMessage;
     usartMsg->message.confMode.access = toupper(sme_cli_msg.token[2][0]);
     if (!((SIGFOX_REGISTER_READ == usartMsg->message.confMode.access) ||
     (SIGFOX_REGISTER_WRITE == usartMsg->message.confMode.access)))
@@ -64,14 +63,10 @@ static int parseDataToken(sigFoxT *usartMsg ){
         return SME_OK;
     }
     
-    usartMsg->messageType = dataMessage;
+    usartMsg->messageType = dataCdcMessage;
     if (sme_cli_msg.token_idx < 3) {
         return SME_EINVAL;
     }
-    
-    // mybe not needed if always fixed (could be added at the send message api)
-    usartMsg->message.dataMode.header = SIGFOX_HEADER;
-    usartMsg->message.dataMode.tailer = SIGFOX_TAILER;
     
     // take the type and payload if needed
     switch(toupper(sme_cli_msg.token[2][0])){
@@ -121,7 +116,7 @@ int parseSigFoxMsg(void **componentStr) {
     if (sme_cli_msg.token[1][0] != 0) {
         switch(sme_cli_msg.token[1][0]) {
             case 'c':
-            err |= parseCommandToken();
+            err |= parseCommandToken(usartMsg);
             break;
             
             case 'd':

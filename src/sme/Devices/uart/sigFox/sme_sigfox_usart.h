@@ -12,7 +12,7 @@
 
 #include "status_codes.h"
 
-#define MAX_RX_BUFFER_LENGTH   5
+#define MAX_SIGFOX_RX_BUFFER_LENGTH   1
 
 void sigFoxInit(void);
 status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len);

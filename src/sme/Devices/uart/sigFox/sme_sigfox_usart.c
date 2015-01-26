@@ -22,13 +22,13 @@
 #define SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SIGFOX_SERCOM_DMAC_ID_TX   SERCOM5_DMAC_ID_TX
 #define SIGFOX_SERCOM_DMAC_ID_RX   SERCOM5_DMAC_ID_RX
-#define SIGFOX_BAUDRATE			   115200
+#define SIGFOX_BAUDRATE			   19200
 /** @} */
 
 /* interrupt USART variables */
 static struct usart_module usart_sigfox;
 
-volatile uint8_t rx_buffer[MAX_RX_BUFFER_LENGTH];
+volatile uint8_t rx_buffer[MAX_SIGFOX_RX_BUFFER_LENGTH];
 /* interrupt USART variables */
 
 static void usart_sigfox_read_callback(const struct usart_module *const usart_module)
@@ -79,8 +79,8 @@ void sigFoxInit(void) {
 }
 
 status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
-	memset((char *)rx_buffer,0,MAX_RX_BUFFER_LENGTH);
-	status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, (uint8_t *)msg, len);
+	memset((char *)rx_buffer,0,MAX_SIGFOX_RX_BUFFER_LENGTH);
+	status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, (char *)msg, len);
 
     // sigfox message send w or w/ success, is it possible to release now the semaphore
     // and let other message take the huge memory
@@ -89,9 +89,9 @@ status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
 }
 
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){ 
-	status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_RX_BUFFER_LENGTH);
+	status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
 	if (ret == STATUS_OK) {
-		memcpy((char *)msg, (char *)rx_buffer, MAX_RX_BUFFER_LENGTH);
+		memcpy((char *)msg, (char *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
 	}
 	return ret;
 }
