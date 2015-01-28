@@ -13,12 +13,14 @@
 #include "sme_sigfox_parse.h"
 #include "../model/sme_model_i2c.h"
 #include "sme_i2c_parse.h"
+#include "sme_sl868v2_parse.h"
 #include "../model/sme_model_sigfox.h"
 
 static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
 static char CDC_HELP_I2C[]   ="Help: i2c <hex-addressd> [r/w] <hex-register> <hex-data>\r\n";
 static char CDC_HELP_SIGFOX[]="Help: sf <c/d> [r/w] <register> <data> \r\n";
+static char CDC_HELP_SL868V2[]="Help: gps [c] <Standard NMEA Sentence> (between '$' and '*') ...\r\n";
 static char CDC_HELP_NA[]="TBD\n";
 
 typedef enum {
@@ -36,6 +38,7 @@ typedef enum {
     CDC_DBG,
     CDC_D_I2C,
     CDC_SIGFOX,
+    CDC_SL868V2,
     CDC_CMD_MAX,
 } sme_cdc_cmd_t;
 
@@ -56,6 +59,7 @@ static int cdc_parser_show(cdc_queue_msg_t *data, xQueueHandle *queue);
 static int cdc_parser_help(cdc_queue_msg_t *data);
 static int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue);
 static int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue);
+static int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue);
 static int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue);
 static int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb);
 
@@ -67,9 +71,10 @@ cmd_cb_t  cmd_cb[] = {
     {CDC_HELP,   "help",  (cmd_callback)cdc_parser_help},
     {CDC_SHOW,   "show",  (cmd_callback)cdc_parser_show},
     /* I.E. dbg <dbg_strng>  */
-    {CDC_DBG,    "dbg" ,  (cmd_callback)cdc_parser_dbg},
-    {CDC_D_I2C,  "i2c" ,  (cmd_callback)cdc_parser_dbg_i2c},
-    {CDC_SIGFOX,  "sf" ,  (cmd_callback)cdc_parser_dbg_sigfox}
+    {CDC_DBG,     "dbg",  (cmd_callback)cdc_parser_dbg},
+    {CDC_D_I2C,   "i2c",  (cmd_callback)cdc_parser_dbg_i2c},
+    {CDC_SIGFOX,  "sf" ,  (cmd_callback)cdc_parser_dbg_sigfox},
+    {CDC_SL868V2, "gps",  (cmd_callback)cdc_parser_dbg_sl868v2}
 };
 
 
@@ -196,6 +201,26 @@ int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
     }
     return err;
 }
+
+/*
+* I.E. gps [c] <NMEA-string>
+*      <NMEA-string> = CMD between '$' and '*'
+*/
+int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue)
+{
+    int err = SME_OK;
+    *queue = usartCommandQueue;
+    data->uart_msg.code = gps;
+    
+    err  |= parseSl868v2Msg(&data->uart_msg.componentStruct);
+    
+    if (err) {
+        print_out(CDC_HELP_SL868V2);
+    }
+    return err;
+}
+
+
 
 int sme_cdc_cmd_execute(cmd_cb_t *cmd)
 {

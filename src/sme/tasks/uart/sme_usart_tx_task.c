@@ -7,9 +7,11 @@
 #include "sme_usart_tx_task.h"
 #include "samd21_xplained_pro.h"
 #include "port.h"
+#include "sme_cmn.h"
 #include "sme\Devices\uart\sigFox\sme_sigfox_usart.h"
 #include "sme\Devices\uart\sigFox\sme_sigfox_execute.h"
 #include "sme\model\sme_model_sigfox.h"
+#include "sme\Devices\uart\gps\sme_sl868v2_execute.h"
 
 #define USART_TASK_DELAY     (1000 / portTICK_RATE_MS)
 
@@ -29,9 +31,12 @@ static void usartTxTask(void *params){
 				case sigFox:
 				executeCDCSigFox(current_message.componentStruct);				
 				break;
-				
+
+				case gps:
+					executeSl868v2(current_message.componentStruct);
+				break;			
 				default:
-				//error print Help
+				    print_err("Wrong USART msg code: %d\n", current_message.code);
 				break;
 			}
 		}
