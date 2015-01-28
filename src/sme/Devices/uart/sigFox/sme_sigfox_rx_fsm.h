@@ -12,7 +12,7 @@
 
 #include "sme\model\sme_model_sigfox.h"
 
-void set_sgf_fsm(sigFoxMessageTypeE state);
+void set_sfx_cdc_status(sigFoxMessageTypeE state);
 uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen);
 
 #endif /* SME_SIGFOX_RX_FSM_H_ */

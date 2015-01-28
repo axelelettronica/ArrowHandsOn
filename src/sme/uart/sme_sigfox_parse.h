@@ -24,7 +24,7 @@
 * Valid only in configuration mode
 * r = read register
 * w = write register
-* register = the register in hex mode
+* register = the register in DEC mode
 * data     = the value to write on the register (only in conf w mode)
 *
 * sending "sf c" (without parameters) move the sigfox in configuration mode

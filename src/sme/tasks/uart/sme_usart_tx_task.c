@@ -27,7 +27,7 @@ static void usartTxTask(void *params){
 			switch (current_message.code){
 				
 				case sigFox:
-				executeSigFox(current_message.componentStruct);				
+				executeCDCSigFox(current_message.componentStruct);				
 				break;
 				
 				default:

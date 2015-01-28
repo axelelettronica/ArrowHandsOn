@@ -40,7 +40,7 @@ static void extint0_detection_callback(void)
     
     BaseType_t xHigherPriorityTaskWoken;
 
-interruptData.intE = interruptDetected;
+    interruptData.intE = interruptDetected;
 
     /* We have not woken a task at the start of the ISR. */
     xHigherPriorityTaskWoken = pdFALSE;
@@ -71,7 +71,7 @@ static void configure_extint_channel(void)
     config_extint_chan.gpio_pin = INT0_EIC_PIN;
     config_extint_chan.gpio_pin_mux = INT0_EIC_MUX;
     config_extint_chan.gpio_pin_pull = EXTINT_PULL_DOWN;
-    config_extint_chan.detection_criteria = EXTINT_DETECT_BOTH;
+    config_extint_chan.detection_criteria = EXTINT_DETECT_RISING;
     extint_chan_set_config(INT0_EIC_LINE, &config_extint_chan);
 }
 

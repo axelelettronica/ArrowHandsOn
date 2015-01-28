@@ -10,6 +10,7 @@
 #include "..\interrupt\interruptHandle.h"
 #include "..\Devices\I2C\Accelerometer\LSM9DS1.h"
 #include "..\model\sme_model_sigfox.h"
+#include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
 
 static void control_task(void *params);
 
@@ -26,7 +27,7 @@ int sme_ctrl_init(void)
     {
         err= xTaskCreate(control_task,
         (const char *) "Control",
-        configMINIMAL_STACK_SIZE,
+        configMINIMAL_STACK_SIZE*2,
         NULL,
         CONTROL_TASK_PRIORITY,
         NULL);
@@ -37,9 +38,15 @@ int sme_ctrl_init(void)
 
 
 static void sendToSigFox(uint8_t sensorData){
-    //sigFoxT *sfModel= 
-    getSigFoxModel();
-    
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.length++;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+    sfModel->message.dataMode.payload[0]=sensorData;
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    sendSigFoxDataMessage(sfModel);
 }
 
 /*
@@ -49,7 +56,7 @@ detect NFC interrupt:
 2) take GPS position
 3) Send all to SigFox
 */
-static void performExecution( uint16_t detection) {
+static void performExecution( uint16_t intDetection) {
     uint8_t data;
     #if NOT_SENSOR
     if (1) {
@@ -63,7 +70,8 @@ static void performExecution( uint16_t detection) {
         sendToSigFox(data);
 
         #else
-        if ((detection & NFC_FD) == NFC_FD) {
+        // check which is the interrupt that wake-up the task
+        if ((intDetection & NFC_FD) == NFC_FD) {
             #endif
 
         }
@@ -87,7 +95,7 @@ static void performExecution( uint16_t detection) {
             if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
                 switch(current_message.intE) {
                     case interruptDetected:
-                    print_dbg("interruptDetected %d\n", current_message.intE);
+                    //print_dbg("interruptDetected %d\n", current_message.intE);
                     performExecution(interruptDetection());
                     break;
                     default:
