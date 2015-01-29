@@ -21,6 +21,7 @@ void initSl868v2Model(void){
 
 sl868v2T* getSl868v2Model(void) {
     BaseType_t ok = xSemaphoreTake(gps_sem, GPS_SEMAPHORE_DELAY);
+
     if (ok) {
         return &gpsUsartMsg;
         } else {

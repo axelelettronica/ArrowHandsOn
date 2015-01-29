@@ -868,9 +868,6 @@
     <Compile Include="src\sme\tasks\sme_gps_task.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\sme_sigfox_task.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\tasks\sme_sigfox_rx_task.c">
       <SubType>compile</SubType>
     </Compile>

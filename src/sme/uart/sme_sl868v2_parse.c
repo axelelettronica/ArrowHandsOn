@@ -15,12 +15,12 @@
 #define NMEA_TALKER_LEN       2
 #define NMEA_SENTENCE_ID_LEN  3
 
-static int getTalkerType(char *in, sl868v2MsgE *nmeaType)
+static int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
 {
     if (!in || !nmeaType) {
         return SME_EINVAL;
     }
-    if (((in[0]=='G') && ((in[1]=='P') || (in[1]=='L') || (in[1]=='N')) ||
+    if ((((in[0]=='G') && ((in[1]=='P') || (in[1]=='L') || (in[1]=='N'))) ||
         ((in[0]=='B') && (in[1]=='D')))) 
     {
         *nmeaType = STD_NMEA;
@@ -33,18 +33,48 @@ static int getTalkerType(char *in, sl868v2MsgE *nmeaType)
     return SME_EINVAL;
 }
 
-static int getSentenceId(char *in, char *out)
+static int getSentenceId(uint8_t *in, uint8_t *out)
 {   
-    bool ok = false;
+    bool found = false;
 
     if (!in || !out) {
         return SME_EINVAL;
     }
+    print_dbg("sentence %c %c %c  \n", in[0], in[1], in[2]);
     
-    if (((in[0]=='G') && ((in[1]=='P') || (in[1]=='L') || (in[1]=='N'))) ||
-        ((in[0]=='B') && (in[1]=='D'))) {
+    if ((in[0]=='G') && (in[1]=='G') && (in[2]=='A')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='G') && (in[1]=='L') && (in[2]=='L')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='G') && (in[1]=='S') && (in[2]=='A')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='G') && (in[1]=='S') && (in[2]=='V')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='R') && (in[1]=='M') && (in[2]=='C')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='V') && (in[1]=='T') && (in[2]=='G')) {
+        found = true;
+        goto end;
+    }
+    if ((in[0]=='Z') && (in[1]=='D') && (in[2]=='A')) {
+        found = true;
+        goto end;
+    }
+end:
+    if (found) {
         out[0] = in[0];
         out[1] = in[1];
+        out[2] = in[2];
         return SME_OK;
     }
     return SME_EINVAL;
@@ -55,7 +85,7 @@ static int parseCommandToken(void){
     sl868v2T *usartMsg = getSl868v2Model();
     uint8_t  offset = 0;
 
-    if (sme_cli_msg.token_idx != 3) {
+    if (sme_cli_msg.token_idx < 3) {
         return SME_EINVAL;
     }
 
@@ -74,12 +104,12 @@ static int parseCommandToken(void){
         offset++;
 
         /* Filling Sentence Id */
-        if (!getSentenceId(&sme_cli_msg.token[2][offset], &usartMsg->nmea_msg.std.sentenceId)) {
+        if (SME_OK !=getSentenceId(&sme_cli_msg.token[2][offset], usartMsg->nmea_msg.std.sentenceId)) {
             return SME_EINVAL;
         }
         offset += NMEA_SENTENCE_ID_LEN;
         /* Filling data */
-        usartMsg->nmea_msg.std.dataLenght = strlen(&sme_cli_msg.token[2][offset]);
+        usartMsg->nmea_msg.std.dataLenght = strlen((const char *)&sme_cli_msg.token[2][offset]);
         if(!usartMsg->nmea_msg.std.dataLenght) {
             return SME_EINVAL;
         }
@@ -101,7 +131,7 @@ static int parseCommandToken(void){
         usartMsg->nmea_msg.mtk.msgId[2] = sme_cli_msg.token[2][offset];
         offset++;
         /* Filling data */
-        usartMsg->nmea_msg.mtk.dataLenght = strlen(&sme_cli_msg.token[2][offset]);
+        usartMsg->nmea_msg.mtk.dataLenght = strlen((const char *)&sme_cli_msg.token[2][offset]);
 
         if(!usartMsg->nmea_msg.mtk.dataLenght) {
             return SME_EINVAL;
@@ -117,7 +147,7 @@ static int parseCommandToken(void){
 
 int parseSl868v2Msg(void **componentStr) {
     int err = SME_OK;
-    sl868v2MsgT *usartMsg = getSl868v2Model();
+    sl868v2T *usartMsg = getSl868v2Model();
     
     *componentStr = usartMsg; // assign the pointer to the struct
     
