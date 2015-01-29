@@ -16,7 +16,6 @@
 to 255, it depends to the available values).*/
 #define  MAX_CONF_CHAR 10 // depend if the value for the register in write is HEX
 uint8_t message[sizeof(sigFoxDataMessage)];
-uint8_t sequenceNumber;
 
 
 static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
@@ -28,7 +27,7 @@ static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxCon
     int msgLen = sprintf((char *)message, CONF_REGISTER);
 
     // set the RX FSM that SFX is in control mode
-    set_sgf_fsm(msgType);
+    set_sfx_cdc_status(msgType);
 
 
     switch (msgType){
@@ -63,37 +62,36 @@ static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxCon
     return true;
 };
 
-static uint8_t calculateCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
- uint16_t crc = packet->length;
- crc += packet->type;
- crc += packet->sequenceNumber;
- for(int i=0; i<packet->length; i++){
-    crc+=packet->payload[i];
- }
+static uint8_t insertCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
+    uint16_t crc = calculateCRC(packet->length, packet->type, 
+                                packet->sequenceNumber, packet->payload);
 
- char* tmp = &crc;
- message[msgLen++] = tmp[0];
- message[msgLen++] = tmp[1];
- return 2;
+    char* tmp = &crc;
+    message[msgLen++] = tmp[0];
+    message[msgLen++] = tmp[1];
+    return 2;
 }
 
-static bool  sendSigFoxDataMessage(sigFoxMessageTypeE msgType, const sigFoxDataMessage *packet) {
+bool sendSigFoxDataMessage(const sigFoxT *msg) {
     uint8_t msgLen=0;
-    
+    sigFoxDataMessage packet;
+    sigFoxMessageTypeE msgType = msg->messageType;
     // set the RX FSM that SFX is in control mode
-    set_sgf_fsm(msgType);
+    set_sfx_cdc_status(msgType);
 
 
     switch (msgType){
         case dataCdcMessage:
+        case dataIntMessage:
+        packet = msg->message.dataMode;
         message[msgLen++] = SFX_MSG_HEADER;
-        message[msgLen++] = packet->length;
-        message[msgLen++] = packet->type;
-        message[msgLen++] = packet->sequenceNumber;
-        for (int i=0; i<packet->length; i++) {
-            message[msgLen++] = packet->payload[i];
+        message[msgLen++] = packet.length;
+        message[msgLen++] = packet.type;
+        message[msgLen++] = packet.sequenceNumber;
+        for (int i=0; i<packet.length; i++) {
+            message[msgLen++] = packet.payload[i];
         }
-        msgLen += calculateCRC(packet, msgLen);
+        msgLen += insertCRC(&packet, msgLen);
         message[msgLen++] = SFX_MSG_TAILER;
 
         //finally SEND !!!
@@ -108,7 +106,7 @@ static bool  sendSigFoxDataMessage(sigFoxMessageTypeE msgType, const sigFoxDataM
     return true;
 };
 
-bool executeSigFox(const sigFoxT *msg) {
+bool executeCDCSigFox(const sigFoxT *msg) {
 
     bool ret = true;
     switch (msg->messageType){
@@ -120,7 +118,7 @@ bool executeSigFox(const sigFoxT *msg) {
         
         case enterDataMode:
         case dataCdcMessage:
-        ret = sendSigFoxDataMessage(msg->messageType, &msg->message.dataMode);
+        ret = sendSigFoxDataMessage(msg);
         break;
 
         default:

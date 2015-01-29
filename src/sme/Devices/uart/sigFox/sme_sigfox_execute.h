@@ -15,13 +15,6 @@
 #include <stdbool.h>
 #include "../../../model/sme_model_sigfox.h"
 
-extern uint8_t sequenceNumber;
-
-inline uint8_t getNewSequenceNumber(void);
-
-inline uint8_t getNewSequenceNumber(void) {
-    return sequenceNumber++;
-}
-
-bool executeSigFox(const sigFoxT *msg);
+bool sendSigFoxDataMessage(const sigFoxT *msg);
+bool executeCDCSigFox(const sigFoxT *msg);
 #endif /* SME_SIGFOX_EXECUTE_H_ */

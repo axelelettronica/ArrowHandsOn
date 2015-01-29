@@ -10,9 +10,6 @@
 #ifndef SME_MODEL_SIGFOX_H_
 #define SME_MODEL_SIGFOX_H_
 
-
-
-
 #define SIGFOX_REGISTER_READ 'R'
 #define SIGFOX_REGISTER_WRITE 'W'
 
@@ -22,8 +19,13 @@
 #define SIGFOX_END_READ     '?'
 #define SIGFOX_EQUAL_CHAR   '='
 #define SIGFOX_END_MESSAGE  0xd
-#define SFX_MSG_HEADER      0xA5
-#define SFX_MSG_TAILER      0x5A
+
+#if NOT_SENSOR
+    #define SFX_MSG_HEADER      '@'
+    #define SFX_MSG_TAILER      '%'
+#else
+    #define SFX_MSG_HEADER      0xA5
+    #define SFX_MSG_TAILER      0x5A#endif
 
 #define SGF_CONF_OK         "O" // OK
 #define SGF_CONF_ERROR      "E" // ERROR
@@ -31,7 +33,8 @@
 #define SIGFOX_DATA     0x01
 #define SIGFOX_KEEP     0x02
 #define SIGFOX_BIT      0x03
-#define SIGFOX_CONFIRM  0x10
+#define SIGFOX_CONFIRM  0x10
+
 
 typedef enum {
     enterConfMode,
@@ -76,6 +79,7 @@ typedef struct {
 }sigFoxConfT;
 
 #define SIG_FOX_MAX_PAYLOAD 0xff
+
 typedef struct {
     uint8_t length;
     uint8_t type;
@@ -101,15 +105,24 @@ typedef struct {
     uint8_t type;
     uint8_t sequenceNumber; //0x1 to 0xff
     uint8_t payload[SFX_ANSWER_LEN];
-    uint8_t crc;
+    uint8_t crc[2];
     uint8_t tailer;
 }sigFoxRxMessage;
 
 #include "sme/sme_FreeRTOS.h"
 
-extern xSemaphoreHandle sf_sem;
+extern uint8_t sequenceNumber;
+
+inline uint8_t getNewSequenceNumber(void);
+
+inline uint8_t getNewSequenceNumber(void) {
+    return sequenceNumber++;
+}
+
 
 sigFoxT* getSigFoxModel(void);
+void releaseSigFoxModel(void);
 void initSigFoxModel(void);
+uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequenceNumber, uint8_t *payload);
 
 #endif /* SME_MODEL_SIGFOX_H_ */
