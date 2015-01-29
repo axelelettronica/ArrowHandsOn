@@ -15,6 +15,7 @@
 #include "sme_i2c_parse.h"
 #include "sme_sl868v2_parse.h"
 #include "../model/sme_model_sigfox.h"
+#include "../model/sme_model_sl868v2.h"
 
 static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
@@ -215,6 +216,7 @@ int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue)
     err  |= parseSl868v2Msg(&data->uart_msg.componentStruct);
     
     if (err) {
+        releaseSl868v2Model();
         print_out(CDC_HELP_SL868V2);
     }
     return err;

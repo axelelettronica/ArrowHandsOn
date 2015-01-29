@@ -106,8 +106,7 @@ typedef struct {
 } sl868v2T;
 
 
-
+void releaseSl868v2Model(void);
 sl868v2T* getSl868v2Model(void);
-void initSigFoxl868vwModel(void);
-
+void initSl868v2Model(void);
 #endif /* SME_MODEL_SL868V2_H_ */

@@ -7,15 +7,15 @@
  */ 
 
 
-#ifndef SME_CONFIG_USART_H_
-#define SME_CONFIG_USART_H_
+#ifndef SME_SL868V2_USART_H_
+#define SME_SL868V2_USART_H_
 
 //#include "status_codes.h"
 
-#define MAX_SL868V2_RX_BUFFER_LENGTH   5
+#define MAX_SL868V2_RX_BUFFER_LENGTH   1
 
-void sl868v2FoxInit(void);
+void sl868v2Init(void);
 int sl868v2SendMessage(const uint8_t *msg, uint8_t len);
 int sl868v2ReceivedMessage(uint8_t *msg, uint8_t len);
 
-#endif /* SME_CONFIG_USART_H_ */
+#endif /* SME_SL868V2_USART_H_ */

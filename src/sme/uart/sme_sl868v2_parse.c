@@ -15,6 +15,9 @@
 #define NMEA_TALKER_LEN       2
 #define NMEA_SENTENCE_ID_LEN  3
 
+static int parseNmeaCommandToken(sl868v2T *usartMsg);
+
+
 static int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
 {
     if (!in || !nmeaType) {
@@ -25,7 +28,7 @@ static int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
     {
         *nmeaType = STD_NMEA;
         return SME_OK;
-    } else if ((in[0]=='P') && (in[1]=='M') && (in[0]=='T') && (in[1]=='K')) {
+    } else if ((in[0]=='P') && (in[1]=='M') && (in[2]=='T') && (in[3]=='K')) {
         *nmeaType = MTK_NMEA;
         return SME_OK;
     }
@@ -80,9 +83,9 @@ end:
     return SME_EINVAL;
 }
 
-static int parseCommandToken(void){
+static int parseNmeaCommandToken(sl868v2T *usartMsg)
+{
     int ret = SME_OK;
-    sl868v2T *usartMsg = getSl868v2Model();
     uint8_t  offset = 0;
 
     if (sme_cli_msg.token_idx < 3) {
@@ -155,7 +158,7 @@ int parseSl868v2Msg(void **componentStr) {
     if (sme_cli_msg.token[1][0] != 0) {
         switch(sme_cli_msg.token[1][0]) {
             case 'c':
-                err |= parseCommandToken();
+                err |= parseNmeaCommandToken(usartMsg);
             break;
             
             default:
