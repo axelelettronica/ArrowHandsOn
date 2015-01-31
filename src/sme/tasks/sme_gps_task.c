@@ -31,18 +31,20 @@ volatile uint8_t test;
 *
 * \param params Parameters for the task. (Not used.)
 */
-static void gpsTask(void *params)
+static void gpsRxTask(void *params)
 {
 	uint8_t msg[SME_GPS_MAX_DATA_LEN];
-	for (;;) {
-		if (sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN) == STATUS_OK){
-			test++;
-		}
-		BaseType_t preso = xSemaphoreTake(gps_sem, GPS_SEMAPHORE_DELAY);
-		if (preso) {
-            print_dbg("GPS Received:  %s", msg);
-			test++;
 
+    // Trigger the RX interrupt
+    //sigfoxReceivedMessage(msg, MAX_SIGFOX_RX_BUFFER_LENGTH);
+	for (;;) {
+ 		BaseType_t preso = xSemaphoreTake(gps_sem, GPS_SEMAPHORE_DELAY);
+		if (preso) {
+            if (sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN) == STATUS_OK){
+            //		test++;
+                print_dbg("GPS Received:  %s", msg);
+        	} 
+			//test++;
 		}
 	}
 }
@@ -54,7 +56,7 @@ BaseType_t sme_gps_mgr_init(void)
 	gps_sem = xSemaphoreCreateBinary();
 		
 	// create the sigFox Task
-	return xTaskCreate(gpsTask,
+	return xTaskCreate(gpsRxTask,
 	GPS_TASK_NAME,
 	GPS_STACK_SIZE,
 	NULL,

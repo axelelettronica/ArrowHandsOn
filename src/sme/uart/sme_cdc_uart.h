@@ -49,9 +49,9 @@
 
 
 //! Character lines in terminal buffer
-#define MAX_TOKEN_NUM         11
+#define MAX_TOKEN_NUM         7
 //! Character columns in terminal buffer
-#define MAX_TOKEN_LEN         11
+#define MAX_TOKEN_LEN         30
 #endif // SME_CDC_H
 
 

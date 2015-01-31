@@ -23,5 +23,5 @@
 //    return sequenceNumber++;
 //}
 
-int executeSl868v2(const sl868v2T *msg);
+int executeSl868v2(const sl868v2T *data);
 #endif /* SME_SL868V2_EXECUTE_H_ */

@@ -15,7 +15,6 @@
 #define SL868V2_DELIMITER      '*'   
 #define SL868V2_START_MESSAGE  '$'
 
-int executeSl868v2(const sl868v2T *data);
 
 /* Generic NMEA Sentence Format 
  *
@@ -65,24 +64,43 @@ static int sendSl868v2Msg(const uint8_t *msg, uint8_t len) {
 }
 
 
-static int  sendSl868v2DataMessage(const sl868v2MsgT *packet) {
+static int  sendSl868v2DataMessage(const sl868v2T *data) {
     int msgLen=0, i;
     char checksum = 0;
     char checksum_str[3]={};
+    sl868v2MsgE messageType = data->messageType;
+    const sl868v2MsgT *packet = &data->nmea_msg;
 
     memset(message, 0, LS868V2_MAX_MSG_SIZE);
     message[msgLen++] = SL868V2_START_MESSAGE;
-    message[msgLen++] = packet->std.talker[0];
-    message[msgLen++] = packet->std.talker[1];
-    message[msgLen++] = packet->std.sentenceId[0];
-    message[msgLen++] = packet->std.sentenceId[1];
-    message[msgLen++] = packet->std.sentenceId[2];
+    
+    if (messageType == STD_NMEA) { 
+        message[msgLen++] = packet->std.talker[0];
+        message[msgLen++] = packet->std.talker[1];
+        message[msgLen++] = packet->std.sentenceId[0];
+        message[msgLen++] = packet->std.sentenceId[1];
+        message[msgLen++] = packet->std.sentenceId[2];
 
-    for (i=0; i < packet->std.dataLenght; i++) {
-        message[msgLen++] = packet->std.data[i];
+        for (i=0; i < packet->std.dataLenght; i++) {
+            message[msgLen++] = packet->std.data[i];
+        }
+
+    } else {
+        message[msgLen++] = packet->mtk.talker[0];
+        message[msgLen++] = packet->mtk.talker[1];
+        message[msgLen++] = packet->mtk.talker[2];
+        message[msgLen++] = packet->mtk.talker[3];
+        message[msgLen++] = packet->mtk.msgId[0];
+        message[msgLen++] = packet->mtk.msgId[1];
+        message[msgLen++] = packet->mtk.msgId[2];
+        for (i=0; i < packet->mtk.dataLenght; i++) {
+            message[msgLen++] = packet->mtk.data[i];
+        }
     }
+
+
     for (i=1; i < msgLen; i++) {
-       checksum ^=message[i]; // calculating XOR checksum
+        checksum ^=message[i]; // calculating XOR checksum
     }
     message[msgLen++] = SL868V2_DELIMITER;
     sprintf(checksum_str, "%x", checksum);
@@ -98,5 +116,5 @@ static int  sendSl868v2DataMessage(const sl868v2MsgT *packet) {
 
 int executeSl868v2(const sl868v2T *data) 
 {
-   return sendSl868v2DataMessage(&data->nmea_msg);
+   return sendSl868v2DataMessage(data);
 }
