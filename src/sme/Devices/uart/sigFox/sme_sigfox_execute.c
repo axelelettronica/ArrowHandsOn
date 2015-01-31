@@ -10,7 +10,9 @@
 #include "samd21_xplained_pro.h"
 #include "portmacro.h"
 #include "../../../sme_FreeRTOS.h"
-#include "sme_sigfox_rx_fsm.h"
+#include "sme/model/sme_model_sigfox.h"
+#include "sme_cdc_io.h"
+#include "sme_sfx_timer.h"
 
 /* ATSxxx=yy<cr>, where ‘xxx’ is the register address and ‘yy’ the register value (up
 to 255, it depends to the available values).*/
@@ -20,14 +22,21 @@ uint8_t message[sizeof(sigFoxDataMessage)];
 
 static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
     port_pin_toggle_output_level(LED_0_PIN); // just for debug
+    
+    // store the message Id that will be sent
+    sfxMessageIdx[1] = msg[3];
+
     sigfoxSendMessage(msg, len);
 }
 
-static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConfT *configuration) {
+static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConfT *configuration) {
+
+    startSfxCommandTimer();
+
     int msgLen = sprintf((char *)message, CONF_REGISTER);
 
     // set the RX FSM that SFX is in control mode
-    set_sfx_cdc_status(msgType);
+    setSfxStatus(msgType);
 
 
     switch (msgType){
@@ -57,14 +66,20 @@ static bool  sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxCon
         message[msgLen++]= SIGFOX_END_MESSAGE;
         sendSigFoxMsg(message, msgLen);
         break;
+
+        default:
+        print_err("sendSigFoxConfiguration with wrong messageType");
+        return false;
+        break;
     }
     
+
     return true;
 };
 
 static uint8_t insertCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
-    uint16_t crc = calculateCRC(packet->length, packet->type, 
-                                packet->sequenceNumber, packet->payload);
+    uint16_t crc = calculateCRC(packet->length, packet->type,
+    packet->sequenceNumber, packet->payload);
 
     char* tmp = &crc;
     message[msgLen++] = tmp[0];
@@ -76,8 +91,10 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
     uint8_t msgLen=0;
     sigFoxDataMessage packet;
     sigFoxMessageTypeE msgType = msg->messageType;
+
+    stopSfxCommandTimer();
     // set the RX FSM that SFX is in control mode
-    set_sfx_cdc_status(msgType);
+    setSfxStatus(msgType);
 
 
     switch (msgType){
@@ -113,11 +130,13 @@ bool executeCDCSigFox(const sigFoxT *msg) {
         
         case enterConfMode:
         case confCdcMessage:
+        case confIntMessage:
         ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
         break;
         
         case enterDataMode:
         case dataCdcMessage:
+        case dataIntMessage:
         ret = sendSigFoxDataMessage(msg);
         break;
 

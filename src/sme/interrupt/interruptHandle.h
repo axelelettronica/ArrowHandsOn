@@ -33,9 +33,12 @@
 #define HUT_DRDY      0x20
 #define ALS_GPIO1     0x40
 #define ALS_GPIO2     0x80
-#define NFC_FD        0x100
+#define NFC_FD_INT    0x100
 #define SFX_RADIO_STS 0x200
 #define SFX_STDBY_STS 0x400
+
+
+#define BUTTON_0_INT 0x800
 
 #define MAX_EXTERN_INTERRUPT 11
 

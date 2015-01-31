@@ -10,7 +10,6 @@
 #include "sme_cmn.h"
 #include "sme\Devices\uart\sigFox\sme_sigfox_usart.h"
 #include "sme\Devices\uart\sigFox\sme_sigfox_execute.h"
-#include "sme\model\sme_model_sigfox.h"
 #include "sme\Devices\uart\gps\sme_sl868v2_execute.h"
 
 #define USART_TASK_DELAY     (1000 / portTICK_RATE_MS)
@@ -46,7 +45,6 @@ static void usartTxTask(void *params){
 BaseType_t sme_usart_init(void){
 	
 	sigFoxInit();
-    initSigFoxModel();
 	
 	// create the USART Queue
 	usartCommandQueue = xQueueCreate(64, sizeof(usartQueueS));

@@ -18,14 +18,10 @@ typedef enum {
     tailerRec
 } sfxRxFSME;
 
-sigFoxMessageTypeE cdcStatus=0;
+
 sigFoxRxMessage answer;
 sfxRxFSME       recFsm;
 uint8_t         crcCounter;
-
-inline void set_sfx_cdc_status(sigFoxMessageTypeE state) {
-    cdcStatus = state;
-}
 
 static sfxRxFSME crcCheck(void) {
  uint16_t crc = calculateCRC(answer.length, answer.type,
@@ -40,6 +36,7 @@ static sfxRxFSME crcCheck(void) {
 
 static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
     for (int i=0; i<msgMaxLen; i++){
+     print_out(&msg[i]);
         switch (recFsm) {
             case headerRec:
             if (SFX_MSG_HEADER != msg[i])
@@ -109,7 +106,7 @@ static uint8_t handleConf(uint8_t *msg, uint8_t msgMaxLen) {
 
 uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen) {
     
-    switch(cdcStatus){
+    switch(sfxStatus){
         // first byte reset the payload ptr
         case enterConfMode:
         case confCdcMessage:
@@ -117,9 +114,11 @@ uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen) {
         if (SME_OK != handleConf(msg, msgMaxLen)) {
             answer.payloadPtr=0;
         }
+        return SME_OK;
         
         case enterDataMode:
         case dataCdcMessage:
+        case dataIntMessage:
         if (SME_OK != handleData(msg, msgMaxLen)) {
             answer.payloadPtr=0;
         }

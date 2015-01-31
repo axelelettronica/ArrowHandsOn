@@ -69,13 +69,14 @@ static void init_services(void);
  */
 static void init_services(void)
 {
-	sme_cdc_mgr_init();
+	
+	sme_usart_init();
+    sme_cdc_mgr_init();
 	sme_uart_mgr_init();
 	sme_i2c_mgr_init();
 	sme_ctrl_init();
 	sme_init_isr_global();
 	sme_sigfox_rx_mgr_init();
-	sme_usart_init();
 
 
     interruptValueInitializzation();
@@ -87,6 +88,7 @@ static void init_services(void)
 int main (void)//
 {
 	system_init();
+    
 	//gfx_mono_init();
 
 	// Initialize the Board..

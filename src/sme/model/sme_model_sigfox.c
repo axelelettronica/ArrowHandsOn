@@ -11,17 +11,32 @@
 #include <string.h>
 
 
-uint8_t sequenceNumber;
+uint8_t sequenceNumber=1;
 static sigFoxT usartMsg;
 xSemaphoreHandle sf_sem;
 #define SF_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS)
+
+sigFoxMessageTypeE sfxStatus=0;
 
 void initSigFoxModel(void){
     // create the sigFox semaphore
     sf_sem = xSemaphoreCreateMutex();
 }
 
+inline void setSfxStatus(sigFoxMessageTypeE state) {
+    sfxStatus = state;
+}
 
+
+bool sfxIsInDataStatus(void) {
+    return  ((sfxStatus==enterDataMode) ||
+            (sfxStatus==dataIntMessage) || 
+            (sfxStatus==dataCdcMessage) );
+}
+
+inline sigFoxMessageTypeE getSfxStatus(void) {
+    return sfxStatus;
+}
 
 uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequenceNumber, uint8_t *payload){
     uint16_t crc = length;

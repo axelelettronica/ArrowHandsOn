@@ -95,10 +95,7 @@ static int parseDataToken(sigFoxT *usartMsg ){
             sme_hex_str_to_uint8(sme_cli_msg.token[3], usartMsg->message.dataMode.payload);
         }
         break;
-    }
-    
-
-
+    }    
     
     // everything is OK, add the new sequence number
     usartMsg->message.dataMode.sequenceNumber=getNewSequenceNumber();

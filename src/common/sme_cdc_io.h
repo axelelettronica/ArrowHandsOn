@@ -10,6 +10,8 @@
 #define SME_CDC_IO_H_
 
 #include <stdarg.h>
+#include <usart.h>
+#include <string.h>
 
 struct usart_module cdc_usart;
 
