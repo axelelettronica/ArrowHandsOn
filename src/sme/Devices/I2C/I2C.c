@@ -34,6 +34,9 @@ void configure_i2c_master(void)
     /* Change pins */
     config_i2c.pinmux_pad0  = EDBG_I2C_SERCOM_PINMUX_PAD0;
     config_i2c.pinmux_pad1  = EDBG_I2C_SERCOM_PINMUX_PAD1;
+    // Changed to leave Pins to GPS Serial connection
+    //config_i2c.pinmux_pad0  = PINMUX_PA22C_SERCOM3_PAD0;
+    //config_i2c.pinmux_pad1  = PINMUX_PA23C_SERCOM3_PAD1;
 
     /* Initialize and enable device with config */
     i2c_master_init(&i2c_master_instance, EDBG_I2C_MODULE, &config_i2c);

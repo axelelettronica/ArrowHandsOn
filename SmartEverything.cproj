@@ -754,7 +754,13 @@
     <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_execute.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\uart\gps\sme_config_usart.c">
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_rx_fsm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_rx_fsm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_usart.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_usart.h">
@@ -868,7 +874,7 @@
     <Compile Include="src\sme\tasks\sme_controller.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\sme_gps_task.c">
+    <Compile Include="src\sme\tasks\sme_gps_rx_task.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\tasks\sme_gps_task.h">

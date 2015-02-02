@@ -9,13 +9,23 @@
 //#include "sme_config_usart.h"
 #include "..\..\..\sme_FreeRTOS.h"
 #include "sme_cmn.h"
-//#include "sme\tasks\sme_gps_task.h"
+#include "sme\tasks\sme_gps_task.h"
 #include "sme\model\sme_model_sl868v2.h"
 #include "./sme_sl868v2_usart.h"
 
 /** \name Extension header #1 UART definitions
 * @{
-*/
+*
+#define GPS_MODULE              SERCOM2
+#define GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
+#define GPS_SERCOM_PINMUX_PAD0  PINMUX_PA08D_SERCOM2_PAD0
+#define GPS_SERCOM_PINMUX_PAD1  PINMUX_PA09D_SERCOM2_PAD1
+#define GPS_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define GPS_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
+#define GPS_SERCOM_DMAC_ID_TX   SERCOM2_DMAC_ID_TX
+#define GPS_SERCOM_DMAC_ID_RX   SERCOM2_DMAC_ID_RX
+#define GPS_BAUDRATE		    9600
+/ @} */
 
 #define GPS_MODULE              SERCOM1
 #define GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
@@ -26,8 +36,6 @@
 #define GPS_SERCOM_DMAC_ID_TX   SERCOM1_DMAC_ID_TX
 #define GPS_SERCOM_DMAC_ID_RX   SERCOM1_DMAC_ID_RX
 #define GPS_BAUDRATE		    9600
-/** @} */
-
 
 /* interrupt USART variables */
 static struct usart_module usart_gps;
@@ -39,7 +47,7 @@ static void usart_gps_read_callback(const struct usart_module *const usart_modul
 {
 	
 	BaseType_t xHigherPriorityTaskWoken; 
-	xSemaphoreGiveFromISR(gps_sem, &xHigherPriorityTaskWoken );
+	xSemaphoreGiveFromISR(gps_rx_sem, &xHigherPriorityTaskWoken );
 	
 	    /* If xHigherPriorityTaskWoken was set to true you
     we should yield.  The actual macro used here is 
