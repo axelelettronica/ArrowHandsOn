@@ -7,29 +7,45 @@
 #include <asf.h>
 #include "sme_sigfox_usart.h"
 #include "..\..\..\sme_FreeRTOS.h"
-
 #include "sme\tasks\sme_sigfox_task.h"
 #include "sme\model\sme_model_sigfox.h"
+#include "status_codes.h"
+#include "sme_sfx_timer.h"
 
 /** \name Embedded debugger CDC Gateway USART interface definitions
 * @{
 */
-#define SIGFOX_MODULE              SERCOM5
 #define SIGFOX_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
+#ifdef SMARTEVERYTHING
+#define SIGFOX_MODULE              SERCOM4
+#define SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PB12C_SERCOM4_PAD0
+#define SIGFOX_SERCOM_PINMUX_PAD1  PINMUX_PB13C_SERCOM4_PAD1
+#define SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
+#define SIGFOX_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
+#define SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
+#else
+#define SIGFOX_MODULE              SERCOM5
 #define SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PB16C_SERCOM5_PAD0
 #define SIGFOX_SERCOM_PINMUX_PAD1  PINMUX_PB17C_SERCOM5_PAD1
 #define SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
 #define SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SIGFOX_SERCOM_DMAC_ID_TX   SERCOM5_DMAC_ID_TX
 #define SIGFOX_SERCOM_DMAC_ID_RX   SERCOM5_DMAC_ID_RX
+#endif
 #define SIGFOX_BAUDRATE			   19200
 /** @} */
 
 /* interrupt USART variables */
 static struct usart_module usart_sigfox;
-
 volatile uint8_t rx_buffer[MAX_SIGFOX_RX_BUFFER_LENGTH];
 /* interrupt USART variables */
+
+
+// keep track of the messageId are active
+uint8_t sfxMessageIdx[MAX_MESSAGE_OUT];
+
+
 
 static void usart_sigfox_read_callback(const struct usart_module *const usart_module)
 {
@@ -50,7 +66,13 @@ static void usart_sigfox_write_callback(const struct usart_module *const usart_m
 
 }
 
+volatile int init;
+
 void sigFoxInit(void) {
+
+    initSigFoxModel();
+    initSfxTimer();
+
     // sigfox usart configuration
     struct usart_config config_usart;
 
@@ -63,8 +85,12 @@ void sigFoxInit(void) {
     config_usart.pinmux_pad2 = SIGFOX_SERCOM_PINMUX_PAD2;
     config_usart.pinmux_pad3 = SIGFOX_SERCOM_PINMUX_PAD3;
 
-    while (usart_init(&usart_sigfox, SIGFOX_MODULE, &config_usart) != STATUS_OK) {
-    }
+    do
+    {
+        init = usart_init(&usart_sigfox, SIGFOX_MODULE, &config_usart);
+    } while (init != STATUS_OK);
+    /* while ( usart_init(&usart_sigfox, SIGFOX_MODULE, &config_usart) != STATUS_OK) {
+    }*/
 
     usart_enable(&usart_sigfox);
     

@@ -16,11 +16,11 @@
 #include "sme_sl868v2_parse.h"
 #include "../model/sme_model_sigfox.h"
 #include "../model/sme_model_sl868v2.h"
+#include "sme_cdc_io.h"
 
-static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d: "
+static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d|s: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
 static char CDC_HELP_I2C[]   ="Help: i2c <hex-addressd> [r/w] <hex-register> <hex-data>\r\n";
-static char CDC_HELP_SIGFOX[]="Help: sf <c/d> [r/w] <register> <data> \r\n";
 static char CDC_HELP_SL868V2[]="Help: gps [c] <Standard NMEA Sentence> (between '$' and '*') ...\r\n";
 static char CDC_HELP_NA[]="TBD\n";
 
@@ -153,12 +153,20 @@ int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue)
             case 'e':
             wrong = false;
             break;
+
             case 'd':
             wrong = false;
             break;
+            
             case '0':
             return SME_OK;
             break;
+            
+            case 's':
+            sme_dbg_sfx_enable = !sme_dbg_sfx_enable;
+             wrong = false;
+            break;
+
             default:
             break;
         }
@@ -191,10 +199,9 @@ int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
 int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
 {
     int err = SME_OK;
-    *queue = usartCommandQueue;
-    data->uart_msg.code = sigFox;
+    *queue = NULL;
     
-    err  |= parseSigFoxMsg(&data->uart_msg.componentStruct);
+    err  |= parseSigFoxMsg();
     
     if (err) {
         releaseSigFoxModel();
@@ -210,10 +217,9 @@ int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
 int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue)
 {
     int err = SME_OK;
-    *queue = usartCommandQueue;
-    data->uart_msg.code = gps;
+    *queue = NULL;
     
-    err  |= parseSl868v2Msg(&data->uart_msg.componentStruct);
+    err  |= parseSl868v2Msg();
     
     if (err) {
         releaseSl868v2Model();
@@ -237,14 +243,6 @@ int sme_cdc_cmd_execute(cmd_cb_t *cmd)
     
     if (cmd->func(&cdc_q_buffer, &queue)) {
         return SME_EINVAL;
-    }
-
-    if (queue != NULL) {
-        // send to the proper queue
-        if (!xQueueSend(queue, (void *)&cdc_q_buffer, (int)NULL) != pdPASS) {
-            // Error: could not enqueue character
-            return SME_EBUSY;
-        }
     }
     
     return SME_OK;

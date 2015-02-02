@@ -11,10 +11,9 @@
 
 #ifndef SME_SIGFOX_EXECUTE_H_
 #define SME_SIGFOX_EXECUTE_H_
-#include <stdint-gcc.h>
 #include <stdbool.h>
 #include "../../../model/sme_model_sigfox.h"
 
-bool sendSigFoxDataMessage(const sigFoxT *msg);
+
 bool executeCDCSigFox(const sigFoxT *msg);
 #endif /* SME_SIGFOX_EXECUTE_H_ */

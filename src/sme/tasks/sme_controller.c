@@ -11,6 +11,7 @@
 #include "..\Devices\I2C\Accelerometer\LSM9DS1.h"
 #include "..\model\sme_model_sigfox.h"
 #include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
+#include "..\Devices\uart\sigFox\sme_sfx_timer.h"
 
 static void control_task(void *params);
 
@@ -37,7 +38,7 @@ int sme_ctrl_init(void)
 }
 
 
-static void sendToSigFox(uint8_t sensorData){
+static void sendToSigFoxValue(uint8_t sensorData){
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -46,9 +47,48 @@ static void sendToSigFox(uint8_t sensorData){
     sfModel->message.dataMode.payload[0]=sensorData;
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
-    sendSigFoxDataMessage(sfModel);
+    executeCDCSigFox(sfModel);
 }
 
+
+/**
+*
+* Send the KEEP message if SigFox is in data mode
+*
+*/
+static void sendToSfxKeep(void){
+    
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.length=0;
+    sfModel->message.dataMode.type = SIGFOX_KEEP;
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+    
+}
+static void sendToSfxExitConf(void){
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = enterDataMode;
+
+    executeCDCSigFox(sfModel);
+}
+
+static void sfxTimeOut(void){
+    if (sfxIsInDataStatus()) {
+        print_sfx("Sending SFX KEEP\r\n");
+        sendToSfxKeep();
+    }
+    else {
+        if (isSfxCommandTimerExpired()) {
+            print_sfx("no command sent, exit from command mode\r\n");
+            sendToSfxExitConf();
+        }
+    }
+
+}
 /*
 * First Use case
 detect NFC interrupt:
@@ -67,11 +107,11 @@ static void performExecution( uint16_t intDetection) {
         // getPosition();
 
         //point 3
-        sendToSigFox(data);
+        sendToSigFoxValue(data);
 
         #else
         // check which is the interrupt that wake-up the task
-        if ((intDetection & NFC_FD) == NFC_FD) {
+        if ((intDetection & NFC_FD_INT) == NFC_FD_INT) {
             #endif
 
         }
@@ -99,8 +139,11 @@ static void performExecution( uint16_t intDetection) {
                     performExecution(interruptDetection());
                     break;
                     default:
-                        print_dbg("Not Handled\n");
+                    print_dbg("Not Handled\n");
                 }
+            }
+            else {
+                sfxTimeOut();
             }
         }
     }

@@ -14,6 +14,15 @@
 
 #define MAX_SIGFOX_RX_BUFFER_LENGTH   1
 
+// only for KEEP and data
+#define DATA_SEQUENCE_NUMBER 0
+#define KEEP_SEQUENCE_NUMBER 1
+#define MAX_MESSAGE_OUT 2
+
+// keep track of the messageId are active
+uint8_t sfxMessageIdx[MAX_MESSAGE_OUT];
+
+
 void sigFoxInit(void);
 status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len);
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len);

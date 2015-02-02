@@ -21,7 +21,7 @@ typedef union manufactoringDataUnion{
 } manufactoringDataU;
 
 static manufactoringDataU manuf;
-static uint8_t userData[900];
+static uint8_t userData[USER_DATA_LEN];
 
 bool readManufactoringData(void) {
 	bool ret = false;
@@ -89,11 +89,10 @@ bool readSRAM(void){
 	return ret;
 }
 
-#define JUST_FOR_DEBUG 9
+
 bool getNxpUserData(char* buffer) {
 	if (readUserData()) {
-		memcpy(buffer, userData, JUST_FOR_DEBUG)	;
-	//memcpy(buffer, userData, USER_DATA_LEN)	;
+	    memcpy(buffer, userData, USER_DATA_LEN)	;
 	return true;
 	} else 
 	return false;

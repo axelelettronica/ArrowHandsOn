@@ -51,6 +51,10 @@
 #include "sme/tasks/uart/sme_usart_tx_task.h"
 #include "sme/interrupt/interruptHandle.h"
 #include "sme/model/sme_model_i2c.h"
+#include "sme/Devices/uart/sigFox/sme_sigfox_usart.h"
+#include "sme/Devices/uart/gps/sme_sl868v2_usart.h"
+#include "sme/model/sme_model_sigfox.h"
+#include "sme/model/sme_model_sl868v2.h"
 
 
 static void init_services(void);
@@ -71,25 +75,30 @@ static void init_services(void);
 static void init_services(void)
 {
 	sme_cdc_mgr_init();
-	sme_uart_mgr_init();
 	sme_i2c_mgr_init();
 	sme_ctrl_init();
 	sme_init_isr_global();
 	sme_sigfox_rx_mgr_init();
     sme_gps_mgr_init();
-	sme_usart_init();
 
 
     interruptValueInitializzation();
 }
 
-
+static void componentInit(void) {
+	sigFoxInit();
+	sl868v2Init();
+	initSigFoxModel();
+	initSl868v2Model();
+}
 
 
 int main (void)//
 {
 	system_init();
-	//gfx_mono_init();
+    
+	// init Hw components
+	componentInit();
 
 	// Initialize the Board..
 	init_services();

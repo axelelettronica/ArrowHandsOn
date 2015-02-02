@@ -14,19 +14,14 @@
 #define SIGFOX_REGISTER_WRITE 'W'
 
 #define ENTER_CONF_MODE     "+++"
-#define ENTER_DATA_MODE     "ATX"
+#define ENTER_DATA_MODE     "ATX\r"
 #define CONF_REGISTER       "ATS"
 #define SIGFOX_END_READ     '?'
 #define SIGFOX_EQUAL_CHAR   '='
 #define SIGFOX_END_MESSAGE  0xd
 
-#if NOT_SENSOR
-    #define SFX_MSG_HEADER      '@'
-    #define SFX_MSG_TAILER      '%'
-#else
-    #define SFX_MSG_HEADER      0xA5
-    #define SFX_MSG_TAILER      0x5A#endif
-
+#define SFX_MSG_HEADER      0xA5
+#define SFX_MSG_TAILER      0x5A#define SFX_HEADER_POS 0#define SFX_SEQUENCE_POS 3
 #define SGF_CONF_OK         "O" // OK
 #define SGF_CONF_ERROR      "E" // ERROR
 
@@ -39,12 +34,16 @@
 typedef enum {
     enterConfMode,
     enterDataMode,
+
     confCdcMessage,
     dataCdcMessage,
+
     confIntMessage,
     dataIntMessage
 } sigFoxMessageTypeE;
 
+
+extern sigFoxMessageTypeE sfxStatus;
 
 /* see
 http://www.adaptivemodules.com/assets/telit/Telit-LE51-868-S-Software-User-Guide-r1.pdf
@@ -113,10 +112,13 @@ typedef struct {
 
 extern uint8_t sequenceNumber;
 
-inline uint8_t getNewSequenceNumber(void);
-
 inline uint8_t getNewSequenceNumber(void) {
-    return sequenceNumber++;
+    sequenceNumber++;
+    
+    if (sequenceNumber ==0)
+        sequenceNumber =1;
+
+    return sequenceNumber;
 }
 
 
@@ -124,5 +126,10 @@ sigFoxT* getSigFoxModel(void);
 void releaseSigFoxModel(void);
 void initSigFoxModel(void);
 uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequenceNumber, uint8_t *payload);
+
+
+void setSfxStatus(sigFoxMessageTypeE state);
+sigFoxMessageTypeE getSfxStatus(void);
+bool sfxIsInDataStatus(void);
 
 #endif /* SME_MODEL_SIGFOX_H_ */

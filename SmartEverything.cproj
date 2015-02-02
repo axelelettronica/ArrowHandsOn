@@ -457,6 +457,7 @@
       <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
       <Value>NOT_SENSOR</Value>
       <Value>EXTINT_CALLBACK_MODE=true</Value>
+      <Value>SMARTEVERYTHING</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
@@ -681,7 +682,6 @@
     <Folder Include="src\sme\interrupt" />
     <Folder Include="src\sme\model" />
     <Folder Include="src\sme\tasks" />
-    <Folder Include="src\sme\tasks\uart" />
     <Folder Include="src\sme\uart\" />
   </ItemGroup>
   <ItemGroup>
@@ -764,6 +764,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_usart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sfx_timer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\sigFox\sme_sfx_timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_execute.c">
@@ -880,12 +886,6 @@
     <Compile Include="src\sme\tasks\sme_sigfox_task.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\uart\printf-stdarg.c">
       <SubType>compile</SubType>
     </Compile>
@@ -917,12 +917,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_sl868v2_parse.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\uart\sme_uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\uart\sme_uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\tickless.c">

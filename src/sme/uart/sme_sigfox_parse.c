@@ -17,6 +17,14 @@
 #define SIGFOX_BIT_C      'B'
 #define SIGFOX_CONFIRM_C  'C'
 
+#define DBG_ENABLE  1
+#define DBG_DISABLE 0
+#define DBG_ENABLE_STR  '1'
+#define DBG_DISABLE_STR '0'
+
+char CDC_HELP_SIGFOX[]="Help: sf <c/s> <mode> <register> <data> > \r\n";
+
+bool sme_dbg_sfx_enable = false;
 
 static int parseCommandToken(sigFoxT *usartMsg){
     int ret = SME_OK;
@@ -95,10 +103,7 @@ static int parseDataToken(sigFoxT *usartMsg ){
             sme_hex_str_to_uint8(sme_cli_msg.token[3], usartMsg->message.dataMode.payload);
         }
         break;
-    }
-    
-
-
+    }    
     
     // everything is OK, add the new sequence number
     usartMsg->message.dataMode.sequenceNumber=getNewSequenceNumber();
@@ -106,12 +111,12 @@ static int parseDataToken(sigFoxT *usartMsg ){
     return SME_OK;
 }
 
-int parseSigFoxMsg(void **componentStr) {
+
+
+int parseSigFoxMsg(void) {
     int err = SME_OK;
     sigFoxT *usartMsg = getSigFoxModel();
-    
-    *componentStr = usartMsg; // assign the pointer to the struct
-    
+        
     // read operation
     if (sme_cli_msg.token[1][0] != 0) {
         switch(sme_cli_msg.token[1][0]) {
@@ -119,19 +124,25 @@ int parseSigFoxMsg(void **componentStr) {
             err |= parseCommandToken(usartMsg);
             break;
             
-            case 'd':
+            case 's':
             err |= parseDataToken(usartMsg);
             break;
-            
+           
             default:
-            // print help
+            // print help           
             return SME_EINVAL;
             break;
         }
-        } else {
+    } else {
         // print help
         return SME_EINVAL;
     }
     
+    if (SME_OK == err) {
+        if (executeCDCSigFox(usartMsg) != true){
+            err = SME_EIO;
+        }
+    }
+
     return err;
 }

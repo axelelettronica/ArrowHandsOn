@@ -15,7 +15,9 @@
 
 #define USER_START_REG 0x1
 #define USER_END_REG   0x38 // just the first 8 bytes
-#define USER_DATA_LEN 888
+
+#define JUST_FOR_DEBUG 9
+#define USER_DATA_LEN  JUST_FOR_DEBUG // was 999
 
 #define SRAM_START_REG 0xF8
 #define SRAM_END_REG   0xFB // just the first 8 bytes
