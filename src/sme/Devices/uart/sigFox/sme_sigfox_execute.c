@@ -110,7 +110,7 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
         for (int i=0; i<packet->length; i++) {
             message[msgLen++] = packet->payload[i];
         }
-        msgLen += insertCRC(&packet, msgLen);
+        msgLen += insertCRC(packet, msgLen);
         message[msgLen++] = SFX_MSG_TAILER;
 
 

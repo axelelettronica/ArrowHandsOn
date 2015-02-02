@@ -105,7 +105,6 @@ typedef struct {
     uint8_t sequenceNumber; //0x1 to 0xff
     uint8_t payload[SFX_ANSWER_LEN];
     uint8_t crc[2];
-    uint8_t tailer;
 }sigFoxRxMessage;
 
 #include "sme/sme_FreeRTOS.h"
