@@ -24,7 +24,7 @@ static void sfxTimerCallback( TimerHandle_t pxTimer )
 {
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( pxTimer );
-    print_dbg("TimeOut\r\n");
+    print_sfx("TimeOut\r\n");
     timedOut = true;
 }
 
@@ -51,11 +51,13 @@ void stopSfxCommandTimer(void){
 
 void startSfxCommandTimer(void) {
     // start or rest the timer
-    if( xTimerStart(sfxCommandTimeOut, 0 ) != pdPASS )
+    BaseType_t start =  xTimerStart(sfxCommandTimeOut, 0 );
+    if(start != pdPASS )
     {
-        print_err("startSfxCommandTimer - Timer no started");
+        print_err("startSfxCommandTimer - Timer NO started");
     }
     else {
+        print_sfx("Timer sfxCommandTimeOut started\r\n");
         timedOut = false;
     }
 }

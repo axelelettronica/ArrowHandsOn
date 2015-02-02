@@ -14,7 +14,11 @@
 
 #define MAX_SIGFOX_RX_BUFFER_LENGTH   1
 
-#define MAX_MESSAGE_OUT 6
+// only for KEEP and data
+#define DATA_SEQUENCE_NUMBER 0
+#define KEEP_SEQUENCE_NUMBER 1
+#define MAX_MESSAGE_OUT 2
+
 // keep track of the messageId are active
 uint8_t sfxMessageIdx[MAX_MESSAGE_OUT];
 

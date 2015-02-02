@@ -7,6 +7,7 @@
 #include "sme_sigfox_rx_fsm.h"
 #include "sme\model\sme_model_sigfox.h"
 #include "sme_cmn.h"
+#include "sme_sigfox_usart.h"
 
 typedef enum {
     headerRec,
@@ -19,24 +20,53 @@ typedef enum {
 } sfxRxFSME;
 
 
-sigFoxRxMessage answer;
-sfxRxFSME       recFsm;
-uint8_t         crcCounter;
+static sigFoxRxMessage answer;
+static sfxRxFSME       recFsm;
+static uint8_t         crcCounter;
+
 
 static sfxRxFSME crcCheck(void) {
- uint16_t crc = calculateCRC(answer.length, answer.type,
-                            answer.sequenceNumber, answer.payload);
- uint16_t *receivedCrc=answer.crc;
+    uint16_t crc = calculateCRC(answer.length, answer.type,
+    answer.sequenceNumber, answer.payload);
+    uint16_t *receivedCrc=answer.crc;
 
- if (*receivedCrc == crc)
- return tailerRec;
- else
- return headerRec;
+    if (*receivedCrc == crc)
+    return tailerRec;
+    else
+    return headerRec;
+}
+
+static uint8_t checkSequenceConsistence(uint8_t sequence) {
+    char seq[4];
+    for(int i=0; i<MAX_MESSAGE_OUT; i++ ) {
+        if (sfxMessageIdx[i] == sequence){
+            answer.sequenceNumber = sequence;
+            answer.payloadPtr = 0;
+            recFsm = payloadRec;
+            print_sfx ("find correct Sequence = ");
+            sprintf(seq, "%d", sequence);
+            print_sfx(seq);
+            print_sfx("\n\r");
+            return SME_SFX_OK;
+        }
+    }
+
+    print_sfx ("find wrong Sequence = ");
+    sprintf(seq, "%d", sequence);
+    print_sfx(seq);
+    print_sfx (" stored = ");
+   sprintf(seq, "%d ", sfxMessageIdx[0]);
+   print_sfx(seq);
+     sprintf(seq, "%d ", sfxMessageIdx[1]);
+     print_sfx(seq);
+    print_sfx("\n\r");
+
+    return SME_SFX_KO;
 }
 
 static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
     for (int i=0; i<msgMaxLen; i++){
-     print_out(&msg[i]);
+        print_dbg(&msg[i]);
         switch (recFsm) {
             case headerRec:
             if (SFX_MSG_HEADER != msg[i])
@@ -56,9 +86,7 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             break;
 
             case sequenceRec:
-            answer.sequenceNumber = msg[i];
-            answer.payloadPtr = 0;
-            recFsm = payloadRec;
+            checkSequenceConsistence(msg[i]);
             break;
 
             case payloadRec:
@@ -72,11 +100,11 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             case crcRec:
             answer.crc[crcCounter++] = msg[i];
             if (crcCounter == 2)
-            recFsm = crcCheck();
+                recFsm = crcCheck();
             break;
 
             case tailerRec:
-             recFsm = headerRec;
+            recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i])
             return SME_SFX_OK;
             else
@@ -91,7 +119,7 @@ static uint8_t handleConf(uint8_t *msg, uint8_t msgMaxLen) {
         // store all the received bye till the end of message
         if (msg[i] != SIGFOX_END_MESSAGE) {
             answer.payload[answer.payloadPtr++]= msg[i];
-            print_out(&msg[i]);
+            print_sfx(&msg[i]);
             } else {
             // end found check if the answer is ok
             if (SGF_CONF_ERROR != answer.payload[0]) {

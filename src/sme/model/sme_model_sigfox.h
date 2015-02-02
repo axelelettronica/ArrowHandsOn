@@ -21,7 +21,7 @@
 #define SIGFOX_END_MESSAGE  0xd
 
 #define SFX_MSG_HEADER      0xA5
-#define SFX_MSG_TAILER      0x5A
+#define SFX_MSG_TAILER      0x5A#define SFX_HEADER_POS 0#define SFX_SEQUENCE_POS 3
 #define SGF_CONF_OK         "O" // OK
 #define SGF_CONF_ERROR      "E" // ERROR
 
@@ -114,7 +114,7 @@ extern uint8_t sequenceNumber;
 
 inline uint8_t getNewSequenceNumber(void) {
     sequenceNumber++;
-
+    
     if (sequenceNumber ==0)
         sequenceNumber =1;
 

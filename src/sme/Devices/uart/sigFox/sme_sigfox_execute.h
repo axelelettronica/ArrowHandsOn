@@ -11,7 +11,6 @@
 
 #ifndef SME_SIGFOX_EXECUTE_H_
 #define SME_SIGFOX_EXECUTE_H_
-#include <stdint-gcc.h>
 #include <stdbool.h>
 #include "../../../model/sme_model_sigfox.h"
 

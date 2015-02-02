@@ -9,13 +9,11 @@
 #ifndef SME_CDC_CMD_PARSE_H_
 #define SME_CDC_CMD_PARSE_H_
 
-#include "..\tasks\uart\sme_usart_tx_task.h"
 #include "sme_cmn.h"
 #include <stdint-gcc.h>
 #include "..\model\sme_model_i2c.h"
 
 typedef union {
-	usartQueueS uart_msg;	// uart_msg
 	i2cQueueS   i2c_msg; 	// spi_msg
 } cdc_queue_msg_t;
 

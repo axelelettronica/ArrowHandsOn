@@ -78,11 +78,14 @@ static void sendToSfxExitConf(void){
 
 static void sfxTimeOut(void){
     if (sfxIsInDataStatus()) {
+        print_sfx("Sending SFX KEEP\r\n");
         sendToSfxKeep();
     }
     else {
-    if (isSfxCommandTimerExpired())
-        sendToSfxExitConf();
+        if (isSfxCommandTimerExpired()) {
+            print_sfx("no command sent, exit from command mode\r\n");
+            sendToSfxExitConf();
+        }
     }
 
 }

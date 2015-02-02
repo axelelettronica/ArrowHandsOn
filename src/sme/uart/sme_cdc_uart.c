@@ -89,7 +89,7 @@ int sme_cdc_mgr_init (void)
    cdc_msg_in_queue = xQueueCreate(64, sizeof(uint8_t));
 
 
-	xTaskCreate(cdc_task, (const char *) "CDC", configMINIMAL_STACK_SIZE,
+	xTaskCreate(cdc_task, (const char *) "CDC", configMINIMAL_STACK_SIZE*2,
                 NULL, CDC_TASK_PRIORITY, NULL);
 	
     xTaskCreate(cdc_task_rx, (const char *) "CDC_RX", configMINIMAL_STACK_SIZE,

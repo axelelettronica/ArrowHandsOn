@@ -4,6 +4,7 @@
 * Created: 12/01/2015 20:43:25
 *  Author: mfontane
 */
+#include <stdlib.h>
 #include "sme_sigfox_execute.h"
 #include "port.h"
 #include "sme\Devices\Uart\sigFox\sme_sigfox_usart.h"
@@ -21,10 +22,11 @@ uint8_t message[sizeof(sigFoxDataMessage)];
 
 
 static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
-    port_pin_toggle_output_level(LED_0_PIN); // just for debug
-    
-    // store the message Id that will be sent
-    sfxMessageIdx[1] = msg[3];
+    print_sfx("send Sequence Number=");
+    char seq[4];
+    sprintf(seq, "%d", msg[SFX_SEQUENCE_POS]);
+    print_sfx(seq);
+    print_sfx("\r\n");
 
     sigfoxSendMessage(msg, len);
 }
@@ -35,9 +37,8 @@ static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConf
 
     int msgLen = sprintf((char *)message, CONF_REGISTER);
 
-    // set the RX FSM that SFX is in control mode
+    // set the RX FSM that SFX is in configuration mode
     setSfxStatus(msgType);
-
 
     switch (msgType){
         case enterConfMode:
@@ -89,27 +90,35 @@ static uint8_t insertCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
 
 bool sendSigFoxDataMessage(const sigFoxT *msg) {
     uint8_t msgLen=0;
-    sigFoxDataMessage packet;
+    sigFoxDataMessage *packet;
     sigFoxMessageTypeE msgType = msg->messageType;
 
     stopSfxCommandTimer();
-    // set the RX FSM that SFX is in control mode
+
+    // set the RX FSM that SFX is in data mode
     setSfxStatus(msgType);
 
 
     switch (msgType){
         case dataCdcMessage:
         case dataIntMessage:
-        packet = msg->message.dataMode;
+        packet = &msg->message.dataMode;
         message[msgLen++] = SFX_MSG_HEADER;
-        message[msgLen++] = packet.length;
-        message[msgLen++] = packet.type;
-        message[msgLen++] = packet.sequenceNumber;
-        for (int i=0; i<packet.length; i++) {
-            message[msgLen++] = packet.payload[i];
+        message[msgLen++] = packet->length;
+        message[msgLen++] = packet->type;
+        message[msgLen++] = packet->sequenceNumber;
+        for (int i=0; i<packet->length; i++) {
+            message[msgLen++] = packet->payload[i];
         }
         msgLen += insertCRC(&packet, msgLen);
         message[msgLen++] = SFX_MSG_TAILER;
+
+
+        // store the message Id that will be sent
+        if (SIGFOX_DATA == packet->type)
+        sfxMessageIdx[DATA_SEQUENCE_NUMBER] = packet->sequenceNumber;
+        else
+        sfxMessageIdx[KEEP_SEQUENCE_NUMBER] = packet->sequenceNumber;
 
         //finally SEND !!!
         sendSigFoxMsg(message, msgLen);
@@ -135,9 +144,15 @@ bool executeCDCSigFox(const sigFoxT *msg) {
         break;
         
         case enterDataMode:
+            // this is the only way to activate the possibility to sent a message
+            setSfxStatus(msg->messageType);
         case dataCdcMessage:
         case dataIntMessage:
-        ret = sendSigFoxDataMessage(msg);
+        // send the message only when are in data mode 
+        // (activated by the enterDataMode message)
+        if (sfxIsInDataStatus()) {
+            ret = sendSigFoxDataMessage(msg);
+        }
         break;
 
         default:
@@ -145,5 +160,9 @@ bool executeCDCSigFox(const sigFoxT *msg) {
         break;
     }
     
+    // release the SFX model that had an error
+    if ( ret == false)
+        releaseSigFoxModel();
+
     return ret;
 }

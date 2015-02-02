@@ -682,7 +682,6 @@
     <Folder Include="src\sme\interrupt" />
     <Folder Include="src\sme\model" />
     <Folder Include="src\sme\tasks" />
-    <Folder Include="src\sme\tasks\uart" />
     <Folder Include="src\sme\uart\" />
   </ItemGroup>
   <ItemGroup>
@@ -881,12 +880,6 @@
     <Compile Include="src\sme\tasks\sme_sigfox_task.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\tasks\uart\sme_usart_tx_task.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\uart\printf-stdarg.c">
       <SubType>compile</SubType>
     </Compile>
@@ -918,12 +911,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\uart\sme_sl868v2_parse.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\uart\sme_uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\uart\sme_uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\tickless.c">

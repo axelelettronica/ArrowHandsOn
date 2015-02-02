@@ -148,11 +148,9 @@ static int parseNmeaCommandToken(sl868v2T *usartMsg)
     return ret;
 }
 
-int parseSl868v2Msg(void **componentStr) {
+int parseSl868v2Msg(void) {
     int err = SME_OK;
     sl868v2T *usartMsg = getSl868v2Model();
-    
-    *componentStr = usartMsg; // assign the pointer to the struct
     
     // read operation
     if (sme_cli_msg.token[1][0] != 0) {
@@ -169,6 +167,10 @@ int parseSl868v2Msg(void **componentStr) {
     } else {
         // print help
         return SME_EINVAL;
+    }
+
+    if (SME_OK == err) {
+        executeSl868v2(usartMsg);
     }
     
     return err;
