@@ -26,7 +26,7 @@
 #define NMEA_SENTENCE_ID_LEN  3
 
 
-int parseSl868v2Msg(void **componentStr);
+int parseSl868v2Msg(void);
 
 int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType);
 #endif /* SME_SL868V2_PARSE_H_ */

@@ -48,7 +48,6 @@
 #include "sme/interrupt/interrupt.h"
 #include "sme/tasks/sme_sigfox_task.h"
 #include "sme/tasks/sme_gps_task.h"
-#include "sme/tasks/uart/sme_usart_tx_task.h"
 #include "sme/interrupt/interruptHandle.h"
 #include "sme/model/sme_model_i2c.h"
 #include "sme/Devices/uart/sigFox/sme_sigfox_usart.h"
