@@ -66,7 +66,7 @@ typedef struct {
 
 #include "sme/sme_FreeRTOS.h"
 
-extern xSemaphoreHandle gps_sem;
+//extern xSemaphoreHandle gps_rx_sem;
 
 
 #define STD_NMEA_MAX_DATA_LEN 76

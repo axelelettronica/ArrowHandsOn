@@ -47,6 +47,7 @@
 #include "sme/tasks/sme_controller.h"
 #include "sme/interrupt/interrupt.h"
 #include "sme/tasks/sme_sigfox_task.h"
+#include "sme/tasks/sme_gps_task.h"
 #include "sme/tasks/uart/sme_usart_tx_task.h"
 #include "sme/interrupt/interruptHandle.h"
 #include "sme/model/sme_model_i2c.h"
@@ -75,6 +76,7 @@ static void init_services(void)
 	sme_ctrl_init();
 	sme_init_isr_global();
 	sme_sigfox_rx_mgr_init();
+    sme_gps_mgr_init();
 	sme_usart_init();
 
 

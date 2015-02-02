@@ -12,13 +12,11 @@
 *  Author: speirano
 */
 
-#define NMEA_TALKER_LEN       2
-#define NMEA_SENTENCE_ID_LEN  3
 
 static int parseNmeaCommandToken(sl868v2T *usartMsg);
 
 
-static int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
+int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
 {
     if (!in || !nmeaType) {
         return SME_EINVAL;

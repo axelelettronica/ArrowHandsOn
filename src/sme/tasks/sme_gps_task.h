@@ -16,7 +16,7 @@
 
 //! semaphore for incoming execution command
 
-extern xSemaphoreHandle gps_sem;
+extern xSemaphoreHandle gps_rx_sem;
 
 
 
