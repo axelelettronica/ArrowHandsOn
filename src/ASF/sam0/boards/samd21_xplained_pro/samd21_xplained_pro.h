@@ -582,11 +582,19 @@ void system_board_init(void);
 /** \name Embedded debugger I2C interface definitions
  * @{
  */
+#ifdef SMARTEVERYTHING
 #define EDBG_I2C_MODULE              SERCOM2
 #define EDBG_I2C_SERCOM_PINMUX_PAD0  PINMUX_PA08D_SERCOM2_PAD0
 #define EDBG_I2C_SERCOM_PINMUX_PAD1  PINMUX_PA09D_SERCOM2_PAD1
 #define EDBG_I2C_SERCOM_DMAC_ID_TX   SERCOM2_DMAC_ID_TX
 #define EDBG_I2C_SERCOM_DMAC_ID_RX   SERCOM2_DMAC_ID_RX
+#else
+#define EDBG_I2C_MODULE              SERCOM5
+#define EDBG_I2C_SERCOM_PINMUX_PAD0  PINMUX_PB16C_SERCOM5_PAD0
+#define EDBG_I2C_SERCOM_PINMUX_PAD1  PINMUX_PB17C_SERCOM5_PAD1
+#define EDBG_I2C_SERCOM_DMAC_ID_TX   SERCOM5_DMAC_ID_TX
+#define EDBG_I2C_SERCOM_DMAC_ID_RX   SERCOM5_DMAC_ID_RX
+#endif
 /** @} */
 
 /** \name Embedded debugger SPI interface definitions
