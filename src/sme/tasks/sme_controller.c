@@ -12,6 +12,8 @@
 #include "..\model\sme_model_sigfox.h"
 #include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
 #include "..\Devices\uart\sigFox\sme_sfx_timer.h"
+#include "../interrupt/interrupt.h"
+#include "../Devices/I2C/nfc/nxpNfc.h"
 
 static void control_task(void *params);
 
@@ -58,6 +60,7 @@ static void sendToSigFoxValue(uint8_t sensorData){
 */
 static void sendToSfxKeep(void){
     
+    print_sfx("Sending KEEP\n\r");
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -89,6 +92,7 @@ static void sfxTimeOut(void){
     }
 
 }
+
 /*
 * First Use case
 detect NFC interrupt:
@@ -99,52 +103,129 @@ detect NFC interrupt:
 static void performExecution( uint16_t intDetection) {
     uint8_t data;
     #if NOT_SENSOR
-    if (1) {
-        // point 1
-        LSM9DS1getValues((char *)&data);
+    
+    // point 1
+    LSM9DS1getValues((char *)&data);
 
-        //point 2 (could be a FSM because has to be wait the GSM wake-up)
-        // getPosition();
+    //point 2 (could be a FSM because has to be wait the GSM wake-up)
+    // getPosition();
 
-        //point 3
-        sendToSigFoxValue(data);
+    //point 3
+    sendToSigFoxValue(data);
 
-        #else
-        // check which is the interrupt that wake-up the task
-        if ((intDetection & NFC_FD_INT) == NFC_FD_INT) {
-            #endif
+    #else
+    // check which is the interrupt that wake-up the task
+    if ((intDetection & NFC_FD_INT) == NFC_FD_INT) {
+    }
+    #endif
 
+    
+}
+
+
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void button2Execution(void) {
+    uint8_t data;
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    int offset;
+    for (int page=0; page<255/NFC_PAGE_SIZE; page++){
+        if (readUserData(page)) {
+            
+            sfModel->message.dataMode.length+=NFC_PAGE_SIZE;
+
+            offset = ((page)*NFC_PAGE_SIZE);
+            memcpy(&sfModel->message.dataMode.payload[offset],getLastNfcPage(),NFC_PAGE_SIZE);
         }
     }
 
-    /**
-    *
-    * This task is the board controller.
-    * This manage the SmartEverything controller as required
-    *
-    * \param params Parameters for the task. (Not used.)
-    */
-    static void control_task(void *params)
-    {
-        //bool valueRead=false;
-        controllerQueueS current_message;
-        //uint8_t value;
-        
+    //point 2 (could be a FSM because has to be wait the GSM wake-up)
+    // getPosition();
 
-        for(;;) {
-            if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
-                switch(current_message.intE) {
-                    case interruptDetected:
-                    //print_dbg("interruptDetected %d\n", current_message.intE);
-                    performExecution(interruptDetection());
-                    break;
-                    default:
-                    print_dbg("Not Handled\n");
-                }
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+
+    
+}
+
+
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void button1Execution(void) {
+    uint8_t data;
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+    //point 2 (could be a FSM because has to be wait the GSM wake-up)
+    // getPosition();
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+
+    
+}
+
+/**
+*
+* This task is the board controller.
+* This manage the SmartEverything controller as required
+*
+* \param params Parameters for the task. (Not used.)
+*/
+static void control_task(void *params)
+{
+    //bool valueRead=false;
+    controllerQueueS current_message;
+    //uint8_t value;
+    
+
+    for(;;) {
+        if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
+            switch(current_message.intE) {
+                case button1Int:
+                    button1Execution();
+                break;
+
+                case button2Int:
+                    button2Execution();
+                break;
+
+                // check on the I/O expander which is the interrupt
+                case externalInt:
+                performExecution(interruptDetection());
+                
+                break;
+                default:
+                print_dbg("Interrupt Not Handled\n");
             }
-            else {
-                sfxTimeOut();
-            }
+            clearInt(current_message.intE);
+        }
+        else {
+            sfxTimeOut();
         }
     }
+}
 

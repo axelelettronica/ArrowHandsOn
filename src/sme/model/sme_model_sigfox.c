@@ -14,9 +14,10 @@
 uint8_t sequenceNumber=1;
 static sigFoxT usartMsg;
 xSemaphoreHandle sf_sem;
-#define SF_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS)
+#define SF_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS) // it could be to wait 4 Sec
 
-sigFoxMessageTypeE sfxStatus=0;
+// after a reset SigFx starts in data mode
+sigFoxMessageTypeE sfxStatus=enterDataMode;
 
 void initSigFoxModel(void){
     // create the sigFox semaphore

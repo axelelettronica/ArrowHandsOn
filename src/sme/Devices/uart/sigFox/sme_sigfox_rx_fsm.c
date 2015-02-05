@@ -16,12 +16,13 @@ typedef enum {
     sequenceRec,
     payloadRec,
     crcRec,
-    tailerRec
+    tailerRec,
+    nullState // used when gotcha an error
 } sfxRxFSME;
 
 
 static sigFoxRxMessage answer;
-static sfxRxFSME       recFsm;
+static sfxRxFSME       recFsm=headerRec;
 static uint8_t         crcCounter;
 
 
@@ -35,26 +36,26 @@ static sfxRxFSME crcCheck(void) {
     }
     else {
         print_dbg("wrong crc = %X calculated = %x \r\n", *receivedCrc, crc);
-        return headerRec;
+        return nullState;
     }
 }
 
-static uint8_t checkSequenceConsistence(uint8_t sequence) {
+static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
     char seq[4];
     for(int i=0; i<MAX_MESSAGE_OUT; i++ ) {
         if (sfxMessageIdx[i] == sequence){
             answer.sequenceNumber = sequence;
             answer.payloadPtr = 0;
-            recFsm = payloadRec;
 
-            return SME_SFX_OK;
+            return payloadRec;
         }
     }
 
     print_sfx ("find wrong Sequence = %X", sequence);
     print_sfx (" stored = %X, %X\n\r", sfxMessageIdx[0], sfxMessageIdx[1]);
 
-    return SME_SFX_KO;
+    
+    return nullState;
 }
 
 static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
@@ -73,13 +74,13 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             recFsm = typeRec;
             break;
 
-            case typeRec:            
+            case typeRec:
             answer.type  = msg[i];
             recFsm = sequenceRec;
             break;
 
             case sequenceRec:
-            checkSequenceConsistence(msg[i]);
+            recFsm = checkSequenceConsistence(msg[i]);
             break;
 
             case payloadRec:
@@ -100,10 +101,15 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             case tailerRec:
             
             recFsm = headerRec;
-            if (SFX_MSG_TAILER == msg[i])
+            if (SFX_MSG_TAILER == msg[i]){
+            print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
             return SME_SFX_OK;
-            else
+            } else
             return SME_SFX_KO;
+
+            case nullState:
+            // remove all the last incoming data
+            break;
         }
     }
     return SME_OK;
@@ -125,6 +131,10 @@ static uint8_t handleConf(uint8_t *msg, uint8_t msgMaxLen) {
         }
     }
     return SME_OK;
+}
+
+void resetRxFsm(void) {
+    recFsm = headerRec;
 }
 
 uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen) {

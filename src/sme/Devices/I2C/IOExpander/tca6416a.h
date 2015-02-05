@@ -22,7 +22,7 @@ bool TCA6416aInit(void);
 bool TCA6416aPort1Values(char *buffer);
 bool TCA6416aPort0Values(char *buffer);
 bool TCA6416aPortsValues(uint16_t *buffer);
-
+bool TCA6416aResetDevices(void);
 
 
 #endif /* TCA6416A_H_ */
