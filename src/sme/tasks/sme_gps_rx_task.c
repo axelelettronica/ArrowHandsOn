@@ -11,7 +11,7 @@
 #include "..\Devices\Uart\gps\sme_sl868v2_rx_fsm.h"
 
 #define GPS_TASK_DELAY       (1000 / portTICK_RATE_MS)
-#define GPS_STACK_SIZE	  	 (configMINIMAL_STACK_SIZE)
+#define GPS_STACK_SIZE	  	 (configMINIMAL_STACK_SIZE*2)
 #define GPS_TASK_PRIORITY    (tskIDLE_PRIORITY + 1)
 #define GPS_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS)
 
@@ -44,6 +44,7 @@ static void gpsRxTask(void *params)
             if (sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN) == STATUS_OK){
             //		test++;
                 sl868v2HandleRx(msg, SME_GPS_MAX_DATA_LEN);
+                print_dbg("msg: %c", msg[0]);
         	} 
 			//test++;
 		}

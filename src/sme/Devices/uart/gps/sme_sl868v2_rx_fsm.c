@@ -77,7 +77,7 @@ void sl868v2ParseRx (void)
         /* Filling data */
         msgPtrT.nmea_p.std_p.data_p = &rxMsg.data[offset];
 
-        while( &rxMsg.data[offset++] != '*') {
+        while( rxMsg.data[offset++] != '*') {
             i++;
         }
         msgPtrT.nmea_p.std_p.dataLenght = i;
@@ -215,7 +215,7 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
       rxMsg.data[rxMsg.idx++] = *msg;
 
       if (*msg == '\n')  {
-         rxMsg.data[rxMsg.idx] = '\0';
+        rxMsg.data[rxMsg.idx] = '\0';
          sl868v2ParseRx();
          sl868InitRxData();
          print_dbg(" received: %s", rxMsg.data);
