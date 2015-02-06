@@ -11,6 +11,7 @@
 #include "sme\model\sme_model_sigfox.h"
 #include "status_codes.h"
 #include "sme_sfx_timer.h"
+#include "sme_sigfox_rx_fsm.h"
 
 /** \name Embedded debugger CDC Gateway USART interface definitions
 * @{
@@ -96,6 +97,10 @@ void sigFoxInit(void) {
 }
 
 status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
+
+    // reset the receiver fsm to a start state
+    resetRxFsm();
+
     memset((char *)rx_buffer,0,MAX_SIGFOX_RX_BUFFER_LENGTH);
     status_code_genare_t err =  usart_write_buffer_job(&usart_sigfox, (char *)msg, len);
 

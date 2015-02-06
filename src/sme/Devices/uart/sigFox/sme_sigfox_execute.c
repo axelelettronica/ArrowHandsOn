@@ -134,13 +134,13 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
 
 bool executeCDCSigFox(const sigFoxT *msg) {
 
-    bool ret = true;
+    bool ret = false;
     switch (msg->messageType){
         
         case enterConfMode:
         case confCdcMessage:
         case confIntMessage:
-        ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
+            ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
         break;
         
         case enterDataMode:

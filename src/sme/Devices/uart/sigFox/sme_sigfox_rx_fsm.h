@@ -12,6 +12,7 @@
 
 #include "sme\model\sme_model_sigfox.h"
 
+void resetRxFsm(void);
 uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen);
 
 #endif /* SME_SIGFOX_RX_FSM_H_ */

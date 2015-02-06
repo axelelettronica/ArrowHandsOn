@@ -16,6 +16,12 @@
 #include "../Devices/I2C/IOExpander/tca6416a.h"
 #include "../Devices/I2C/I2C.h"
 
+#define MMA8452_POS 0
+#define NXPNFC_POS  1
+#define TS221_POS   2
+#define LPS25_POS   3
+#define TCA6416_POS 4
+
 #define MAX_I2C_SENSORS 5
 
 // function pointer for the readValues functions on all sensor
@@ -44,16 +50,16 @@ static void readAllValues(void){
     }
 }
 
-static volatile	uint8_t i2CId=0;
-static void readSensorValue(messageU command){
 
+static void readSensorValue(messageU command){
+uint8_t i2CId=0;
     switch (command.fields.sensorId) {
         case NXPNFC_ADDRESS:
-        i2CId = 1;
+        i2CId = NXPNFC_POS;
         break;
         
         case MMA8452_ADDRESS:
-        i2CId = 0;
+        i2CId = MMA8452_POS;
         break;
         
         default:
@@ -114,24 +120,28 @@ void sme_i2c_mgr_init(void) {
     /* Configure the I2C master module */
     configure_i2c_master();
     
-    sensors[0].sensorInit  = ZXYInit;
-    sensors[0].sensorValue = MMA8452getAccelData;
+    sensors[MMA8452_POS].sensorInit  = ZXYInit;
+    sensors[MMA8452_POS].sensorValue = MMA8452getAccelData;
     
-    sensors[1].sensorValue = /*getNxpUserData*/(readValue)readSRAM;
-    sensors[1].sensorInit  = nxpInit;
+    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)readSRAM;
+    sensors[NXPNFC_POS].sensorInit  = nxpInit;
     
-    sensors[2].sensorInit  = HTS221nit;
-    sensors[2].sensorValue = HTS221getValues;
+    sensors[TS221_POS].sensorInit  = HTS221nit;
+    sensors[TS221_POS].sensorValue = HTS221getValues;
     
-    sensors[3].sensorInit  = LPS25Hnit;
-    sensors[3].sensorValue = LPS25HgetValues;
+    sensors[LPS25_POS].sensorInit  = LPS25Hnit;
+    sensors[LPS25_POS].sensorValue = LPS25HgetValues;
     
-    sensors[4].sensorInit  = TCA6416aInit;
-    sensors[4].sensorValue = TCA6416aPort1Values;
+    sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
+    sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;
     
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
         if (sensors[i].sensorInit())
         sensors[i].sensorInitialized=1;
     }
     
+    
+    //if the IO extender as been initialized, reset the Devices
+    if (sensors[TCA6416_POS].sensorInitialized)
+        TCA6416aResetDevices();
 }

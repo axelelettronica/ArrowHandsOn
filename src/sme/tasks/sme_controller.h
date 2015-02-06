@@ -11,7 +11,9 @@
 #define SME_CONTROLLER_H_
 
 typedef enum {
-    interruptDetected,
+    button1Int,
+    button2Int,
+    externalInt,
     nfcInt,
     bteInt
 }eventE;
