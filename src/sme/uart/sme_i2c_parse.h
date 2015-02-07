@@ -9,11 +9,10 @@
 #ifndef SME_I2C_PARSE_H_
 #define SME_I2C_PARSE_H_
 
-#include "sme_cdc_cmd_parse.h"
 
 
     /* I.E. i2c <address> [r/w] <register> <data> */
-int parseI2CMsg(cdc_queue_msg_t *data);
+int parseI2CMsg(void);
 
 
 #endif /* SME_I2C_PARSE_H_ */

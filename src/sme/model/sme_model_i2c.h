@@ -25,19 +25,18 @@ typedef enum {
 
 #define SME_CDC_MAX_DATA_LEN  20
 
-typedef union {
+typedef struct {
     struct {
         uint8_t sensorId;
         uint8_t i2cRegister;
         uint8_t datalen;
         uint8_t data[SME_CDC_MAX_DATA_LEN];
     }fields;
-    uint8_t message[5];
-}messageU;
+}i2cMessageS;
 
 typedef struct {
     sensorCommandE code; // code of command to execute to the sensor
-    messageU   command;     // must be allocated and released by the caller
+    i2cMessageS   command;     // must be allocated and released by the caller
 }i2cQueueS;
 
 

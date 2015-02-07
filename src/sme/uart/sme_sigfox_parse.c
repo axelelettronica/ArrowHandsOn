@@ -119,7 +119,7 @@ int parseSigFoxMsg(void) {
         
     // read operation
     if (sme_cli_msg.token[1][0] != 0) {
-        switch(sme_cli_msg.token[1][0]) {
+            switch(sme_cli_msg.token[1][0]) {
             case 'c':
             err |= parseCommandToken(usartMsg);
             break;

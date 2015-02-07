@@ -20,7 +20,7 @@
 #define SIGFOX_MODULE              SERCOM4
 #define SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PB12C_SERCOM4_PAD0
 #define SIGFOX_SERCOM_PINMUX_PAD1  PINMUX_PB13C_SERCOM4_PAD1
-#define SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_PB14C_SERCOM4_PAD2
 #define SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SIGFOX_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
 #define SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
@@ -81,8 +81,7 @@ void sigFoxInit(void) {
     {
         init = usart_init(&usart_sigfox, SIGFOX_MODULE, &config_usart);
     } while (init != STATUS_OK);
-    /* while ( usart_init(&usart_sigfox, SIGFOX_MODULE, &config_usart) != STATUS_OK) {
-    }*/
+
 
     usart_enable(&usart_sigfox);
     

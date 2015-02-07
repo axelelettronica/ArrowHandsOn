@@ -20,7 +20,6 @@
 
 static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d|s: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
-static char CDC_HELP_I2C[]   ="Help: i2c <hex-addressd> [r/w] <hex-register> <hex-data>\r\n";
 static char CDC_HELP_SL868V2[]="Help: gps [c] <Standard NMEA Sentence> (between '$' and '*') ...\r\n";
 static char CDC_HELP_NA[]="TBD\n";
 
@@ -44,7 +43,7 @@ typedef enum {
 } sme_cdc_cmd_t;
 
 
-typedef int (*cmd_callback) (cdc_queue_msg_t *data, ...);
+typedef int (*cmd_callback) (void);
 
 typedef struct {
     sme_cdc_cmd_t cmd;
@@ -56,12 +55,13 @@ typedef struct {
 /*                              Functions prototypes                         */
 /*****************************************************************************/
 
-static int cdc_parser_show(cdc_queue_msg_t *data, xQueueHandle *queue);
-static int cdc_parser_help(cdc_queue_msg_t *data);
-static int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue);
-static int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue);
-static int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue);
-static int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue);
+static int cdc_parser_show(void);
+static int cdc_parser_help(void);
+static int cdc_parser_dbg (void);
+static int cdc_parser_dbg_i2c(void);
+static int cdc_parser_dbg_sl868v2(void);
+static int cdc_parser_dbg_sigfox(void);
+
 static int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb);
 
 /*****************************************************************************/
@@ -79,7 +79,7 @@ cmd_cb_t  cmd_cb[] = {
 };
 
 
-cdc_queue_msg_t cdc_q_buffer;
+
 
 
 /*****************************************************************************/
@@ -121,19 +121,19 @@ int sme_hex_str_to_data(uint8_t *s, uint8_t *data, uint8_t *datalen)
 /*                          I2C Parsing functions                            */
 /*****************************************************************************/
 
-int cdc_parser_help(cdc_queue_msg_t *data)
+int cdc_parser_help(void)
 {
     uint8_t i;
 
-    print_out("Available commands:\n");
+    print_out("Available commands:\r\n");
     for (i=0; i < CDC_CMD_MAX; ++i) {
-        print_out("- %s\n",cmd_cb[i].cmd_str);
+        print_out("- %s\r\n",cmd_cb[i].cmd_str);
     }
     
     return SME_OK;
 }
 
-int cdc_parser_show(cdc_queue_msg_t *data, xQueueHandle *queue)
+int cdc_parser_show()
 {
     print_out(CDC_HELP_NA);
     return SME_OK;
@@ -144,7 +144,7 @@ int cdc_parser_show(cdc_queue_msg_t *data, xQueueHandle *queue)
 *   e  : enable Errors, d  : enable Debug, ed: enable Error & Debug
 *   0  : disable all
 */
-int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue)
+int cdc_parser_dbg (void)
 {
     int i = 0;
     bool wrong = true;
@@ -164,7 +164,7 @@ int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue)
             
             case 's':
             sme_dbg_sfx_enable = !sme_dbg_sfx_enable;
-             wrong = false;
+            wrong = false;
             break;
 
             default:
@@ -178,28 +178,19 @@ int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue)
     return SME_OK;
 }
 
-int cdc_parser_dbg_i2c(cdc_queue_msg_t *data, xQueueHandle *queue)
+int cdc_parser_dbg_i2c(void)
 {
-    int err = parseI2CMsg(data);
+    int err = parseI2CMsg();
 
-    if (err != SME_OK) {
-        // print help
-        print_out(CDC_HELP_I2C);
-        return SME_EINVAL;
-    }
-
-    // do not send to task anymore
-    *queue = NULL;
-    return SME_OK;
+    return err;
 }
 
 /*
 * I.E. i2c <hex-addressd> [r/w] <hex-register> <hex-data>
 */
-int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
+int cdc_parser_dbg_sigfox()
 {
     int err = SME_OK;
-    *queue = NULL;
     
     err  |= parseSigFoxMsg();
     
@@ -214,10 +205,9 @@ int cdc_parser_dbg_sigfox(cdc_queue_msg_t *data, xQueueHandle *queue)
 * I.E. gps [c] <NMEA-string>
 *      <NMEA-string> = CMD between '$' and '*'
 */
-int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue)
+int cdc_parser_dbg_sl868v2(void)
 {
     int err = SME_OK;
-    *queue = NULL;
     
     err  |= parseSl868v2Msg();
     
@@ -228,20 +218,13 @@ int cdc_parser_dbg_sl868v2(cdc_queue_msg_t *data, xQueueHandle *queue)
     return err;
 }
 
-
-
 int sme_cdc_cmd_execute(cmd_cb_t *cmd)
 {
-    xQueueHandle    queue;
-    
-    // Fill queue_msg form msg
     if (!cmd) {
         return SME_EINVAL;
     }
-    
-    memset(&cdc_q_buffer,0, sizeof(cdc_queue_msg_t));
-    
-    if (cmd->func(&cdc_q_buffer, &queue)) {
+
+    if (cmd->func()) {
         return SME_EINVAL;
     }
     
