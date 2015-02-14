@@ -49,13 +49,13 @@ void sme_led_rgb_init(void) {
     tcc_set_compare_value(&tcc_rgb_instance, CC_R_REGISTER, 0xffff);}void sme_led_green_on(void){    //Enable the GREEN TC module to start the timer and begin PWM signal generation.
       if(leds_initilized.led_g_init)
       tcc_set_compare_value(&tcc_rgb_instance, CC_G_REGISTER, 0xffff);
-    }void sme_led_blu_on(void){    //Enable the BLU TC module to start the timer and begin PWM signal generation.
+    }void sme_led_blue_on(void){    //Enable the BLU TC module to start the timer and begin PWM signal generation.
      if(leds_initilized.led_b_init)
      tcc_set_compare_value(&tcc_rgb_instance, CC_B_REGISTER, 0xffff);
 }void sme_led_red_off(void) {    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, CC_R_REGISTER, 0);}void sme_led_green_off(void){    if(leds_initilized.led_g_init)
-     tcc_set_compare_value(&tcc_rgb_instance, CC_G_REGISTER, 0);}void sme_led_blu_off(void){    if(leds_initilized.led_b_init)
+     tcc_set_compare_value(&tcc_rgb_instance, CC_G_REGISTER, 0);}void sme_led_blue_off(void){    if(leds_initilized.led_b_init)
      tcc_set_compare_value(&tcc_rgb_instance, CC_B_REGISTER, 0);}void sme_brigthness_led_red(uint32_t brigthness){    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, CC_R_REGISTER, brigthness);}void sme_brigthness_led_green(uint32_t brigthness){ if(leds_initilized.led_r_init)
-    tcc_set_compare_value(&tcc_rgb_instance, CC_G_REGISTER, brigthness);}void sme_brigthness_led_blu(uint32_t brigthness){ if(leds_initilized.led_r_init)
+    tcc_set_compare_value(&tcc_rgb_instance, CC_G_REGISTER, brigthness);}void sme_brigthness_led_blue(uint32_t brigthness){ if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, CC_B_REGISTER, brigthness);}

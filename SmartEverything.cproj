@@ -677,8 +677,6 @@
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\GCC\" />
     <Folder Include="src\ASF\thirdparty\freertos\" />
-    <Folder Include="src\ASF\thirdparty\freertos\demo\" />
-    <Folder Include="src\ASF\thirdparty\freertos\demo\oled1_tickless_xpro_example\" />
     <Folder Include="src\ASF\thirdparty\freertos\freertos-8.0.1\" />
     <Folder Include="src\ASF\thirdparty\freertos\freertos-8.0.1\Source\" />
     <Folder Include="src\ASF\thirdparty\freertos\freertos-8.0.1\Source\include\" />
@@ -1089,9 +1087,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\component\evsys.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\freertos\demo\oled1_tickless_xpro_example\oled1.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\drivers\sercom\usart\usart.h">
