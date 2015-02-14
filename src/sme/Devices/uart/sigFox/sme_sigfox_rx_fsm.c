@@ -8,6 +8,7 @@
 #include "sme\model\sme_model_sigfox.h"
 #include "sme_cmn.h"
 #include "sme_sigfox_usart.h"
+#include "..\..\IO\sme_rgb_led.h"
 
 typedef enum {
     headerRec,
@@ -35,6 +36,7 @@ static sfxRxFSME crcCheck(void) {
         return tailerRec;
     }
     else {
+        sme_brigthness_led_red(0xffff);
         print_dbg("wrong crc = %X calculated = %x \r\n", *receivedCrc, crc);
         return nullState;
     }
@@ -50,7 +52,7 @@ static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
             return payloadRec;
         }
     }
-
+    sme_brigthness_led_red(0xffff);
     print_sfx ("find wrong Sequence = %X", sequence);
     print_sfx (" stored = %X, %X\n\r", sfxMessageIdx[0], sfxMessageIdx[1]);
 
@@ -102,8 +104,8 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             
             recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i]){
-            print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
-            return SME_SFX_OK;
+                print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
+                return SME_SFX_OK;
             } else
             return SME_SFX_KO;
 

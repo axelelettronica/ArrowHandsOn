@@ -12,6 +12,7 @@
 #include "sme\tasks\sme_gps_task.h"
 #include "sme\model\sme_model_sl868v2.h"
 #include "./sme_sl868v2_usart.h"
+#include "..\..\IO\sme_rgb_led.h"
 
 /** \name Extension header #1 UART definitions
 * @{
@@ -37,6 +38,12 @@
 #define GPS_SERCOM_DMAC_ID_RX   SERCOM1_DMAC_ID_RX
 #define GPS_BAUDRATE		    9600
 
+
+
+
+#define VALID_GREEN_LEVEL (0xFFFF / 8)
+
+
 /* interrupt USART variables */
 static struct usart_module usart_gps;
 
@@ -58,7 +65,7 @@ static void usart_gps_read_callback(const struct usart_module *const usart_modul
 static void usart_gps_write_callback(const struct usart_module *const usart_module)
 {
 
-	port_pin_toggle_output_level(LED_0_PIN);
+	    sme_brigthness_led_green(VALID_GREEN_LEVEL);
 
 }
 
@@ -125,6 +132,7 @@ sl868v2ReceivedMessage(uint8_t *msg, uint8_t len )
                                                       MAX_SL868V2_RX_BUFFER_LENGTH);
 	if (ret == STATUS_OK) {
 		memcpy((char *)msg, (char *)gps_rx_buffer, MAX_SL868V2_RX_BUFFER_LENGTH);
+        sme_led_green_off();
         return SME_OK;
 	} else {
         return SME_EIO;

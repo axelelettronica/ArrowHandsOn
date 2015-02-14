@@ -12,6 +12,7 @@
 #include "status_codes.h"
 #include "sme_sfx_timer.h"
 #include "sme_sigfox_rx_fsm.h"
+#include "..\..\IO\sme_rgb_led.h"
 
 /** \name Embedded debugger CDC Gateway USART interface definitions
 * @{
@@ -26,6 +27,10 @@
 #define SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
 
 #define SIGFOX_BAUDRATE			   19200
+
+#define VALID_RED_LEVEL   (0xFFFF / 2)
+#define VALID_BLUE_LEVEL  (0xFFFF / 16)
+
 /** @} */
 
 /* interrupt USART variables */
@@ -53,9 +58,8 @@ static void usart_sigfox_read_callback(const struct usart_module *const usart_mo
 
 static void usart_sigfox_write_callback(const struct usart_module *const usart_module)
 {
-
-    port_pin_toggle_output_level(LED_0_PIN);
-
+    sme_brigthness_led_red(VALID_RED_LEVEL);
+     sme_brigthness_led_blu(VALID_BLUE_LEVEL);
 }
 
 volatile int init;
@@ -112,6 +116,9 @@ status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){
     status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
     if (ret == STATUS_OK) {
+        port_pin_set_output_level(LED_0_PIN, LED_0_INACTIVE); // clear the led
+        sme_led_red_off();
+        sme_led_blu_off();
         memcpy((char *)msg, (char *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
     }
     return ret;

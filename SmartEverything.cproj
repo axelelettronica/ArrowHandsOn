@@ -32,12 +32,13 @@
           <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common2.services.gfx_mono" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common2.services.gfx_mono.font" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.extint" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.port" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.drivers.sercom.i2c.master" value="Add" config="polled" content-id="Atmel.ASF" />
           <option id="sam0.drivers.sercom.usart" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.system" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.drivers.tc" value="Add" config="callback" content-id="Atmel.ASF" />
-          <option id="sam0.drivers.extint" value="Add" config="callback" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.tcc" value="Add" config="polled" content-id="Atmel.ASF" />
           <option id="common.services.freertos.oled1_tickless_xpro_example" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.services.freertos.oled1_tickless_xpro_example.user_io" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.utils" value="Add" config="" content-id="Atmel.ASF" />
@@ -280,6 +281,11 @@
           <file path="src/ASF/sam0/drivers/extint/extint_callback.h" framework="" version="3.19.0" source="sam0\drivers\extint\extint_callback.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/extint/extint.h" framework="" version="3.19.0" source="sam0\drivers\extint\extint.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/Config/conf_extint.h" framework="" version="3.19.0" source="sam0\drivers\extint\module_config\conf_extint.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc.c" framework="" version="3.19.0" source="sam0\drivers\tcc\tcc.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_buffering/qs_tcc_buffering.h" framework="" version="3.19.0" source="sam0\drivers\tcc\quick_start_buffering\qs_tcc_buffering.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_dma/qs_tcc_dma.h" framework="" version="3.19.0" source="sam0\drivers\tcc\quick_start_dma\qs_tcc_dma.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc.h" framework="" version="3.19.0" source="sam0\drivers\tcc\tcc.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start/qs_tcc_basic.h" framework="" version="3.19.0" source="sam0\drivers\tcc\quick_start\qs_tcc_basic.h" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.19.0/common.services.freertos.oled1_tickless_xpro_example.samd21_xplained_pro/html/index.html" />
         <offline-documentation help="" />
@@ -300,7 +306,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.edbg</ToolType>
-      <ToolNumber>ATML2130021800003503</ToolNumber>
+      <ToolNumber>ATML2130021800003261</ToolNumber>
       <ToolName>EDBG</ToolName>
     </com_atmel_avrdbg_tool_edbg>
   </PropertyGroup>
@@ -327,6 +333,7 @@
       <Value>SYSTICK_MODE</Value>
       <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
       <Value>EXTINT_CALLBACK_MODE=true</Value>
+      <Value>TCC_ASYNC=false</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
@@ -367,6 +374,7 @@
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
       <Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value>
       <Value>../src/ASF/sam0/drivers/extint</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -389,7 +397,7 @@
   </armgcc.linker.libraries.LibrarySearchPaths>
   <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
   <armgcc.linker.miscellaneous.LinkerFlags>-Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/samd21/gcc/samd21j18a_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0=true -DBOARD=SAMD21_XPLAINED_PRO -DGFX_MONO_LCD_HEIGHT=64 -DGFX_MONO_UG_2832HSWEG04=1 -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__FREERTOS__ -D__SAMD21J18A__ -DI2C_MASTER_CALLBACK_MODE=false -DEXTINT_CALLBACK_MODE=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0=true -DBOARD=SAMD21_XPLAINED_PRO -DGFX_MONO_LCD_HEIGHT=64 -DGFX_MONO_UG_2832HSWEG04=1 -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__FREERTOS__ -D__SAMD21J18A__ -DI2C_MASTER_CALLBACK_MODE=false -DEXTINT_CALLBACK_MODE=true -DTCC_ASYNC=false</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.DefaultIncludePath>False</armgcc.preprocessingassembler.general.DefaultIncludePath>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
@@ -428,6 +436,7 @@
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
       <Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value>
       <Value>../src/ASF/sam0/drivers/extint</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -457,6 +466,8 @@
       <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>NOT_SENSOR</Value>
+      <Value>TCC_ASYNC=false</Value>
+      <Value>DEBUG_SIGFOX</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>
@@ -508,6 +519,7 @@
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
       <Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value>
       <Value>../src/ASF/sam0/drivers/extint</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -534,7 +546,7 @@
   <armgcc.linker.memorysettings.ExternalRAM />
   <armgcc.linker.miscellaneous.LinkerFlags>-Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/samd21/gcc/samd21j18a_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0=true -DBOARD=SAMD21_XPLAINED_PRO -DGFX_MONO_LCD_HEIGHT=64 -DGFX_MONO_UG_2832HSWEG04=1 -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__FREERTOS__ -D__SAMD21J18A__ -DI2C_MASTER_CALLBACK_MODE=false -DEXTINT_CALLBACK_MODE=true</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0=true -DBOARD=SAMD21_XPLAINED_PRO -DGFX_MONO_LCD_HEIGHT=64 -DGFX_MONO_UG_2832HSWEG04=1 -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__FREERTOS__ -D__SAMD21J18A__ -DI2C_MASTER_CALLBACK_MODE=false -DEXTINT_CALLBACK_MODE=true -DTCC_ASYNC=false</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.DefaultIncludePath>False</armgcc.preprocessingassembler.general.DefaultIncludePath>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
@@ -573,6 +585,7 @@
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
       <Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value>
       <Value>../src/ASF/sam0/drivers/extint</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -630,6 +643,10 @@
     <Folder Include="src\ASF\sam0\drivers\system\interrupt\system_interrupt_samd21\" />
     <Folder Include="src\ASF\sam0\drivers\system\pinmux\" />
     <Folder Include="src\ASF\sam0\drivers\system\pinmux\quick_start\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_buffering\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_dma\" />
     <Folder Include="src\ASF\sam0\drivers\tc\" />
     <Folder Include="src\ASF\sam0\drivers\tc\quick_start\" />
     <Folder Include="src\ASF\sam0\drivers\tc\quick_start_callback\" />
@@ -680,6 +697,7 @@
     <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
+    <Folder Include="src\sme\Devices\IO" />
     <Folder Include="src\sme\Devices\uart" />
     <Folder Include="src\sme\Devices\uart\gps\" />
     <Folder Include="src\sme\Devices\uart\sigFox" />
@@ -728,6 +746,21 @@
     <Compile Include="src\ASF\sam0\drivers\sercom\i2c\i2c_samd21_r21_d10_d11\i2c_master.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_buffering\qs_tcc_buffering.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_dma\qs_tcc_dma.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start\qs_tcc_basic.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\tcc\tcc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\tcc\tcc.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\ASF\sam0\utils\stdio\read.c">
       <SubType>compile</SubType>
     </Compile>
@@ -753,6 +786,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\IO\sme_rgb_led.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\IO\sme_rgb_led.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_execute.c">
