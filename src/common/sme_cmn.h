@@ -9,7 +9,7 @@
 #define COMMON_H_
 
 #include <asf.h>
-#include <stdio_serial.h>
+#include <stdio/stdio_serial/stdio_serial.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "sme_cdc_io.h"

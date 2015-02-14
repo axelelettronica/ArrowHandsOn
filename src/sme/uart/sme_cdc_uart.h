@@ -54,8 +54,6 @@
 #define MAX_TOKEN_LEN         30
 #endif // SME_CDC_H
 
-
-#define EDBG_CDC_SIGFOX_BAUDRATE 115200
 int sme_cdc_cmd_parse (uint8_t token_num);
 
 

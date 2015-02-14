@@ -14,32 +14,6 @@
 #include "./sme_sl868v2_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
 
-/** \name Extension header #1 UART definitions
-* @{
-*
-#define GPS_MODULE              SERCOM2
-#define GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
-#define GPS_SERCOM_PINMUX_PAD0  PINMUX_PA08D_SERCOM2_PAD0
-#define GPS_SERCOM_PINMUX_PAD1  PINMUX_PA09D_SERCOM2_PAD1
-#define GPS_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
-#define GPS_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
-#define GPS_SERCOM_DMAC_ID_TX   SERCOM2_DMAC_ID_TX
-#define GPS_SERCOM_DMAC_ID_RX   SERCOM2_DMAC_ID_RX
-#define GPS_BAUDRATE		    9600
-/ @} */
-
-#define GPS_MODULE              SERCOM1
-#define GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
-#define GPS_SERCOM_PINMUX_PAD0  PINMUX_PA16C_SERCOM1_PAD0
-#define GPS_SERCOM_PINMUX_PAD1  PINMUX_PA17C_SERCOM1_PAD1
-#define GPS_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
-#define GPS_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
-#define GPS_SERCOM_DMAC_ID_TX   SERCOM1_DMAC_ID_TX
-#define GPS_SERCOM_DMAC_ID_RX   SERCOM1_DMAC_ID_RX
-#define GPS_BAUDRATE		    9600
-
-
-
 
 #define VALID_GREEN_LEVEL (0xFFFF / 8)
 
@@ -74,7 +48,7 @@ void uartInit(const struct usart_module *const module,
              usart_callback_t tx_callback_func,
              usart_callback_t rx_callback_func) 
 {
-	while (usart_init(module, GPS_MODULE, config) != STATUS_OK) {
+	while (usart_init(module, SME_GPS_MODULE, config) != STATUS_OK) {
 	}
 
 	usart_enable(module);
@@ -96,12 +70,12 @@ void sl868v2Init(void) {
 
     usart_get_config_defaults(&config_usart);
     //! [setup_gps_config]
-    config_usart.baudrate    = GPS_BAUDRATE;
-    config_usart.mux_setting = GPS_SERCOM_MUX_SETTING;
-    config_usart.pinmux_pad0 = GPS_SERCOM_PINMUX_PAD0;
-    config_usart.pinmux_pad1 = GPS_SERCOM_PINMUX_PAD1;
-    config_usart.pinmux_pad2 = GPS_SERCOM_PINMUX_PAD2;
-    config_usart.pinmux_pad3 = GPS_SERCOM_PINMUX_PAD3;
+    config_usart.baudrate    = SME_GPS_BAUDRATE;
+    config_usart.mux_setting = SME_GPS_SERCOM_MUX_SETTING;
+    config_usart.pinmux_pad0 = SME_GPS_SERCOM_PINMUX_PAD0;
+    config_usart.pinmux_pad1 = SME_GPS_SERCOM_PINMUX_PAD1;
+    config_usart.pinmux_pad2 = SME_GPS_SERCOM_PINMUX_PAD2;
+    config_usart.pinmux_pad3 = SME_GPS_SERCOM_PINMUX_PAD3;
 
     uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
              usart_gps_read_callback);
