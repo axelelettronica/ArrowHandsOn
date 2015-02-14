@@ -8,9 +8,9 @@
 
 #ifndef SME_SFX_TIMER_H_
 #define SME_SFX_TIMER_H_
+#include "common/sme_timer_define.h"
 
-
-#define SFX_COMMAND_TIMEOUT  (120000 / portTICK_RATE_MS)
+#define SFX_COMMAND_TIMEOUT  ONE_MINUTE
 #define SFX_COMMAND_TIMEOUT_ID 1
 
 bool isSfxCommandTimerExpired(void);

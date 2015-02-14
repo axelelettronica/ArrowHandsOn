@@ -37,7 +37,7 @@
 #define UART_TASK_DELAY         (51 / portTICK_RATE_MS)
 
 #define CONTROL_TASK_PRIORITY      (tskIDLE_PRIORITY + 2)
-#define CONTROL_TASK_DELAY         (300000 / portTICK_RATE_MS) // 5 Minuts
+#define CONTROL_TASK_DELAY         FIVE_MINUTE
 
 
 extern bool volatile tickless_enable;

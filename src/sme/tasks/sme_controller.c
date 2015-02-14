@@ -120,10 +120,8 @@ static void sfxTimeOut(void) {
         }
     }
     else {
-        if (isSfxCommandTimerExpired()) {
-            print_sfx("no command sent, exit from command mode\r\n");
-            sendToSfxExitConf();
-        }
+        print_sfx("no command sent, exit from command mode\r\n");
+        sendToSfxExitConf();        
     }
     #endif
 }

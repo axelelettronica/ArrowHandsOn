@@ -12,6 +12,7 @@
 #include "sme_sfx_timer.h"
 #include "sme/model/sme_model_sigfox.h"
 #include "sme_sigfox_execute.h"
+#include "../../IO/sme_rgb_led.h"
 
 static TimerHandle_t sfxCommandTimeOut;
 static bool timedOut;
@@ -25,7 +26,8 @@ static void sfxTimerCallback( TimerHandle_t pxTimer )
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( pxTimer );
     print_sfx("TimeOut\r\n");
-    timedOut = true;
+    sme_led_red_off();
+    sme_led_blue_off();
 }
 
 void initSfxTimer(void){
@@ -50,7 +52,7 @@ void stopSfxCommandTimer(void){
 
 
 void startSfxCommandTimer(void) {
-    // start or rest the timer
+    // start or reset the timer
     BaseType_t start =  xTimerStart(sfxCommandTimeOut, 0 );
     if(start != pdPASS )
     {

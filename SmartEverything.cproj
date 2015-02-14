@@ -332,11 +332,10 @@
   <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
   <Value>EXTINT_CALLBACK_MODE=true</Value>
   <Value>TCC_ASYNC=false</Value>
-  <Value>DEBUG_SIGFOX</Value>
   <Value>NOT_SENSOR</Value>
   <Value>NDEBUG</Value>
 </ListValues></armgcc.compiler.symbols.DefSymbols>
-  <armgcc.compiler.preprocessor.UndefSymbols><ListValues><Value>SMARTEVERYTHING</Value></ListValues></armgcc.compiler.preprocessor.UndefSymbols>
+  <armgcc.compiler.preprocessor.UndefSymbols><ListValues><Value>SMARTEVERYTHING</Value><Value>DEBUG_SIGFOX</Value></ListValues></armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
   <armgcc.compiler.directories.IncludePaths><ListValues><Value>../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro</Value><Value>../src/ASF/common2/components/display/ssd1306</Value><Value>../src/ASF/sam0/utils/header_files</Value><Value>../src/ASF/sam0/drivers/tc</Value><Value>../src/ASF/common/utils</Value><Value>../src/ASF/sam0/drivers/system/pinmux</Value><Value>../src/ASF/common2/services/delay/sam0</Value><Value>../src/ASF/common/boards</Value><Value>../src/ASF/sam0/drivers/sercom/spi</Value><Value>../src/ASF/sam0/drivers/port</Value><Value>../src/ASF/common2/services/delay</Value><Value>../src/ASF/sam0/drivers/system/clock/clock_samd21_r21</Value><Value>../src/ASF/sam0/boards</Value><Value>../src/ASF/sam0/drivers/sercom/usart</Value><Value>../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/include</Value><Value>../src/ASF/sam0/utils</Value><Value>../src/ASF/thirdparty/CMSIS/Include</Value><Value>../src/config</Value><Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value><Value>../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samd21</Value><Value>../src/ASF/sam0/boards/samd21_xplained_pro</Value><Value>../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/portable/GCC/ARM_CM0</Value><Value>../src</Value><Value>../src/ASF/sam0/drivers/sercom</Value><Value>../src/ASF/sam0/utils/preprocessor</Value><Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value><Value>../src/ASF/sam0/drivers/system</Value><Value>../src/ASF/common2/services/gfx_mono</Value><Value>../src/ASF/sam0/utils/cmsis/samd21/source</Value><Value>../src/ASF/sam0/drivers/system/clock</Value><Value>../src/ASF/sam0/drivers/system/interrupt</Value><Value>../src/ASF/sam0/drivers/sercom/i2c</Value><Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value><Value>../src/ASF/sam0/drivers/extint</Value><Value>../src/ASF/sam0/drivers/tcc</Value><Value>../src/common</Value><Value>../src/sme</Value><Value>../src/ASF/common/boards/serial</Value><Value>../src/ASF/sam0/utils/stdio/stdio_serial</Value></ListValues></armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
@@ -379,11 +378,10 @@
   <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
   <Value>EXTINT_CALLBACK_MODE=true</Value>
   <Value>TCC_ASYNC=false</Value>
-  <Value>DEBUG_SIGFOX</Value>
   <Value>NOT_SENSOR</Value>
   <Value>DEBUG</Value>
 </ListValues></armgcc.compiler.symbols.DefSymbols>
-  <armgcc.compiler.preprocessor.UndefSymbols><ListValues><Value>SMARTEVERYTHING</Value></ListValues></armgcc.compiler.preprocessor.UndefSymbols>
+  <armgcc.compiler.preprocessor.UndefSymbols><ListValues><Value>SMARTEVERYTHING</Value><Value>DEBUG_SIGFOX</Value></ListValues></armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
   <armgcc.compiler.directories.IncludePaths><ListValues><Value>../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro</Value><Value>../src/ASF/common2/components/display/ssd1306</Value><Value>../src/ASF/sam0/utils/header_files</Value><Value>../src/ASF/sam0/drivers/tc</Value><Value>../src/ASF/common/utils</Value><Value>../src/ASF/sam0/drivers/system/pinmux</Value><Value>../src/ASF/common2/services/delay/sam0</Value><Value>../src/ASF/common/boards</Value><Value>../src/ASF/sam0/drivers/sercom/spi</Value><Value>../src/ASF/sam0/drivers/port</Value><Value>../src/ASF/common2/services/delay</Value><Value>../src/ASF/sam0/drivers/system/clock/clock_samd21_r21</Value><Value>../src/ASF/sam0/boards</Value><Value>../src/ASF/sam0/drivers/sercom/usart</Value><Value>../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/include</Value><Value>../src/ASF/sam0/utils</Value><Value>../src/ASF/thirdparty/CMSIS/Include</Value><Value>../src/config</Value><Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value><Value>../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samd21</Value><Value>../src/ASF/sam0/boards/samd21_xplained_pro</Value><Value>../src/ASF/thirdparty/freertos/freertos-8.0.1/Source/portable/GCC/ARM_CM0</Value><Value>../src</Value><Value>../src/ASF/sam0/drivers/sercom</Value><Value>../src/ASF/sam0/utils/preprocessor</Value><Value>../src/ASF/sam0/utils/cmsis/samd21/include</Value><Value>../src/ASF/sam0/drivers/system</Value><Value>../src/ASF/common2/services/gfx_mono</Value><Value>../src/ASF/sam0/utils/cmsis/samd21/source</Value><Value>../src/ASF/sam0/drivers/system/clock</Value><Value>../src/ASF/sam0/drivers/system/interrupt</Value><Value>../src/ASF/sam0/drivers/sercom/i2c</Value><Value>../src/ASF/sam0/drivers/sercom/i2c/i2c_samd21_r21_d10_d11</Value><Value>../src/ASF/sam0/drivers/extint</Value><Value>../src/ASF/sam0/drivers/tcc</Value><Value>../src/common</Value><Value>../src/sme</Value><Value>../src/ASF/common/boards/serial</Value><Value>../src/ASF/sam0/utils/stdio/stdio_serial</Value></ListValues></armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
@@ -601,6 +599,9 @@
     <None Include="src\config\conf_extint.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\common\sme_timer_define.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
