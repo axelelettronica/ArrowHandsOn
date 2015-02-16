@@ -15,6 +15,7 @@ typedef enum {
     button2Int,
     externalInt,
     nfcInt,
+    gpsData,
     bteInt
 }eventE;
 

@@ -12,6 +12,7 @@
 #include "..\model\sme_model_sigfox.h"
 #include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
 #include "..\Devices\uart\sigFox\sme_sfx_timer.h"
+#include "../devices/uart/gps/sme_sl868v2_execute.h"
 #include "../interrupt/interrupt.h"
 #include "../Devices/I2C/nfc/nxpNfc.h"
 
@@ -108,7 +109,7 @@ static void performExecution( uint16_t intDetection) {
     LSM9DS1getValues((char *)&data);
 
     //point 2 (could be a FSM because has to be wait the GSM wake-up)
-    // getPosition();
+    gpsStartScan();
 
     //point 3
     sendToSigFoxValue(data);
@@ -156,8 +157,6 @@ static void button2Execution(void) {
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
     executeCDCSigFox(sfModel);
-
-    
 }
 
 
@@ -183,9 +182,31 @@ static void button1Execution(void) {
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
-    executeCDCSigFox(sfModel);
+    executeCDCSigFox(sfModel); 
+}
 
-    
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void sme_gps_data_updateExecution(void) {
+    uint8_t data;
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+    // readCachedGPSPosition();
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel); 
 }
 
 /**
@@ -216,8 +237,12 @@ static void control_task(void *params)
                 // check on the I/O expander which is the interrupt
                 case externalInt:
                 performExecution(interruptDetection());
-                
                 break;
+
+                case gpsData:
+                sme_gps_data_updateExecution();          
+                break;
+
                 default:
                 print_dbg("Interrupt Not Handled\n");
             }

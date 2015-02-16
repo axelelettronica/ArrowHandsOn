@@ -10,7 +10,7 @@
 //#include <stdint-gcc.h>
 #include "../sme_FreeRTOS.h"
 
-#define SME_GPS_MAX_DATA_LEN             1 //82
+//#define SME_GPS_MAX_DATA_LEN          
 #define GPS_TASK_NAME (const char *)   "GPS"
 
 

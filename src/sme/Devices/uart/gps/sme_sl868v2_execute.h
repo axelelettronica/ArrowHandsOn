@@ -23,5 +23,9 @@
 //    return sequenceNumber++;
 //}
 
-int executeSl868v2(const sl868v2T *data);
+int  executeSl868v2(const sl868v2T *data);
+int  sendSl868v2Msg(const uint8_t *msg, uint8_t len);
+
+//  GPS exported API to drive GPS management
+void gpsStartScan(void);
 #endif /* SME_SL868V2_EXECUTE_H_ */

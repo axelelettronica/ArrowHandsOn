@@ -109,4 +109,27 @@ typedef struct {
 void releaseSl868v2Model(void);
 sl868v2T* getSl868v2Model(void);
 void initSl868v2Model(void);
+
+/* TX Messagese */
+#define  SL868V2_SET_STDBY_CMD    "$PMTK161,0*28\n\r"    // Set standby
+#define  SL868V2_HOT_RST_CMD      "$PMTK101*32\n\r"      // HOT RESTART
+#define  SL868V2_WARM_RST_CMD     "$PMTK102*31\n\r"      // WARM Restart
+#define  SL868V2_COLD_RST_CMD     "$PMTK103*30\n\r"      // Cold restart
+#define  SL868V2_FCOLD_RST_CMD    "$PMTK104*37\n\r"      // Full cold restart
+#define  SL868V2_CLR_FLASH_CMD    "$PMTK120*31\n\r"      // clear flash
+#define  SL868V2_CLEAR_ORBIT_CMD  "$PMTK127*36\n\r"      // clear predicted orbit data
+#define  SL868V2_SET_FIXINT_CMD   "$PMTK220,1000*1F\n\r" // set position fix interval to 1000 
+
+
+
+typedef enum {
+    SME_LAT,
+    SME_LONG,
+    SME_ALT,
+    SME_COORD_UNDEF
+} sme_coord_t;
+
+void sme_parse_coord(uint8_t in[], uint8_t in_len, uint8_t out_str[],
+uint8_t out_len, sme_coord_t type);
+
 #endif /* SME_MODEL_SL868V2_H_ */

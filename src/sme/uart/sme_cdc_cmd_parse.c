@@ -18,7 +18,7 @@
 #include "../model/sme_model_sl868v2.h"
 #include "sme_cdc_io.h"
 
-static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d|s: "
+static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d|s|g: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
 static char CDC_HELP_I2C[]   ="Help: i2c <hex-addressd> [r/w] <hex-register> <hex-data>\r\n";
 static char CDC_HELP_SL868V2[]="Help: gps [c] <Standard NMEA Sentence> (between '$' and '*') ...\r\n";
@@ -165,6 +165,11 @@ int cdc_parser_dbg (cdc_queue_msg_t *data, xQueueHandle *queue)
             case 's':
             sme_dbg_sfx_enable = !sme_dbg_sfx_enable;
              wrong = false;
+            break;
+
+            case 'g':
+            sme_dbg_gps_enable = !sme_dbg_gps_enable;
+            wrong = false;
             break;
 
             default:
