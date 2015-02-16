@@ -24,6 +24,8 @@
 #define NFC_PAGE_SIZE 16
 
 
+extern  uint8_t  nfcPageBuffer[NFC_PAGE_SIZE];
+
 bool readManufactoringData(void);
 void getNxpSerialNumber(char* buffer);
 bool readUserData(uint8_t page);

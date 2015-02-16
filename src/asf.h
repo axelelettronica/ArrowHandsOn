@@ -117,4 +117,8 @@
 #include <tc.h>
 #include <tc_interrupt.h>
 
+// From module: TCC - Timer Counter for Control Applications (Polled APIs)
+#include <tcc.h>
+
+
 #endif // ASF_H

@@ -54,6 +54,7 @@
 #include "sme/Devices/uart/gps/sme_sl868v2_usart.h"
 #include "sme/model/sme_model_sigfox.h"
 #include "sme/model/sme_model_sl868v2.h"
+#include "sme/Devices/IO/sme_rgb_led.h"
 
 
 static void init_services(void);
@@ -91,12 +92,14 @@ static void componentInit(void) {
     sl868v2Init();
     initSigFoxModel();
     initSl868v2Model();
+
+    sme_led_rgb_init();
 }
 
 
 int main (void)//
 {
-    system_init();
+    system_init(); 
     
     // init Hw components as first
     componentInit();

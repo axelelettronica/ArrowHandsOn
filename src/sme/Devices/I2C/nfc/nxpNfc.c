@@ -8,7 +8,7 @@
 *  Author: mfontane
 */
 
-static uint8_t  pageBuffer[NFC_PAGE_SIZE];
+uint8_t  nfcPageBuffer[NFC_PAGE_SIZE];
 typedef union manufactoringDataUnion{
     struct {
         uint8_t  slaveAddr;
@@ -23,7 +23,7 @@ typedef union manufactoringDataUnion{
 static manufactoringDataU manuf;
 
 inline uint8_t* getLastNfcPage(void) {
-    return pageBuffer;
+    return nfcPageBuffer;
 }
 
 bool readManufactoringData(void) {
@@ -51,11 +51,11 @@ bool nxpInit(void){
 }
 
 bool getConfiguration(void) {
-    return readBufferRegister(NXPNFC_ADDRESS, CONFIG_REG, pageBuffer, sizeof(pageBuffer));
+    return readBufferRegister(NXPNFC_ADDRESS, CONFIG_REG, nfcPageBuffer, sizeof(nfcPageBuffer));
 }
 
 bool getSessionReg(void) {
-    return readBufferRegister(NXPNFC_ADDRESS, SESSION_REG, pageBuffer, sizeof(pageBuffer));
+    return readBufferRegister(NXPNFC_ADDRESS, SESSION_REG, nfcPageBuffer, sizeof(nfcPageBuffer));
 }
 
 bool readUserData(uint8_t page){
@@ -67,7 +67,7 @@ bool readUserData(uint8_t page){
 
     bool ret=false;
 
-    ret = readBufferRegister(NXPNFC_ADDRESS, reg, pageBuffer, sizeof(pageBuffer));
+    ret = readBufferRegister(NXPNFC_ADDRESS, reg, nfcPageBuffer, sizeof(nfcPageBuffer));
     
     
     return ret;
@@ -79,7 +79,7 @@ bool readSRAM(void){
     uint16_t offset;
     for (int i = SRAM_START_REG, j=0; i<=SRAM_END_REG; i++,j++) {
         offset = ((j)*16);
-        ret = readBufferRegister(NXPNFC_ADDRESS, i, pageBuffer, sizeof(pageBuffer));
+        ret = readBufferRegister(NXPNFC_ADDRESS, i, nfcPageBuffer, sizeof(nfcPageBuffer));
         if (ret==false) {
             return ret;
         }

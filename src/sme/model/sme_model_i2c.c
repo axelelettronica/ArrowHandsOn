@@ -15,6 +15,7 @@
 #include "../Devices/I2C/Pressure/LPS25H.h"
 #include "../Devices/I2C/IOExpander/tca6416a.h"
 #include "../Devices/I2C/I2C.h"
+#include "sme_cdc_io.h"
 
 #define MMA8452_POS 0
 #define NXPNFC_POS  1
@@ -51,8 +52,32 @@ static void readAllValues(void){
 }
 
 
-static void readSensorValue(messageU command){
-uint8_t i2CId=0;
+static void readGenericRegister(i2cMessageS command) {
+        uint8_t data;
+    switch (command.fields.sensorId) {
+
+        // it is a 16 bytes page
+        case NXPNFC_ADDRESS:;
+        if (readBufferRegister(command.fields.sensorId, command.fields.i2cRegister, nfcPageBuffer, sizeof(nfcPageBuffer))) {
+            print_dbg("I2C READ Register %s - ", nfcPageBuffer);
+        }else {
+            print_dbg("I2C READ Fails");
+        }
+        return;
+
+        default:
+        if (readRegister(command.fields.sensorId, command.fields.i2cRegister, &data)){
+            print_dbg("I2C READ Register %c - ", data);
+        }else {
+            print_dbg("I2C READ Fails");
+        }
+
+        return;
+    }
+}
+
+static void readSensorValue(i2cMessageS command){
+    uint8_t i2CId=0;
     switch (command.fields.sensorId) {
         case NXPNFC_ADDRESS:
         i2CId = NXPNFC_POS;
@@ -107,6 +132,8 @@ void sme_cdc_i2c(i2cQueueS *current_message) {
         break;
         
         case sensorReadRegister:
+        readGenericRegister(current_message->command);
+        break;
         case sensorReadValue:
         readSensorValue(current_message->command);
         break;
@@ -143,5 +170,5 @@ void sme_i2c_mgr_init(void) {
     
     //if the IO extender as been initialized, reset the Devices
     if (sensors[TCA6416_POS].sensorInitialized)
-        TCA6416aResetDevices();
+    TCA6416aResetDevices();
 }

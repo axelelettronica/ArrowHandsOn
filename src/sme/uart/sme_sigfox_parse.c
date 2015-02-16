@@ -22,7 +22,7 @@
 #define DBG_ENABLE_STR  '1'
 #define DBG_DISABLE_STR '0'
 
-char CDC_HELP_SIGFOX[]="Help: sf <c/s> <mode> <register> <data> > \r\n";
+char CDC_HELP_SIGFOX[]="Holp: sf <c/s> <mode> <register> <data> > \r\n";
 
 bool sme_dbg_sfx_enable = false;
 
@@ -119,7 +119,7 @@ int parseSigFoxMsg(void) {
         
     // read operation
     if (sme_cli_msg.token[1][0] != 0) {
-        switch(sme_cli_msg.token[1][0]) {
+            switch(sme_cli_msg.token[1][0]) {
             case 'c':
             err |= parseCommandToken(usartMsg);
             break;

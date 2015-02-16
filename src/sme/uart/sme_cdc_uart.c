@@ -64,15 +64,15 @@ void configure_usart(struct usart_module *const cdc_uart_module)
 
 	usart_get_config_defaults(&config_usart);
 
-	config_usart.mux_setting = EDBG_CDC_SERCOM_MUX_SETTING;
-	config_usart.pinmux_pad0 = EDBG_CDC_SERCOM_PINMUX_PAD0;
-	config_usart.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
-	config_usart.pinmux_pad2 = EDBG_CDC_SERCOM_PINMUX_PAD2;
-	config_usart.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
-	config_usart.baudrate    = EDBG_CDC_SIGFOX_BAUDRATE;
+	config_usart.mux_setting = SME_CDC_SERCOM_MUX_SETTING;
+	config_usart.pinmux_pad0 = SME_CDC_SERCOM_PINMUX_PAD0;
+	config_usart.pinmux_pad1 = SME_CDC_SERCOM_PINMUX_PAD1;
+	config_usart.pinmux_pad2 = SME_CDC_SERCOM_PINMUX_PAD2;
+	config_usart.pinmux_pad3 = SME_CDC_SERCOM_PINMUX_PAD3;
+	config_usart.baudrate    = SME_CDC_SIGFOX_BAUDRATE;
 
 	while (usart_init(cdc_uart_module,
-           EDBG_CDC_MODULE, &config_usart) != STATUS_OK) {
+           SME_CDC_MODULE, &config_usart) != STATUS_OK) {
 	}
 
 	usart_enable(cdc_uart_module);

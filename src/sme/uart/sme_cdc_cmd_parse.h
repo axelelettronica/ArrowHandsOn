@@ -11,14 +11,9 @@
 
 #include "sme_cmn.h"
 #include <stdint-gcc.h>
-#include "..\model\sme_model_i2c.h"
-
-typedef union {
-	i2cQueueS   i2c_msg; 	// spi_msg
-} cdc_queue_msg_t;
 
 
-
+extern char CDC_HELP_I2C[];
 int sme_hex_str_to_data(uint8_t *s, uint8_t *data, uint8_t *datalen);
 inline int sme_int_str_to_uint8(uint8_t *s, uint8_t *value);
 inline int sme_hex_str_to_uint8(uint8_t *s, uint8_t *value);

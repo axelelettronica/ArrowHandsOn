@@ -18,8 +18,9 @@
 
 static void control_task(void *params);
 
+#define KEEP_TIMEOUT 276 // number of %minute in 23Hour
 xQueueHandle controllerQueue;
-
+static int keepTimeout;
 
 int sme_ctrl_init(void)
 {
@@ -80,10 +81,44 @@ static void sendToSfxExitConf(void){
     executeCDCSigFox(sfModel);
 }
 
-static void sfxTimeOut(void){
+#if DEBUG_SIGFOX
+char debugSFXMsg[100];
+uint8_t msgCounter=0;
+uint8_t   timeoutCounter=6;
+
+static void debugSigFox(void){
+    timeoutCounter++;
+    if (timeoutCounter==7) {
+        timeoutCounter =0;
+        msgCounter++;
+        print_sfx("Sending DEBUG MSG\n\r");
+        sigFoxT *sfModel = getSigFoxModel();
+        sprintf(sfModel->message.dataMode.payload, "SmartEveryThing 0x%x", msgCounter);
+        sfModel->messageType = dataIntMessage;
+        sfModel->message.dataMode.length=strlen(sfModel->message.dataMode.payload);
+        sfModel->message.dataMode.type = SIGFOX_DATA;
+        sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+        executeCDCSigFox(sfModel);
+    }
+}
+#endif
+
+static void sfxTimeOut(void) {
+
+    print_dbg("5 minutes timeout \r\n");
+
+    #if DEBUG_SIGFOX
+    debugSigFox();
+    #else
     if (sfxIsInDataStatus()) {
-        print_sfx("Sending SFX KEEP\r\n");
-        sendToSfxKeep();
+        keepTimeout++;
+        //every 23 Hours send the KEEP Message
+        if (keepTimeout == KEEP_TIMEOUT) {
+            print_sfx("Sending SFX KEEP\r\n");
+            sendToSfxKeep();
+            keepTimeout=0; // reset the counter for Keep
+        }
     }
     else {
         if (isSfxCommandTimerExpired()) {
@@ -91,7 +126,7 @@ static void sfxTimeOut(void){
             sendToSfxExitConf();
         }
     }
-
+    #endif
 }
 
 /*
@@ -227,11 +262,11 @@ static void control_task(void *params)
         if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
             switch(current_message.intE) {
                 case button1Int:
-                    button1Execution();
+                button1Execution();
                 break;
 
                 case button2Int:
-                    button2Execution();
+                button2Execution();
                 break;
 
                 // check on the I/O expander which is the interrupt

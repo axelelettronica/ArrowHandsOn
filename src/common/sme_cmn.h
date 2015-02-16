@@ -9,7 +9,7 @@
 #define COMMON_H_
 
 #include <asf.h>
-#include <stdio_serial.h>
+#include <stdio/stdio_serial/stdio_serial.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "sme_cdc_io.h"
@@ -37,7 +37,7 @@
 #define UART_TASK_DELAY         (51 / portTICK_RATE_MS)
 
 #define CONTROL_TASK_PRIORITY      (tskIDLE_PRIORITY + 2)
-#define CONTROL_TASK_DELAY         (120000 / portTICK_RATE_MS)
+#define CONTROL_TASK_DELAY         (300000 / portTICK_RATE_MS) // 5 Minuts
 
 
 extern bool volatile tickless_enable;

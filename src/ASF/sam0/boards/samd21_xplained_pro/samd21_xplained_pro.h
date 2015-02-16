@@ -47,6 +47,8 @@
 #include <conf_board.h>
 #include <compiler.h>
 
+#include "sme_pin_definition.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -579,23 +581,6 @@ void system_board_init(void);
 #define EDBG_UART_TX_SERCOM_PAD   -1 /* Not available on this board */
 /** @} */
 
-/** \name Embedded debugger I2C interface definitions
- * @{
- */
-#ifdef SMARTEVERYTHING
-#define EDBG_I2C_MODULE              SERCOM2
-#define EDBG_I2C_SERCOM_PINMUX_PAD0  PINMUX_PA08D_SERCOM2_PAD0
-#define EDBG_I2C_SERCOM_PINMUX_PAD1  PINMUX_PA09D_SERCOM2_PAD1
-#define EDBG_I2C_SERCOM_DMAC_ID_TX   SERCOM2_DMAC_ID_TX
-#define EDBG_I2C_SERCOM_DMAC_ID_RX   SERCOM2_DMAC_ID_RX
-#else
-#define EDBG_I2C_MODULE              SERCOM5
-#define EDBG_I2C_SERCOM_PINMUX_PAD0  PINMUX_PB16C_SERCOM5_PAD0
-#define EDBG_I2C_SERCOM_PINMUX_PAD1  PINMUX_PB17C_SERCOM5_PAD1
-#define EDBG_I2C_SERCOM_DMAC_ID_TX   SERCOM5_DMAC_ID_TX
-#define EDBG_I2C_SERCOM_DMAC_ID_RX   SERCOM5_DMAC_ID_RX
-#endif
-/** @} */
 
 /** \name Embedded debugger SPI interface definitions
  * @{
@@ -608,21 +593,6 @@ void system_board_init(void);
 #define EDBG_SPI_SERCOM_PINMUX_PAD3  PINMUX_PB23D_SERCOM5_PAD3
 #define EDBG_SPI_SERCOM_DMAC_ID_TX   SERCOM5_DMAC_ID_TX
 #define EDBG_SPI_SERCOM_DMAC_ID_RX   SERCOM5_DMAC_ID_RX
-/** @} */
-
-/** \name Embedded debugger CDC Gateway USART interface definitions
- * @{
- */
-#define EDBG_CDC_MODULE              SERCOM3
-#define EDBG_CDC_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
-#define EDBG_CDC_SERCOM_PINMUX_PAD0  PINMUX_PA22C_SERCOM3_PAD0
-#define EDBG_CDC_SERCOM_PINMUX_PAD1  PINMUX_PA23C_SERCOM3_PAD1
-#define EDBG_CDC_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
-#define EDBG_CDC_SERCOM_DMAC_ID_TX   SERCOM3_DMAC_ID_TX
-#define EDBG_CDC_SERCOM_DMAC_ID_RX   SERCOM3_DMAC_ID_RX
-/** @} */
-
 /** @} */
 
 /** \name 802.15.4 TRX Interface definitions
