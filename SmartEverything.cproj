@@ -803,6 +803,12 @@
     <Compile Include="src\sme\Devices\IO\sme_rgb_led.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_gps_timer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\uart\gps\sme_gps_timer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\uart\gps\sme_sl868v2_execute.c">
       <SubType>compile</SubType>
     </Compile>

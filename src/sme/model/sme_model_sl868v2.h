@@ -111,14 +111,14 @@ sl868v2T* getSl868v2Model(void);
 void initSl868v2Model(void);
 
 /* TX Messagese */
-#define  SL868V2_SET_STDBY_CMD    "$PMTK161,0*28\n\r"    // Set standby
-#define  SL868V2_HOT_RST_CMD      "$PMTK101*32\n\r"      // HOT RESTART
-#define  SL868V2_WARM_RST_CMD     "$PMTK102*31\n\r"      // WARM Restart
-#define  SL868V2_COLD_RST_CMD     "$PMTK103*30\n\r"      // Cold restart
-#define  SL868V2_FCOLD_RST_CMD    "$PMTK104*37\n\r"      // Full cold restart
-#define  SL868V2_CLR_FLASH_CMD    "$PMTK120*31\n\r"      // clear flash
-#define  SL868V2_CLEAR_ORBIT_CMD  "$PMTK127*36\n\r"      // clear predicted orbit data
-#define  SL868V2_SET_FIXINT_CMD   "$PMTK220,1000*1F\n\r" // set position fix interval to 1000 
+#define  SL868V2_SET_STDBY_CMD    "$PMTK161,0*28\r\n"    // Set standby
+#define  SL868V2_HOT_RST_CMD      "$PMTK101*32\r\n"      // HOT RESTART
+#define  SL868V2_WARM_RST_CMD     "$PMTK102*31\r\n"      // WARM Restart
+#define  SL868V2_COLD_RST_CMD     "$PMTK103*30\r\n"      // Cold restart
+#define  SL868V2_FCOLD_RST_CMD    "$PMTK104*37\r\n"      // Full cold restart
+#define  SL868V2_CLR_FLASH_CMD    "$PMTK120*31\r\n"      // clear flash
+#define  SL868V2_CLEAR_ORBIT_CMD  "$PMTK127*36\r\n"      // clear predicted orbit data
+#define  SL868V2_SET_FIXINT_CMD   "$PMTK220,1000*1F\r\n" // set position fix interval to 1000 
 
 
 

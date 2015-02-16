@@ -14,7 +14,7 @@
 
 
 static int parseNmeaCommandToken(sl868v2T *usartMsg);
-bool sme_dbg_gps_enable = false;
+bool sme_dbg_gps_enable = true;
 
 
 int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)

@@ -143,9 +143,6 @@ static void performExecution( uint16_t intDetection) {
     // point 1
     LSM9DS1getValues((char *)&data);
 
-    //point 2 (could be a FSM because has to be wait the GSM wake-up)
-    gpsStartScan();
-
     //point 3
     sendToSigFoxValue(data);
 
@@ -211,8 +208,9 @@ static void button1Execution(void) {
 
     // point 1
     sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+
     //point 2 (could be a FSM because has to be wait the GSM wake-up)
-    // getPosition();
+    gpsStartScan();
 
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();

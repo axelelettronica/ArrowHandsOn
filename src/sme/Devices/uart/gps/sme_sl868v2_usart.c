@@ -13,20 +13,20 @@
 #include "sme\model\sme_model_sl868v2.h"
 #include "./sme_sl868v2_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
+#include "sme_gps_timer.h"
 
 /** \name Extension header #1 UART definitions
 * @{
-*
-#define GPS_MODULE              SERCOM4
-#define GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
-#define GPS_SERCOM_PINMUX_PAD0  PINMUX_PB12C_SERCOM4_PAD0
-#define GPS_SERCOM_PINMUX_PAD1  PINMUX_PB13C_SERCOM4_PAD1
-#define GPS_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
-#define GPS_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
-#define GPS_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
-#define GPS_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
-#define GPS_BAUDRATE		    9600
 */
+#define SME_GPS_MODULE              SERCOM0
+#define SME_GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
+#define SME_GPS_SERCOM_PINMUX_PAD0  PINMUX_PA08C_SERCOM0_PAD0
+#define SME_GPS_SERCOM_PINMUX_PAD1  PINMUX_PA09C_SERCOM0_PAD1
+#define SME_GPS_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define SME_GPS_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
+#define SME_GPS_SERCOM_DMAC_ID_TX   SERCOM0_DMAC_ID_TX
+#define SME_GPS_SERCOM_DMAC_ID_RX   SERCOM0_DMAC_ID_RX
+#define SME_GPS_BAUDRATE		    9600
 
 #define VALID_GREEN_LEVEL (0xFFFF / 8)
 
@@ -93,6 +93,8 @@ void sl868v2Init(void) {
 
     uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
              usart_gps_read_callback);
+    
+    initGpsTimer();
 }
 
 int 
