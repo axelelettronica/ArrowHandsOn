@@ -12,7 +12,7 @@
 
 //Define a few of the registers that we will be accessing on the MMA8452
 
-#define WHO_AM_I    0x0D
+#define WHO_AM_I        0x0D
 #define WHO_AM_I_RETURN 0x2A
 
 

@@ -92,7 +92,7 @@ void system_board_init(void);
 
 /** \name SW0 definitions
  *  @{ */
-#define SW0_PIN                   PIN_PA15
+#define SW0_PIN                   SME_BUTTON1_PIN
 #define SW0_ACTIVE                false
 #define SW0_INACTIVE              !SW0_ACTIVE
 #define SW0_EIC_PIN               PIN_PA15A_EIC_EXTINT15
@@ -110,8 +110,8 @@ void system_board_init(void);
  *  @{ */
 #define LED_0_NAME                "LED0 (yellow)"
 #define LED_0_PIN                 LED0_PIN
-#define LED_0_ACTIVE              LED0_ACTIVE
-#define LED_0_INACTIVE            LED0_INACTIVE
+#define LED_0_ACTIVE              LED_ACTIVE
+#define LED_0_INACTIVE            LED_INACTIVE
 #define LED0_GPIO                 LED0_PIN
 #define LED0                      LED0_PIN
 

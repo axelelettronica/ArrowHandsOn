@@ -10,6 +10,7 @@
 #include "..\interrupt\interruptHandle.h"
 #include "..\Devices\I2C\Accelerometer\LSM9DS1.h"
 #include "..\model\sme_model_sigfox.h"
+#include "..\model\sme_model_i2c.h"
 #include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
 #include "..\Devices\uart\sigFox\sme_sfx_timer.h"
 #include "../devices/uart/gps/sme_sl868v2_execute.h"
@@ -201,10 +202,14 @@ detect NFC interrupt:
 */
 static void button1Execution(void) {
     uint8_t data;
+    char *i2cbuf_ptr = NULL;
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
     sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // get I2C sensor report
+    i2cbuf_ptr = sme_i2c_get_read_str();
 
     // point 1
     sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");

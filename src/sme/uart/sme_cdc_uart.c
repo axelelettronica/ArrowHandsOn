@@ -69,8 +69,8 @@ void configure_usart(struct usart_module *const cdc_uart_module)
 	config_usart.pinmux_pad1 = SME_CDC_SERCOM_PINMUX_PAD1;
 	config_usart.pinmux_pad2 = SME_CDC_SERCOM_PINMUX_PAD2;
 	config_usart.pinmux_pad3 = SME_CDC_SERCOM_PINMUX_PAD3;
-	config_usart.baudrate    = SME_CDC_SIGFOX_BAUDRATE;
-
+	config_usart.baudrate    = SME_CDC_SERCOM_BAUDRATE;
+    
 	while (usart_init(cdc_uart_module,
            SME_CDC_MODULE, &config_usart) != STATUS_OK) {
 	}
@@ -108,6 +108,7 @@ static void cdc_task_rx(void *params)
 	while (true) {
 		//! [main_read]
         vTaskDelay(UART_TASK_DELAY);
+
 		if (usart_read_wait(&cdc_usart, &temp) == STATUS_OK) {
 			xQueueSendFromISR(cdc_msg_in_queue, (uint8_t *)&temp, NULL);
 			while (usart_write_wait(&cdc_usart, temp) != STATUS_OK) {

@@ -7,6 +7,9 @@
 #include "LPS25H.h"
 #include "..\I2C.h"
 
+
+#define HUMIDITY_READY    0x20
+
 #if NOT_SENSOR
 // The SparkFun breakout board defaults to 1, set to 0 if SA0 jumper on the bottom of the board is set
 #define LPS25H_ADDRESS 85
@@ -58,7 +61,7 @@
 
 #define STATUS_REG  0x0D
 #define TEMPERATURE_READY 0xA
-#define HUMIDITY_READY    0x20
+
 
 #define HUMIDITY_L_REG 0x13
 #define HUMIDITY_H_REG 0x14
@@ -176,6 +179,9 @@
 #define CALIB_START        0x30
 #define CALIB_END	       0x3F
 #endif
+
+
+
 static inline bool humidityReady(uint8_t data) {
 	return (data & 0x02);
 }

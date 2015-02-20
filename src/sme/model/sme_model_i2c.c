@@ -30,24 +30,31 @@ typedef bool (*readValue)(char*);
 // function pointer for the initialization of sensor
 typedef bool (*initSensor)(void);
 
+#define SME_MAX_I2C_SENSOR_SIZE     10
+#define SME_MAX_I2C_SENSOR_BUF_LEN (MAX_I2C_SENSORS*SME_MAX_I2C_SENSOR_SIZE)
+
 
 typedef struct {
     bool sensorInitialized;
     initSensor sensorInit;
     readValue sensorValue;
+
 } sensorTaskStr;
 
 static sensorTaskStr sensors[MAX_I2C_SENSORS];
 
 xQueueHandle i2cCommandQueue;
 
+char buffer[SME_MAX_I2C_SENSOR_BUF_LEN];
 
-char buffer[10];
+
+//char buffer[10];
 static void readAllValues(void){
-    
+    memset(buffer, 0, SME_MAX_I2C_SENSOR_BUF_LEN);
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
-        if (sensors[i].sensorInitialized == true)
-        sensors[i].sensorValue(buffer);
+        if (sensors[i].sensorInitialized == true) {
+            sensors[i].sensorValue(buffer+(i*SME_MAX_I2C_SENSOR_SIZE));
+        }
     }
 }
 
@@ -171,4 +178,13 @@ void sme_i2c_mgr_init(void) {
     //if the IO extender as been initialized, reset the Devices
     if (sensors[TCA6416_POS].sensorInitialized)
     TCA6416aResetDevices();
+}
+
+
+/*
+ *  This function exports a preformatted string with all read sensors
+ */
+char *sme_i2c_get_read_str(void) {
+    readAllValues();
+    return buffer;
 }
