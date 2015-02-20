@@ -76,9 +76,7 @@ bool readUserData(uint8_t page){
 
 bool readSRAM(void){
     bool ret=false;
-    uint16_t offset;
     for (int i = SRAM_START_REG, j=0; i<=SRAM_END_REG; i++,j++) {
-        offset = ((j)*16);
         ret = readBufferRegister(NXPNFC_ADDRESS, i, nfcPageBuffer, sizeof(nfcPageBuffer));
         if (ret==false) {
             return ret;

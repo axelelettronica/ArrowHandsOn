@@ -13,6 +13,8 @@
 #include "sme/model/sme_model_sigfox.h"
 #include "sme_sigfox_execute.h"
 #include "../../IO/sme_rgb_led.h"
+#include "sme_pin_definition.h"
+#include "port.h"
 
 static TimerHandle_t sfxCommandTimeOut;
 static bool timedOut;
@@ -28,6 +30,7 @@ static void sfxTimerCallback( TimerHandle_t pxTimer )
     print_sfx("TimeOut\r\n");
     sme_led_red_off();
     sme_led_blue_off();
+     port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
 }
 
 void initSfxTimer(void){
@@ -39,7 +42,7 @@ void initSfxTimer(void){
     /* The timers will NOT auto-reload themselves when they expire. */
     pdFALSE,
     /* Assign each timer a unique id. */
-    SFX_COMMAND_TIMEOUT_ID,
+    ( void * ) SFX_COMMAND_TIMEOUT_ID,
     /* callback when it expires. */
     sfxTimerCallback
     );

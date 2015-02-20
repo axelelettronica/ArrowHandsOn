@@ -44,7 +44,7 @@ static sfxRxFSME crcCheck(void) {
 }
 
 static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
-    char seq[4];
+    
     for(int i=0; i<MAX_MESSAGE_OUT; i++ ) {
         if (sfxMessageIdx[i] == sequence){
             answer.sequenceNumber = sequence;

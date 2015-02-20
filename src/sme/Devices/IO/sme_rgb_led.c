@@ -56,7 +56,8 @@ void sme_led_rgb_init(void) {
 }void sme_led_red_off(void) {    // switch off the RED led    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_R_REGISTER, 0);}void sme_led_green_off(void){    // switch off the GREEN led    if(leds_initilized.led_g_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_G_REGISTER, 0);}void sme_led_blue_off(void){    // switch off the BLUE led    if(leds_initilized.led_b_init)
-    tcc_set_compare_value(&tcc_rgb_instance, SME_CC_B_REGISTER, 0);}void sme_brigthness_led_red(uint32_t brigthness) {    // ligth on a desired intensity the RED led    if(leds_initilized.led_r_init)
+    tcc_set_compare_value(&tcc_rgb_instance, SME_CC_B_REGISTER, 0);}
+void sme_led_rgb_off(void){    sme_led_green_off();    sme_led_red_off();    sme_led_green_off();    sme_led_blue_off();}void sme_brigthness_led_red(uint32_t brigthness) {    // ligth on a desired intensity the RED led    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_R_REGISTER, brigthness);}void sme_brigthness_led_green(uint32_t brigthness) {    // ligth on a desired intensity the RED led    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_G_REGISTER, brigthness);}void sme_brigthness_led_blue(uint32_t brigthness) {    // ligth on a desired intensity the RED led    if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_B_REGISTER, brigthness);}

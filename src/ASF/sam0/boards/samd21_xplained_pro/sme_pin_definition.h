@@ -1,17 +1,42 @@
 /*
- * sme_pin_definition.h
- *
- * Created: 2/14/2015 7:09:37 PM
- *  Author: mfontane
- */ 
+* sme_pin_definition.h
+*
+* Created: 2/14/2015 7:09:37 PM
+*  Author: mfontane
+*/
 
 
 #ifndef SME_PIN_DEFINITION_H_
 #define SME_PIN_DEFINITION_H_
 
+
+#define LED_ACTIVE               false
+#define LED_INACTIVE             !LED_ACTIVE
+
+#define SME_LED_Y1_PIN                 PIN_PB01
+#define SME_LED_Y1_NAME                "LED1 (yellow)"
+#define SME_LED_Y1_ACTIVE              LED_ACTIVE
+#define SME_LED_Y1_INACTIVE            LED_INACTIVE
+#define SME_LED_Y1_GPIO                SME_LED_Y1_PIN
+#define SME_LED_Y1                     SME_LED_Y1_PIN
+
+#define SME_LED_Y2_PIN                 PIN_PB03
+#define SME_LED_Y2_NAME                "LED2 (yellow)"
+#define SME_LED_Y2_ACTIVE              LED_ACTIVE
+#define SME_LED_Y2_INACTIVE            LED_INACTIVE
+#define SME_LED_Y2_GPIO                SME_LED_Y2_PIN
+#define SME_LED_Y2                     SME_LED_Y2_PIN
+
+#define SME_RESET_IOEXT_PIN                 PIN_PA13
+#define SME_RESET_IOEXT_NAME                "LED2 (yellow)"
+#define SME_RESET_IOEXT_ACTIVE              LED_ACTIVE
+#define SME_RESET_IOEXT_INACTIVE            LED_INACTIVE
+#define SME_RESET_IOEXT_GPIO                SME_RESET_IOEXT_PIN
+#define SME_RESET_IOEXT                     SME_RESET_IOEXT_PIN
+
 /** \name Embedded debugger I2C interface definitions
- * @{
- */
+* @{
+*/
 #ifdef SMARTEVERYTHING
 #define SME_I2C_MODULE              SERCOM3
 #define SME_I2C_SERCOM_PINMUX_PAD0  PINMUX_PA22C_SERCOM3_PAD0
@@ -29,8 +54,8 @@
 
 
 /** \name Embedded debugger CDC Gateway USART interface definitions
- * @{
- */
+* @{
+*/
 #ifdef SMARTEVERYTHING
 #define SME_CDC_MODULE              SERCOM0
 #define SME_CDC_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
@@ -54,8 +79,19 @@
 /** @} */
 
 /** \name Embedded SIGFOX UART interface definitions
- * @{
- */
+* @{
+*/
+/*
+#ifdef SMARTEVERYTHING
+#define SME_SIGFOX_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
+#define SME_SIGFOX_MODULE              SERCOM0
+#define SME_SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PA10C_SERCOM0_PAD2
+#define SME_SIGFOX_SERCOM_PINMUX_PAD1  PINMUX_PA11C_SERCOM0_PAD3
+#define SME_SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define SME_SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
+#define SME_SIGFOX_SERCOM_DMAC_ID_TX   SERCOM0_DMAC_ID_TX
+#define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM0_DMAC_ID_RX
+#else */
 #define SME_SIGFOX_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
 #define SME_SIGFOX_MODULE              SERCOM4
 #define SME_SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PB12C_SERCOM4_PAD0
@@ -64,14 +100,14 @@
 #define SME_SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SME_SIGFOX_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
 #define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
-
+//#endif
 #define SME_SIGFOX_BAUDRATE			   19200
 /** @} */
 
 
 /** \name Embedded GPS UART interface definitions
- * @{
- */
+* @{
+*/
 #define SME_GPS_MODULE              SERCOM1
 #define SME_GPS_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
 #define SME_GPS_SERCOM_PINMUX_PAD0  PINMUX_PA16C_SERCOM1_PAD0
@@ -86,9 +122,9 @@
 
 
 /** \name Embedded RGB I/O interface definitions
- * @{
- */
- #define SME_PWM_RGB_MODULE  TCC0
+* @{
+*/
+#define SME_PWM_RGB_MODULE  TCC0
 
 #define SME_PWM_R_OUT_PIN PIN_PB10F_TCC0_WO4
 #define SME_PWM_R_OUT_MUX MUX_PB10F_TCC0_WO4
@@ -106,5 +142,60 @@
 #define SME_WO_B_REGISTER 6
 /* @} */
 
+#ifdef SMARTEVERYTHING
+#define STEP_UP_PIN_PIN                 PIN_PB05
+#else
+#define STEP_UP_PIN_PIN                 LED0_PIN
+#endif
+
+
+
+// INTERRUPT
+/** \name INT15 definitions */
+// UNIFORMARE I NOMI UNA VOLTA CHE VEDIANMO CHE FUNZIONA
+#ifdef SMARTEVERYTHING
+#define SME_BUTTON1_PIN     PIN_PB00
+#define INT_BUTTON1__ACTIVE                false
+#define INT_BUTTON1__INACTIVE              !INT_BUTTON1__ACTIVE
+#define INT_BUTTON1_PIN                     PIN_PB00A_EIC_EXTINT0
+#define INT_BUTTON1_MUX                     MUX_PB00A_EIC_EXTINT0
+#define INT_BUTTON1_EIC_PINMUX              PINMUX_PB00A_EIC_EXTINT0
+#define INT_BUTTON1_EIC_LINE              0
+#else
+#define SME_BUTTON1_PIN     PIN_PA15
+#define INT_BUTTON1__ACTIVE                false
+#define INT_BUTTON1__INACTIVE              !INT_BUTTON1__ACTIVE
+#define INT_BUTTON1_PIN                     PIN_PA15A_EIC_EXTINT15
+#define INT_BUTTON1_MUX                     MUX_PA15A_EIC_EXTINT15
+#define INT_BUTTON1_EIC_PINMUX            PINMUX_PA15A_EIC_EXTINT15
+#define INT_BUTTON1_EIC_LINE              15
+#endif
+
+
+#ifdef SMARTEVERYTHING
+#define INT_BUTTON2__ACTIVE                false
+#define INT_BUTTON2__INACTIVE              !INT_BUTTON2__ACTIVE
+#define INT_BUTTON2_PIN                     PIN_PA27A_EIC_EXTINT15
+#define INT_BUTTON2_MUX                     MUX_PA27A_EIC_EXTINT15
+#define INT_BUTTON2_EIC_PINMUX            PINMUX_PA27A_EIC_EXTINT15
+#define INT_BUTTON2_EIC_LINE              15
+#else
+#define INT_BUTTON2__ACTIVE                false
+#define INT_BUTTON2__INACTIVE              !INT_BUTTON2__ACTIVE
+#define INT_BUTTON2_PIN                     PIN_PA15A_EIC_EXTINT15
+#define INT_BUTTON2_MUX                     MUX_PA15A_EIC_EXTINT15
+#define INT_BUTTON2_EIC_PINMUX            PINMUX_PA15A_EIC_EXTINT15
+#define INT_BUTTON2_EIC_LINE              15
+#endif
+
+
+/** \name INT0 definitions  */
+#define INT0_PIN                   PIN_PA16
+#define INT0_ACTIVE                false
+#define INT0_INACTIVE              !INT0_ACTIVE
+#define INT0_EIC_PIN               PIN_PA16A_EIC_EXTINT0
+#define INT0_EIC_MUX               MUX_PA16A_EIC_EXTINT0
+#define INT0_EIC_PINMUX            PINMUX_PA16A_EIC_EXTINT0
+#define INT0_EIC_LINE              0
 
 #endif /* SME_PIN_DEFINITION_H_ */

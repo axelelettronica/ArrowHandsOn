@@ -17,13 +17,13 @@
 #include "../Devices/I2C/I2C.h"
 #include "sme_cdc_io.h"
 
-#define MMA8452_POS 0
-#define NXPNFC_POS  1
-#define TS221_POS   2
+#define MMA8452_POS 4
+#define NXPNFC_POS  2
+#define TS221_POS   1
 #define LPS25_POS   3
-#define TCA6416_POS 4
+#define TCA6416_POS 0
 
-#define MAX_I2C_SENSORS 5
+#define MAX_I2C_SENSORS 2
 
 // function pointer for the readValues functions on all sensor
 typedef bool (*readValue)(char*);
@@ -147,17 +147,18 @@ void sme_i2c_mgr_init(void) {
     /* Configure the I2C master module */
     configure_i2c_master();
     
-    sensors[MMA8452_POS].sensorInit  = ZXYInit;
+    /*sensors[MMA8452_POS].sensorInit  = ZXYInit;
     sensors[MMA8452_POS].sensorValue = MMA8452getAccelData;
     
-    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)readSRAM;
+    sensors[NXPNFC_POS].sensorValue = / *getNxpUserData* /(readValue)readSRAM;
     sensors[NXPNFC_POS].sensorInit  = nxpInit;
+        
+        sensors[LPS25_POS].sensorInit  = LPS25Hnit;
+        sensors[LPS25_POS].sensorValue = LPS25HgetValues;*/
     
     sensors[TS221_POS].sensorInit  = HTS221nit;
     sensors[TS221_POS].sensorValue = HTS221getValues;
-    
-    sensors[LPS25_POS].sensorInit  = LPS25Hnit;
-    sensors[LPS25_POS].sensorValue = LPS25HgetValues;
+
     
     sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
     sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;

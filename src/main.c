@@ -94,6 +94,7 @@ static void componentInit(void) {
     initSl868v2Model();
 
     sme_led_rgb_init();
+    sme_led_rgb_off();
 }
 
 

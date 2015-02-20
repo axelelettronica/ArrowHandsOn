@@ -162,6 +162,7 @@
 #define STATUS_REG  0x27
 #define TEMPERATURE_READY 0x1
 #define PRESSURE_READY    0x2
+#define HUMIDITY_READY    0x20
 
 #define HUMIDITY_L_REG 0x28
 #define HUMIDITY_H_REG 0x29

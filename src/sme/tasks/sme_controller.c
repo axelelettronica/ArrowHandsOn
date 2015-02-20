@@ -164,7 +164,6 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
-    uint8_t data;
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -202,7 +201,6 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button1Execution(void) {
-    uint8_t data;
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -228,6 +226,7 @@ static void button1Execution(void) {
 *
 * \param params Parameters for the task. (Not used.)
 */
+static bool blink = false;
 static void control_task(void *params)
 {
     //bool valueRead=false;
@@ -257,6 +256,8 @@ static void control_task(void *params)
             clearInt(current_message.intE);
         }
         else {
+            blink != blink;
+            port_pin_set_output_level(SME_LED_Y2_PIN, blink);
             sfxTimeOut();
         }
     }

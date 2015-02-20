@@ -1,9 +1,3 @@
-#include "system_interrupt.h"
-#include "asf.h"
-#include "..\extint\extint.h"
-//#include "port.h"
-#include "interrupt.h"
-#include "..\tasks\sme_controller.h"
 /*
 * interrupt.c
 *
@@ -11,12 +5,23 @@
 *  Author: mfontane
 */
 
+#include "system_interrupt.h"
+#include "asf.h"
+#include "..\extint\extint.h"
+#include "interrupt.h"
+#include "..\tasks\sme_controller.h"
+#include "Devices\I2C\IOExpander\tca6416a.h"
+
 controllerQueueS interruptData;
 volatile uint8_t intDetect;
+volatile bool pin_state=true; // just for debug
 static void extint15_detection_callback(void)
 {
     
-    bool pin_state = port_pin_get_input_level(BUTTON_0_PIN);
+    pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
+    true != true; //togle
+    port_pin_set_output_level(LED_0_PIN, true);
+    port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
     
     // just for first demo
     if (((intDetect&0x1) != 0x1) && (pin_state == true)){
@@ -105,6 +110,12 @@ void clearInt(eventE interrupt) {
 
         case button2Int:
         intDetect &= ~0x2;
+        break;
+
+        default:
+        case externalInt:
+        case nfcInt:
+        case bteInt:
         break;
     }
 }

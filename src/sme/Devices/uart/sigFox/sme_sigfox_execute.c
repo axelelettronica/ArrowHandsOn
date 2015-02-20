@@ -82,13 +82,13 @@ static uint8_t insertCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
     uint16_t crc = calculateCRC(packet->length, packet->type,
     packet->sequenceNumber, packet->payload);
 
-    char* tmp = &crc;
+    char* tmp = (char*)&crc;
     message[msgLen++] = tmp[0];
     message[msgLen++] = tmp[1];
     return 2;
 }
 
-bool sendSigFoxDataMessage(const sigFoxT *msg) {
+static bool sendSigFoxDataMessage(const sigFoxT *msg) {
     uint8_t msgLen=0;
     sigFoxDataMessage *packet;
     sigFoxMessageTypeE msgType = msg->messageType;
@@ -124,6 +124,13 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
         
         case enterDataMode:
         sendSigFoxMsg((uint8_t *)ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
+        break;
+
+        case enterConfMode:
+        case confIntMessage:
+        case confCdcMessage:
+        default:
+        // do nothing
         break;
     }
 

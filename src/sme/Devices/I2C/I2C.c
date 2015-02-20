@@ -15,6 +15,7 @@ xSemaphoreHandle i2c_sem;
 /** I2C related structure */
 static struct i2c_master_module i2c_master_instance;
 static struct i2c_master_packet master_packet;
+volatile int status=9;
 
 /**
 * \brief Function for configuring I2C master module
@@ -34,12 +35,10 @@ void configure_i2c_master(void)
     /* Change pins */
     config_i2c.pinmux_pad0  = SME_I2C_SERCOM_PINMUX_PAD0;
     config_i2c.pinmux_pad1  = SME_I2C_SERCOM_PINMUX_PAD1;
-    // Changed to leave Pins to GPS Serial connection
-    //config_i2c.pinmux_pad0  = PINMUX_PA22C_SERCOM3_PAD0;
-    //config_i2c.pinmux_pad1  = PINMUX_PA23C_SERCOM3_PAD1;
+
 
     /* Initialize and enable device with config */
-    i2c_master_init(&i2c_master_instance, SME_I2C_MODULE, &config_i2c);
+    status =  i2c_master_init(&i2c_master_instance, SME_I2C_MODULE, &config_i2c);
 
     i2c_master_enable(&i2c_master_instance);
 }
@@ -157,15 +156,16 @@ bool writeRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite){
         master_packet.ten_bit_address = false;
         master_packet.high_speed      = false;
         master_packet.hs_master_code  = 0x0;
-        while (i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet) !=
-        STATUS_OK) {
+        int err;
+        do {
+        err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
             /* Increment timeout counter and check if timed out. */
             if (timeout++ == TIMEOUT) {
                 // release the semaphore
                 xSemaphoreGive(i2c_sem);
                 return 0;
             }
-        }
+        } while( err != STATUS_OK);
     }
 
     // release the semaphore
