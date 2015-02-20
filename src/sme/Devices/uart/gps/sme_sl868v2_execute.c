@@ -57,7 +57,7 @@ uint8_t message[LS868V2_MAX_MSG_SIZE];
 //uint8_t sequenceNumber;
 
 
-static int sendSl868v2Msg(const uint8_t *msg, uint8_t len) {
+int sendSl868v2Msg(const uint8_t *msg, uint8_t len) {
     port_pin_toggle_output_level(LED_0_PIN); // just for debug
     sl868v2SendMessage(msg, len);
     return SME_OK;

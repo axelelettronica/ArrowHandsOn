@@ -14,6 +14,7 @@
 
 
 static int parseNmeaCommandToken(sl868v2T *usartMsg);
+bool sme_dbg_gps_enable = true;
 
 
 int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
@@ -134,15 +135,12 @@ static int parseNmeaCommandToken(sl868v2T *usartMsg)
         /* Filling data */
         usartMsg->nmea_msg.mtk.dataLenght = strlen((const char *)&sme_cli_msg.token[2][offset]);
 
-        if(!usartMsg->nmea_msg.mtk.dataLenght) {
-            return SME_EINVAL;
+        if(usartMsg->nmea_msg.mtk.dataLenght) {
+            memcpy(usartMsg->nmea_msg.mtk.data, &sme_cli_msg.token[2][offset],
+                   usartMsg->nmea_msg.mtk.dataLenght);
         }
-        memcpy (usartMsg->nmea_msg.mtk.data, &sme_cli_msg.token[2][offset],
-        usartMsg->nmea_msg.mtk.dataLenght);
     }
 
-
-   
     return ret;
 }
 

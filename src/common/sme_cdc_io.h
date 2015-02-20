@@ -20,6 +20,7 @@ struct usart_module cdc_usart;
 extern bool sme_dbg_enable;
 extern bool sme_err_enable;
 extern bool sme_dbg_sfx_enable;
+extern bool sme_dbg_gps_enable;
 extern uint8_t dbg_buf[];
 
 #define print_internal(__fmt_, ...)  ({sprintf((char *)dbg_buf, __fmt_, ##__VA_ARGS__) ;  \
@@ -29,5 +30,6 @@ extern uint8_t dbg_buf[];
 #define print_dbg(__fmt_, ...)   ({if(sme_dbg_enable) print_internal(__fmt_, ##__VA_ARGS__);})
 #define print_err(__fmt_, ...)   ({if(sme_err_enable) print_internal(__fmt_, ##__VA_ARGS__);})
 #define print_sfx(__fmt_, ...)     ({if(sme_dbg_sfx_enable) print_internal(__fmt_, ##__VA_ARGS__);})
+#define print_gps(__fmt_, ...)     ({if(sme_dbg_gps_enable) print_internal(__fmt_, ##__VA_ARGS__);})
 
 #endif /* SME_CDC_IO_H_ */
