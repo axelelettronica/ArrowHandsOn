@@ -20,7 +20,7 @@
 #define MAX_MESSAGE_OUT 2
 
 // keep track of the messageId are active
-uint8_t sfxMessageIdx[MAX_MESSAGE_OUT];
+extern uint8_t sfxMessageIdx[];
 
 
 void sigFoxInit(void);

@@ -63,11 +63,7 @@
 #include <extint.h>
 #include <extint_callback.h>
 
-// From module: GFX Monochrome - Monochrome Graphic Library
-#include <gfx_mono.h>
 
-// From module: GFX Monochrome - System Font
-#include <sysfont.h>
 
 // From module: Generic board support
 #include <board.h>
@@ -97,8 +93,7 @@
 #include <usart.h>
 #include <usart_interrupt.h>
 
-// From module: SSD1306 OLED controller
-#include <ssd1306.h>
+
 
 // From module: SYSTEM - Clock Management for SAMD21
 #include <clock.h>

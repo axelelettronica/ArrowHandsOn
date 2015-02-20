@@ -82,18 +82,16 @@ static uint8_t insertCRC(const sigFoxDataMessage *packet, uint8_t msgLen) {
     uint16_t crc = calculateCRC(packet->length, packet->type,
     packet->sequenceNumber, packet->payload);
 
-    char* tmp = &crc;
+    char* tmp = (char*)&crc;
     message[msgLen++] = tmp[0];
     message[msgLen++] = tmp[1];
     return 2;
 }
 
-bool sendSigFoxDataMessage(const sigFoxT *msg) {
+static bool sendSigFoxDataMessage(const sigFoxT *msg) {
     uint8_t msgLen=0;
     sigFoxDataMessage *packet;
     sigFoxMessageTypeE msgType = msg->messageType;
-
-    stopSfxCommandTimer();
 
     // set the RX FSM that SFX is in data mode
     setSfxStatus(msgType);
@@ -127,6 +125,13 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
         case enterDataMode:
         sendSigFoxMsg((uint8_t *)ENTER_DATA_MODE, sizeof(ENTER_DATA_MODE)-1);
         break;
+
+        case enterConfMode:
+        case confIntMessage:
+        case confCdcMessage:
+        default:
+        // do nothing
+        break;
     }
 
     return true;
@@ -134,27 +139,34 @@ bool sendSigFoxDataMessage(const sigFoxT *msg) {
 
 bool executeCDCSigFox(const sigFoxT *msg) {
 
-    bool ret = false;
+
+    bool ret = false, sendTimeout=false;
     switch (msg->messageType){
         
         case enterConfMode:
         case confCdcMessage:
         case confIntMessage:
-            ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
+        ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);
+        if (ret != false) {
+            sendTimeout= true;
+        }
         break;
         
         case enterDataMode:
-            // this is the only way to activate the possibility to sent a message
-            setSfxStatus(msg->messageType);
+        // this is the only way to activate the possibility to sent a message
+        setSfxStatus(msg->messageType);
         case dataCdcMessage:
         case dataIntMessage:
-        // send the message only when are in data mode 
+        // send the message only when are in data mode
         // (activated by the enterDataMode message)
         if (sfxIsInDataStatus()) {
             ret = sendSigFoxDataMessage(msg);
+            if (ret != false) {
+                sendTimeout= true;
+            }
         }
         break;
-
+        print_err("no valid SFX messageType");
         default:
         //error print Help
         break;
@@ -162,7 +174,11 @@ bool executeCDCSigFox(const sigFoxT *msg) {
     
     // release the SFX model that had an error
     if ( ret == false)
-        releaseSigFoxModel();
+    releaseSigFoxModel();
 
+    if (sendTimeout == true) {
+        // start Timer in case SFX does not answer
+        startSfxCommandTimer();
+    }
     return ret;
 }

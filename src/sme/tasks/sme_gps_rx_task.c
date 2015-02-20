@@ -9,11 +9,12 @@
 #include "sme_cmn.h"
 #include "..\Devices\Uart\gps\sme_sl868v2_usart.h"
 #include "..\Devices\Uart\gps\sme_sl868v2_rx_fsm.h"
+#include "common/sme_timer_define.h"
 
-#define GPS_TASK_DELAY       (1000 / portTICK_RATE_MS)
+#define GPS_TASK_DELAY       ONE_SECOND
 #define GPS_STACK_SIZE	  	 (configMINIMAL_STACK_SIZE)
 #define GPS_TASK_PRIORITY    (tskIDLE_PRIORITY + 2)
-#define GPS_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS)
+#define GPS_SEMAPHORE_DELAY  ONE_SECOND
 //#define GPS_RX_SEMAPHORE_DELAY  (51 / portTICK_RATE_MS)
 
 #define SME_GPS_MAX_DATA_LEN MAX_SL868V2_RX_BUFFER_LENGTH

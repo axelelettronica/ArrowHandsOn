@@ -84,7 +84,8 @@ read also.
 #define CALIB_END	       0x1F
 #else
 
-#define HTS221_ADDRESS 0xBE
+#define HTS221_ADDRESS     0x5F
+
 
 //Define a few of the registers that we will be accessing on the HTS221
 #define WHO_AM_I    0x0F
@@ -145,9 +146,8 @@ static inline bool temperatureReady(uint8_t data) {
 
 static uint8_t h0_rH, h1_rH;
 static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
-
+volatile uint8_t data;
 bool HTS221nit(void) {
-	uint8_t data;
 	if (readRegister(HTS221_ADDRESS, WHO_AM_I, &data)) {
 		if (data == WHO_AM_I_RETURN){
 			if (HTS221Activate()){
@@ -278,17 +278,17 @@ bool HTS221Deactivate(void) {
 
 
 bool HTS221getValues(char *buffer){
-	uint8_t data;
-	if (readRegister(HTS221_ADDRESS, STATUS_REG, &data)) {
-		if (data & TEMPERATURE_READY) {
-			if (readRegister(HTS221_ADDRESS, TEMP_H_REG, &data)) {
-				if (readRegister(HTS221_ADDRESS, TEMP_L_REG, &data)) {
+	
+	if (readRegister(HTS221_ADDRESS, STATUS_REG, (uint8_t*)buffer)) {
+		if (*buffer & TEMPERATURE_READY) {
+			if (readRegister(HTS221_ADDRESS, TEMP_H_REG, (uint8_t*)buffer)) {
+				if (readRegister(HTS221_ADDRESS, TEMP_L_REG, (uint8_t*)buffer)) {
 				}
 			}
 		}
-		if (data & HUMIDITY_READY) {
-			if (readRegister(HTS221_ADDRESS, HUMIDITY_H_REG, &data)) {
-				if (readRegister(HTS221_ADDRESS, HUMIDITY_L_REG, &data)) {
+		if (*buffer & HUMIDITY_READY) {
+			if (readRegister(HTS221_ADDRESS, HUMIDITY_H_REG, (uint8_t*)buffer)) {
+				if (readRegister(HTS221_ADDRESS, HUMIDITY_L_REG, (uint8_t*)buffer)) {
 				}
 			}
 		}

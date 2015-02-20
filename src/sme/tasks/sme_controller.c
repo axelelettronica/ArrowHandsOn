@@ -122,10 +122,8 @@ static void sfxTimeOut(void) {
         }
     }
     else {
-        if (isSfxCommandTimerExpired()) {
-            print_sfx("no command sent, exit from command mode\r\n");
-            sendToSfxExitConf();
-        }
+        print_sfx("no command sent, exit from command mode\r\n");
+        sendToSfxExitConf();        
     }
     #endif
 }
@@ -165,7 +163,6 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
-    uint8_t data;
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -201,7 +198,6 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button1Execution(void) {
-    uint8_t data;
     char *i2cbuf_ptr = NULL;
     sigFoxT *sfModel = getSigFoxModel();
 
@@ -239,7 +235,7 @@ static void sme_gps_data_updateExecution(void) {
 
     // point 1
     sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
-    // readCachedGPSPosition();
+    //readCachedGPSPosition();
 
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
@@ -254,6 +250,7 @@ static void sme_gps_data_updateExecution(void) {
 *
 * \param params Parameters for the task. (Not used.)
 */
+static bool blink = false;
 static void control_task(void *params)
 {
     //bool valueRead=false;
@@ -287,6 +284,8 @@ static void control_task(void *params)
             clearInt(current_message.intE);
         }
         else {
+            blink != blink;
+            port_pin_set_output_level(SME_LED_Y2_PIN, blink);
             sfxTimeOut();
         }
     }

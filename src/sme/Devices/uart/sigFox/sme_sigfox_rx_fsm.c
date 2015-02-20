@@ -9,6 +9,7 @@
 #include "sme_cmn.h"
 #include "sme_sigfox_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
+#include "sme_sfx_timer.h"
 
 typedef enum {
     headerRec,
@@ -43,7 +44,7 @@ static sfxRxFSME crcCheck(void) {
 }
 
 static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
-    char seq[4];
+    
     for(int i=0; i<MAX_MESSAGE_OUT; i++ ) {
         if (sfxMessageIdx[i] == sequence){
             answer.sequenceNumber = sequence;
@@ -101,7 +102,9 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             break;
 
             case tailerRec:
-            
+            // remove the charged timeout
+            stopSfxCommandTimer();
+                        
             recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i]){
                 print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
@@ -110,7 +113,10 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             return SME_SFX_KO;
 
             case nullState:
+            // enter here in case of CRC error or swequence error
             // remove all the last incoming data
+            // remove the charged timeout
+            stopSfxCommandTimer();
             break;
         }
     }
@@ -123,7 +129,10 @@ static uint8_t handleConf(uint8_t *msg, uint8_t msgMaxLen) {
         if (msg[i] != SIGFOX_END_MESSAGE) {
             answer.payload[answer.payloadPtr++]= msg[i];
             print_dbg(&msg[i]);
-            } else {
+        } else {
+            // remove the charged timeout
+            stopSfxCommandTimer();
+
             // end found check if the answer is ok
             if (SGF_CONF_ERROR != answer.payload[0]) {
                 return SME_SFX_OK;

@@ -500,7 +500,6 @@
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/drivers/tc</Value>
       <Value>../src/ASF/common/utils</Value>
@@ -569,7 +568,6 @@
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../thirdparty/freertos/demo/oled1_tickless_xpro_example/samd21_xplained_pro</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/drivers/tc</Value>
       <Value>../src/ASF/common/utils</Value>
@@ -614,15 +612,9 @@
     <Folder Include="src\" />
     <Folder Include="src\ASF\" />
     <Folder Include="src\ASF\common2\" />
-    <Folder Include="src\ASF\common2\components\" />
-    <Folder Include="src\ASF\common2\components\display\" />
-    <Folder Include="src\ASF\common2\components\display\ssd1306\" />
     <Folder Include="src\ASF\common2\services\" />
     <Folder Include="src\ASF\common2\services\delay\" />
     <Folder Include="src\ASF\common2\services\delay\sam0\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\docsrc\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\tools\" />
     <Folder Include="src\ASF\common\" />
     <Folder Include="src\ASF\common\boards\" />
     <Folder Include="src\ASF\common\boards\serial\" />
@@ -726,9 +718,6 @@
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="src\ASF\common2\components\display\ssd1306\ssd1306.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\ASF\common\boards\serial\sam0_usart\usart_serial.h">
       <SubType>compile</SubType>
     </Compile>
@@ -1011,21 +1000,6 @@
     <None Include="src\config\FreeRTOSConfig.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\services\gfx_mono\docsrc\gfx_mono_overview.png">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\bitmap.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\dump_display_over_serial.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\readme.txt">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\tc\tc_interrupt.h">
       <SubType>compile</SubType>
     </None>
@@ -1131,9 +1105,6 @@
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\adc.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_text.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\nvmctrl.h">
       <SubType>compile</SubType>
     </None>
@@ -1224,9 +1195,6 @@
     <None Include="src\ASF\common2\services\delay\delay.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_framebuffer.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\system\interrupt\quick_start\qs_system_interrupt.h">
       <SubType>compile</SubType>
     </None>
@@ -1260,9 +1228,6 @@
     <None Include="src\ASF\thirdparty\CMSIS\Include\arm_math.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\services\gfx_mono\sysfont.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\gclk.h">
       <SubType>compile</SubType>
     </None>
@@ -1288,9 +1253,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\tc5.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\pio\samd21j15a.h">
@@ -1344,16 +1306,7 @@
     <None Include="src\ASF\common\utils\parts.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\components\display\ssd1306\ssd1306.h">
-      <SubType>compile</SubType>
-    </None>
     <Compile Include="src\ASF\common2\services\delay\sam0\systick_counter.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_framebuffer.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_generic.c">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\thirdparty\freertos\freertos-8.0.1\Source\include\event_groups.h">
@@ -1419,18 +1372,6 @@
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\pac0.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_generic.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_text.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\common2\services\gfx_mono\sysfont.c">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\instance\eic.h">
       <SubType>compile</SubType>
     </None>

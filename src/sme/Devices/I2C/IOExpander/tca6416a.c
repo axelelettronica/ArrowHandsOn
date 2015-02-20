@@ -25,7 +25,7 @@
 #define CONFIG_PORT_1   0x0F //Read/write byte    1111 1111
 #else
 
-#define TCA6416A_ADDRESS 0x2E
+#define TCA6416A_ADDRESS 0x20
 // Protocol          PowerOn Default
 #define INPUT_PORT_0    0x00 //Read byte          xxxx xxxx (undefined)
 #define INPUT_PORT_1    0x01 //Read byte          xxxx xxxx

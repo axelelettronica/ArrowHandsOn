@@ -111,20 +111,13 @@ typedef struct {
 
 extern uint8_t sequenceNumber;
 
-inline uint8_t getNewSequenceNumber(void) {
-    sequenceNumber++;
-    
-    if (sequenceNumber ==0)
-        sequenceNumber =1;
 
-    return sequenceNumber;
-}
-
+uint8_t getNewSequenceNumber(void);
 
 sigFoxT* getSigFoxModel(void);
 void releaseSigFoxModel(void);
 void initSigFoxModel(void);
-uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequenceNumber, uint8_t *payload);
+uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequence, uint8_t *payload);
 
 
 void setSfxStatus(sigFoxMessageTypeE state);

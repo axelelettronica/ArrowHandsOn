@@ -74,11 +74,12 @@ static void init_services(void);
 */
 static void init_services(void)
 {
-    sme_cdc_mgr_init();
+   
     sme_i2c_mgr_init();
     sme_init_isr_global();
     sme_sigfox_rx_mgr_init();
     sme_gps_mgr_init();
+    sme_cdc_mgr_init();
 
     //at the end the controller
     sme_ctrl_init();
@@ -94,6 +95,7 @@ static void componentInit(void) {
     initSl868v2Model();
 
     sme_led_rgb_init();
+    sme_led_rgb_off();
 }
 
 

@@ -8,17 +8,31 @@
 
 #include "sme_model_sigfox.h"
 #include <string.h>
+#include "common/sme_timer_define.h"
 
 
-uint8_t sequenceNumber=1;
+uint8_t sequenceNumber;
 static sigFoxT usartMsg;
-xSemaphoreHandle sf_sem;
-#define SF_SEMAPHORE_DELAY  (1000 / portTICK_RATE_MS) // it could be to wait 4 Sec
+xSemaphoreHandle sf_sem; 
+
+#define SF_SEMAPHORE_DELAY  ONE_SECOND
 
 // after a reset SigFx starts in data mode
 sigFoxMessageTypeE sfxStatus=enterDataMode;
 
+
+uint8_t getNewSequenceNumber(void) {
+    sequenceNumber++;
+    
+    if (sequenceNumber ==0)
+    sequenceNumber =1;
+
+    return sequenceNumber;
+}
+
+
 void initSigFoxModel(void){
+    sequenceNumber=1;
     // create the sigFox semaphore
     sf_sem = xSemaphoreCreateMutex();
 }
@@ -30,18 +44,20 @@ inline void setSfxStatus(sigFoxMessageTypeE state) {
 
 bool sfxIsInDataStatus(void) {
     return  ((sfxStatus==enterDataMode) ||
-            (sfxStatus==dataIntMessage) || 
-            (sfxStatus==dataCdcMessage) );
+    (sfxStatus==dataIntMessage) ||
+    (sfxStatus==dataCdcMessage) );
 }
 
 inline sigFoxMessageTypeE getSfxStatus(void) {
     return sfxStatus;
 }
 
-uint16_t calculateCRC(uint8_t length, uint8_t type, uint8_t sequenceNumber, uint8_t *payload){
+uint16_t calculateCRC(uint8_t length, uint8_t type, 
+                      uint8_t sequence, 
+                      uint8_t *payload){
     uint16_t crc = length;
     crc += type;
-    crc += sequenceNumber;
+    crc += sequence;
     for(int i=0; i<length; i++){
         crc+=payload[i];
     }

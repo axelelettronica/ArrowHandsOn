@@ -11,6 +11,7 @@
 
 
 void sme_led_rgb_init(void);
+void sme_led_rgb_off(void);
 
 void sme_led_red_on(void);void sme_led_green_on(void);void sme_led_blue_on(void);
 

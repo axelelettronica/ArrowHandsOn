@@ -14,7 +14,7 @@
 extern xSemaphoreHandle i2c_sem;
 
 /* Number of times to try to send packet if failed. */
-#define TIMEOUT 3
+#define TIMEOUT 1
 
 void configure_i2c_master(void);
 

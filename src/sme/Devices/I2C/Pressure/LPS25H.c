@@ -77,7 +77,7 @@
 #define CALIB_END	       0x1F
 #else
 
-#define LPS25H_ADDRESS 0x2E
+#define LPS25H_ADDRESS  0x5c
 
 #define WHO_AM_I    0x0F
 #define WHO_AM_I_RETURN 0xBD // Contains the device ID, BDh
@@ -165,6 +165,7 @@
 #define STATUS_REG  0x27
 #define TEMPERATURE_READY 0x1
 #define PRESSURE_READY    0x2
+#define HUMIDITY_READY    0x20
 
 #define HUMIDITY_L_REG 0x28
 #define HUMIDITY_H_REG 0x29

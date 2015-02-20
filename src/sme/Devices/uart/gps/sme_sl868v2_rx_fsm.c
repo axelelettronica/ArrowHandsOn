@@ -92,7 +92,7 @@ static bool crcCheck(uint8_t data[], uint8_t len) {
     return true;
 }
 
-void sl868v2ParseRx (void)
+static void sl868v2ParseRx (void)
 {
     uint8_t offset= 0;
     uint8_t i = 0;
@@ -103,7 +103,7 @@ void sl868v2ParseRx (void)
     offset++;   // skip $
      
     if (SME_OK != getTalkerType(&rxMsg.data[offset],  &msgPtrT.messageType)) {
-        return SME_EINVAL;
+        return;
     }
 
     if (msgPtrT.messageType == STD_NMEA) {
