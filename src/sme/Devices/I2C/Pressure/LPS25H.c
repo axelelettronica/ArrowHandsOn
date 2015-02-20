@@ -74,7 +74,7 @@
 #define CALIB_END	       0x1F
 #else
 
-#define LPS25H_ADDRESS 0x2E
+#define LPS25H_ADDRESS  0x5c
 
 #define WHO_AM_I    0x0F
 #define WHO_AM_I_RETURN 0xBD // Contains the device ID, BDh

@@ -18,12 +18,12 @@
 #include "sme_cdc_io.h"
 
 #define MMA8452_POS 4
-#define NXPNFC_POS  2
+#define NXPNFC_POS  3
 #define TS221_POS   1
-#define LPS25_POS   3
+#define LPS25_POS   2
 #define TCA6416_POS 0
 
-#define MAX_I2C_SENSORS 2
+#define MAX_I2C_SENSORS 3
 
 // function pointer for the readValues functions on all sensor
 typedef bool (*readValue)(char*);
@@ -151,10 +151,10 @@ void sme_i2c_mgr_init(void) {
     sensors[MMA8452_POS].sensorValue = MMA8452getAccelData;
     
     sensors[NXPNFC_POS].sensorValue = / *getNxpUserData* /(readValue)readSRAM;
-    sensors[NXPNFC_POS].sensorInit  = nxpInit;
+    sensors[NXPNFC_POS].sensorInit  = nxpInit;*/
         
         sensors[LPS25_POS].sensorInit  = LPS25Hnit;
-        sensors[LPS25_POS].sensorValue = LPS25HgetValues;*/
+        sensors[LPS25_POS].sensorValue = LPS25HgetValues;
     
     sensors[TS221_POS].sensorInit  = HTS221nit;
     sensors[TS221_POS].sensorValue = HTS221getValues;

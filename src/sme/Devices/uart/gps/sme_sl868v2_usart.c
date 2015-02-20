@@ -13,7 +13,7 @@
 #include "sme\model\sme_model_sl868v2.h"
 #include "./sme_sl868v2_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
-#include "sme_gps_timer.h"
+//#include "sme_gps_timer.h"
 
 /** \name Extension header #1 UART definitions
 * @{
@@ -94,7 +94,7 @@ void sl868v2Init(void) {
     uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
              usart_gps_read_callback);
     
-    initGpsTimer();
+    //initGpsTimer();
 }
 
 int 
