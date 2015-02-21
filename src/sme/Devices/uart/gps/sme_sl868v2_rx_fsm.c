@@ -10,7 +10,7 @@
 #include "sme_cmn.h"
 #include "../../../tasks/sme_controller.h"
 #include "sme\Devices\uart\gps\sme_sl868v2_execute.h"
-//#include "sme/Devices/uart/gps/sme_gps_timer.h"
+#include "sme/Devices/uart/gps/sme_gps_timer.h"
 
 
 #define SL868V2_MAX_MSG_LEN   80    
@@ -147,13 +147,13 @@ static void sl868v2ParseRx (void)
 void gpsStartScan(void) {
     sendSl868v2Msg(SL868V2_WARM_RST_CMD, 
                    sizeof(SL868V2_WARM_RST_CMD));
-    //startGpsCommandTimer();
+    startGpsCommandTimer();
     scan_in_progress = true;
 }
 void gpsStopScan(void) {
     sendSl868v2Msg(SL868V2_WARM_RST_CMD, 
                    sizeof(SL868V2_WARM_RST_CMD));
-   // stopGpsCommandTimer();
+    stopGpsCommandTimer();
     scan_in_progress = false;
 }
 

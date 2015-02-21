@@ -16,13 +16,13 @@ controllerQueueS interruptData;
 volatile uint8_t intDetect;
 volatile bool pin_state=true; // just for debug
 static void extint15_detection_callback(void)
-{
-    
-    pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
+{   
+    bool pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
     true != true; //togle
     port_pin_set_output_level(LED_0_PIN, true);
     port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
     
+    //pin_state = port_pin_get_input_level(BUTTON_0_PIN);
     // just for first demo
     if (((intDetect&0x1) != 0x1) && (pin_state == true)){
         intDetect |=0x1;
@@ -44,8 +44,10 @@ static void extint15_detection_callback(void)
 
 static void extint0_detection_callback(void)
 {
+    pin_state = port_pin_get_input_level(SME_BUTTON2_PIN);
+
     // just for first demo
-    if ((intDetect&0x2) != 0x2) {
+    if (((intDetect&0x2) != 0x2) && (pin_state == true)) {
         intDetect |=0x2;
         BaseType_t xHigherPriorityTaskWoken;
 
@@ -78,11 +80,17 @@ static void configure_extint_channel(void)
     extint_chan_set_config(INT_BUTTON1_EIC_LINE, &config_extint_chan);
     
     //configure INT0
-    config_extint_chan.gpio_pin = INT0_EIC_PIN;
-    config_extint_chan.gpio_pin_mux = INT0_EIC_MUX;
-    config_extint_chan.gpio_pin_pull = EXTINT_PULL_DOWN;
-    config_extint_chan.detection_criteria = EXTINT_DETECT_RISING;
-    extint_chan_set_config(INT0_EIC_LINE, &config_extint_chan);
+    //config_extint_chan.gpio_pin = INT0_EIC_PIN;
+    //config_extint_chan.gpio_pin_mux = INT0_EIC_MUX;
+    //config_extint_chan.gpio_pin_pull = EXTINT_PULL_DOWN;
+    //config_extint_chan.detection_criteria = EXTINT_DETECT_RISING;
+    //extint_chan_set_config(INT0_EIC_LINE, &config_extint_chan);
+    //configure INT15
+    config_extint_chan.gpio_pin = INT_BUTTON2_PIN;
+    config_extint_chan.gpio_pin_mux = INT_BUTTON2_MUX;
+    config_extint_chan.gpio_pin_pull = EXTINT_PULL_UP;
+    config_extint_chan.detection_criteria = EXTINT_DETECT_BOTH;
+    extint_chan_set_config(INT_BUTTON2_EIC_LINE, &config_extint_chan);
 }
 
 static void configure_extint_callbacks(void)
@@ -92,8 +100,8 @@ static void configure_extint_callbacks(void)
     extint_chan_enable_callback(INT_BUTTON1_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
     
     //register INT0
-    extint_register_callback(extint0_detection_callback, INT0_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
-    extint_chan_enable_callback(INT0_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
+    extint_register_callback(extint0_detection_callback, INT_BUTTON2_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
+    extint_chan_enable_callback(INT_BUTTON2_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
 }
 
 void sme_init_isr_global(void) {
