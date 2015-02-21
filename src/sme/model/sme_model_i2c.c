@@ -17,27 +17,36 @@
 #include "../Devices/I2C/I2C.h"
 #include "sme_cdc_io.h"
 
-#define MMA8452_POS 4
-#define NXPNFC_POS  3
-#define TS221_POS   1
-#define LPS25_POS   2
 #define TCA6416_POS 0
 
-#define MAX_I2C_SENSORS 3
+/* Sensors list */
+#define LPS25_POS    1
+#define TS221_POS   (LPS25_POS+1)
+
+#define FIRST_I2C_SENSOR      LPS25_POS
+#define MAX_I2C_SENSORS       (TS221_POS+1)
+
+#define NXPNFC_POS  3
+#define MMA8452_POS 4
+
 
 // function pointer for the readValues functions on all sensor
-typedef bool (*readValue)(char*);
+typedef bool (*readValue)(uint16_t*);
 // function pointer for the initialization of sensor
 typedef bool (*initSensor)(void);
+// function pointer decoding  Data on all sensor
+typedef bool (*sensorDecode)(uint16_t* buf, uint16_t *data1, uint16_t *data2);
 
-#define SME_MAX_I2C_SENSOR_SIZE     10
-#define SME_MAX_I2C_SENSOR_BUF_LEN (MAX_I2C_SENSORS*SME_MAX_I2C_SENSOR_SIZE)
+#define SME_MAX_I2C_READ_BUF_LEN     5
 
 
 typedef struct {
-    bool sensorInitialized;
-    initSensor sensorInit;
-    readValue sensorValue;
+    bool          sensorInitialized;
+    initSensor    sensorInit;
+    readValue     sensorValue;
+    sensorDecode  decodeCb;
+    uint16_t      decodedData1;
+    uint16_t      decodedData2;
 
 } sensorTaskStr;
 
@@ -45,15 +54,26 @@ static sensorTaskStr sensors[MAX_I2C_SENSORS];
 
 xQueueHandle i2cCommandQueue;
 
-char buffer[SME_MAX_I2C_SENSOR_BUF_LEN];
+char buffer[SME_MAX_I2C_READ_BUF_LEN];
 
 
 //char buffer[10];
-static void readAllValues(void){
-    memset(buffer, 0, SME_MAX_I2C_SENSOR_BUF_LEN);
-    for(int i=0; i<MAX_I2C_SENSORS; i++) {
+static void readAllValues(void)
+{
+    bool read = false;
+
+    memset(buffer, 0, SME_MAX_I2C_READ_BUF_LEN);
+    for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_SENSORS; ++i) {
         if (sensors[i].sensorInitialized == true) {
-            sensors[i].sensorValue(buffer+(i*SME_MAX_I2C_SENSOR_SIZE));
+            if (sensors[i].sensorValue) {
+                read = sensors[i].sensorValue(buffer);
+
+                if (read && sensors[i].decodeCb) {
+                    sensors[i].decodeCb(buffer, 
+                               &sensors[i].decodedData1,
+                               &sensors[i].decodedData2);
+                }
+            }
         }
     }
 }
@@ -159,26 +179,30 @@ void sme_i2c_mgr_init(void) {
     
     sensors[NXPNFC_POS].sensorValue = / *getNxpUserData* /(readValue)readSRAM;
     sensors[NXPNFC_POS].sensorInit  = nxpInit;*/
+    memset(sensors, 0, sizeof(sensorTaskStr));
+
+    sensors[LPS25_POS].sensorInit  = LPS25Hnit;
+    sensors[LPS25_POS].sensorValue = LPS25HgetValues;
+    sensors[LPS25_POS].decodeCb    = LPS25HDecode;
         
-        sensors[LPS25_POS].sensorInit  = LPS25Hnit;
-        sensors[LPS25_POS].sensorValue = LPS25HgetValues;
-    
     sensors[TS221_POS].sensorInit  = HTS221nit;
     sensors[TS221_POS].sensorValue = HTS221getValues;
-
+    sensors[TS221_POS].decodeCb    = HTS221Decode;
     
     sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
     sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;
     
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
-        if (sensors[i].sensorInit())
-        sensors[i].sensorInitialized=1;
+        if (sensors[i].sensorInit && sensors[i].sensorInit()) {
+            sensors[i].sensorInitialized=1;
+        }
     }
     
     
     //if the IO extender as been initialized, reset the Devices
-    if (sensors[TCA6416_POS].sensorInitialized)
-    TCA6416aResetDevices();
+    if (sensors[TCA6416_POS].sensorInitialized) {
+        TCA6416aResetDevices();
+    }
 }
 
 

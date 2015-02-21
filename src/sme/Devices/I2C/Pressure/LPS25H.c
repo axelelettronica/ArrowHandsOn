@@ -8,12 +8,10 @@
 #include "..\I2C.h"
 
 
-#define HUMIDITY_READY    0x20
 
 #if NOT_SENSOR
 // The SparkFun breakout board defaults to 1, set to 0 if SA0 jumper on the bottom of the board is set
 #define LPS25H_ADDRESS 85
-
 
 //Define a few of the registers that we will be accessing on the LPS25H
 
@@ -53,8 +51,6 @@
 #define POWER_UP    0x80 
 #define BDU_SET     0x04
 
-
-
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
 #define REG_DEFAULT 0x00
@@ -62,9 +58,8 @@
 #define STATUS_REG  0x0D
 #define TEMPERATURE_READY 0xA
 
-
-#define HUMIDITY_L_REG 0x13
-#define HUMIDITY_H_REG 0x14
+#define PRESSURE_L_REG 0x13
+#define PRESSURE_H_REG 0x14
 #define TEMP_L_REG     0x13
 #define TEMP_H_REG     0x14
 /*
@@ -75,15 +70,17 @@
 */
 #define CALIB_START        0x10
 #define CALIB_END	       0x1F
+
+
 #else
 
-#define LPS25H_ADDRESS  0x5c
+#define LPS25H_ADDRESS     0x5C
 
-#define WHO_AM_I    0x0F
-#define WHO_AM_I_RETURN 0xBD // Contains the device ID, BDh
+#define WHO_AM_I           0x0F
+#define WHO_AM_I_RETURN    0xBD // Contains the device ID, BDh
 
-#define RES_CONF_REG 0x10 // Pressure and Temperature internal average configuration.
-#define RES_CONF_DEFAULT 0x05  
+#define RES_CONF_REG       0x10 // Pressure and Temperature internal average configuration.
+#define RES_CONF_DEFAULT   0x05  
 
 
 /*
@@ -118,6 +115,7 @@
 #define CTRL_REG1   0x20
 #define POWER_UP    0x80 
 #define BDU_SET     0x04
+#define ODR0_SET    0x10  // 1 read each second
 
 
 
@@ -162,36 +160,17 @@
  * (0: new data for temperature is not yet available;
  * 1: new data for temperature is available)
  */
-#define STATUS_REG  0x27
-#define TEMPERATURE_READY 0x1
-#define PRESSURE_READY    0x2
-#define HUMIDITY_READY    0x20
+#define STATUS_REG          0x27
+#define TEMPERATURE_READY    0x1
+#define PRESSURE_READY       0x2
 
-#define HUMIDITY_L_REG 0x28
-#define HUMIDITY_H_REG 0x29
-#define TEMP_L_REG     0x2A
-#define TEMP_H_REG     0x2B
-/*
-* calibration registry should be read for temperature and humidity calculation.
-* Before the first calculation of temperature and humidity,
-* the master reads out the calibration coefficients.
-* will do at init phase
-*/
-#define CALIB_START        0x30
-#define CALIB_END	       0x3F
+#define PRESSURE_XL_REG     0x28
+#define PRESSURE_L_REG      0x29
+#define PRESSURE_H_REG      0x2A
+#define TEMP_L_REG          0x2B
+#define TEMP_H_REG          0x2C
+
 #endif
-
-
-
-static inline bool humidityReady(uint8_t data) {
-	return (data & 0x02);
-}
-static inline bool temperatureReady(uint8_t data) {
-	return (data & 0x01);
-}
-
-//static uint8_t h0_rH, h1_rH;
-//static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
 
 
 bool LPS25Hnit(void) {
@@ -205,10 +184,11 @@ bool LPS25Hnit(void) {
 }
 
 bool LPS25HActivate(void) {
-	uint8_t data;
+	uint8_t data = 0;
 	
 	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
 		data |= POWER_UP;
+        data |= ODR0_SET;
 		if (writeRegister(LPS25H_ADDRESS, CTRL_REG1, data))
 			return true;
 	}
@@ -216,7 +196,7 @@ bool LPS25HActivate(void) {
 }
 
 bool LPS25HDeactivate(void) {
-	uint8_t data;
+	uint8_t data = 0;
 	
 	if (readRegister(LPS25H_ADDRESS, CTRL_REG1, &data)) {
 		data &= ~POWER_UP;
@@ -226,25 +206,65 @@ bool LPS25HDeactivate(void) {
 	return false;
 }
 
-bool LPS25HgetValues(char *buffer){
-	uint8_t data;
+bool LPS25HgetValues(uint16_t *buffer) 
+{
+    uint8_t data = 0;
+    uint8_t read = 0;
+
 	if (readRegister(LPS25H_ADDRESS, STATUS_REG, &data)) {
-		if (data & TEMPERATURE_READY) {
-			if (readRegister(LPS25H_ADDRESS, TEMP_H_REG, &data)) {
-				if (readRegister(LPS25H_ADDRESS, TEMP_L_REG, &data)) {
+    	if (data & TEMPERATURE_READY) {
+			if (readRegister(LPS25H_ADDRESS, TEMP_H_REG, &read)) {
+                ((uint8_t*)buffer)[0] = read;
+				if (readRegister(LPS25H_ADDRESS, TEMP_L_REG, &read)) {
+                    ((uint8_t*)buffer)[1] = read;
 				}
 			}
-		}
-		if (data & HUMIDITY_READY) {
-			if (readRegister(LPS25H_ADDRESS, HUMIDITY_H_REG, &data)) {
-				if (readRegister(LPS25H_ADDRESS, HUMIDITY_L_REG, &data)) {
+		} else {
+            return false;
+        }
+
+        if (data & PRESSURE_READY) {
+			if (readRegister(LPS25H_ADDRESS, PRESSURE_H_REG, &read)) {
+                ((uint8_t*)buffer)[2] = read;
+				if (readRegister(LPS25H_ADDRESS, PRESSURE_L_REG,&read)) {
+                    ((uint8_t*)buffer)[3] = read;
+                	if (readRegister(LPS25H_ADDRESS, PRESSURE_XL_REG, &read)) {
+                        ((uint8_t*)buffer)[4] = read;
+                	}
 				}
 			}
-		}
+		} else {
+            return false;
+        }
+
+
 		return true;
 	} else
-	return false;
+	    return false;
 }
+
+bool LPS25HDecode(uint16_t *buffer, uint16_t *data1, uint16_t *data2)
+{
+    double t_temp = 0.0;
+    double p_temp = 0.0;
+    uint16_t t_out;
+    uint32_t p_out;
+
+    // Decode Temperature
+    t_out =  ((uint8_t*)buffer)[0] << 8; // MSB
+    t_out |= ((uint8_t*)buffer)[1];       // LSB
+    t_temp = 42.5 +((int16_t)t_out/480);
+    *data1 = t_temp*10;  // temp in 1/10 Celsius degree
+
+    // Decode pressure
+    p_out  =  ((uint8_t*)buffer)[2] << 16; // MSB
+    p_out |=  ((uint8_t*)buffer)[3] << 8;  // LSB
+    p_out |=  ((uint8_t*)buffer)[4];       // XLSB
+    p_temp = ((int32_t) p_out) / 4096.0;
+    *data2 = p_temp;
+    return true;
+}
+
 
 bool LPS25HBDUActivate(void) {
 	uint8_t data;
