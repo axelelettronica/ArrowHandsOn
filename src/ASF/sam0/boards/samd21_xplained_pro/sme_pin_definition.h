@@ -27,12 +27,24 @@
 #define SME_LED_Y2_GPIO                SME_LED_Y2_PIN
 #define SME_LED_Y2                     SME_LED_Y2_PIN
 
+
+// pin definition for I_O Expander */
 #define SME_RESET_IOEXT_PIN            PIN_PA13
 #define SME_RESET_IOEXT_NAME           "LED2 (yellow)"
 #define SME_RESET_IOEXT_ACTIVE         LED_ACTIVE
 #define SME_RESET_IOEXT_INACTIVE       LED_INACTIVE
 #define SME_RESET_IOEXT_GPIO           SME_RESET_IOEXT_PIN
 #define SME_RESET_IOEXT                SME_RESET_IOEXT_PIN
+
+#define SME_INT_IOEXT_HW_PIN           PIN_PB06
+#define SME_INT_IOEXT_ACTIVE           false
+#define SME_INT_IOEXT_INACTIVE         !SME_INT_IOEXT_ACTIVE
+#define SME_INT_IOEXT_PIN              PIN_PB06A_EIC_EXTINT6
+#define SME_INT_IOEXT_MUX              MUX_PB06A_EIC_EXTINT6
+#define SME_INT_IOEXT_EIC_PINMUX       PINMUX_PB06A_EIC_EXTINT6
+#define SME_INT_IOEXT_EIC_LINE         6
+
+// END pin definition for I_O Expander */
 
 /** \name Embedded debugger I2C interface definitions
 * @{
@@ -58,7 +70,7 @@
 */
 #ifdef SMARTEVERYTHING
 #define SME_CDC_MODULE              SERCOM2
-#define SME_CDC_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
+#define SME_CDC_SERCOM_MUX_SETTING  USART_RX_3_TX_2_XCK_3
 #define SME_CDC_SERCOM_PINMUX_PAD0  PINMUX_PA10D_SERCOM2_PAD2
 #define SME_CDC_SERCOM_PINMUX_PAD1  PINMUX_PA11D_SERCOM2_PAD3
 #define SME_CDC_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
@@ -92,7 +104,7 @@
 #define SME_SIGFOX_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
 #define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
 
-#define SME_SIGFOX_RTS__IOEXT_PIN                 PIN_PB14
+#define SME_SIGFOX_RST_PIN                 PIN_PB14
 #define SME_SIGFOX_RTS__IOEXT_NAME                "RTS (SFX)"
 #define SME_SIGFOX_RTS__IOEXT_ACTIVE              LED_ACTIVE
 #define SME_SIGFOX_RTS__IOEXT_INACTIVE            LED_INACTIVE
@@ -188,7 +200,6 @@
 #define INT_BUTTON1_EIC_PINMUX          PINMUX_PA15A_EIC_EXTINT15
 #define INT_BUTTON1_EIC_LINE            15
 #endif
-
 
 #ifdef SMARTEVERYTHING
 #define SME_BUTTON2_PIN                 PIN_PA27

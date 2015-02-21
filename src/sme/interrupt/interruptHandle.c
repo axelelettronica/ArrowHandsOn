@@ -19,10 +19,11 @@ typedef int (*handleInt) (void* data, ...);
 
 static handleInt isrFunct[MAX_EXTERN_INTERRUPT];
 
+
 uint16_t interruptDetection(void) {
     uint16_t newValue;
-    TCA6416aPortsValues(&newValue);
-
+    TCA6416a_input_ports_values(&newValue);
+    
     uint16_t detection = newValue ^ portsValue;
     portsValue= newValue;
 
@@ -39,5 +40,5 @@ uint16_t interruptDetection(void) {
 }
 
 void interruptValueInitializzation(void) {
-    TCA6416aPortsValues(&portsValue);
+    TCA6416a_input_ports_values(&portsValue);
 }

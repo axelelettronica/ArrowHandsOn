@@ -64,7 +64,7 @@
 Initialize the output extension with the configuration of input/output ports.
 Keep the reset High
 */
-bool TCA6416aInit(void) {
+bool TCA6416a_init(void) {
     bool ret = false;
     //readRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, &ret); //debug
     if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, INIT_CONF_PORT_0)!=false) {
@@ -84,7 +84,7 @@ bool TCA6416aInit(void) {
 }
 
 volatile uint8_t resets[4];
-bool TCA6416aResetDevices(void){
+bool TCA6416a_reset_devices(void){
     
     uint8_t actual;
     writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, RESET_P1);
@@ -108,25 +108,28 @@ bool TCA6416aResetDevices(void){
     writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, actual);
     readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[3] );
     
+    
+    //ENABLE Interrupt
+    extint_chan_enable_callback(SME_INT_IOEXT_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
     resets[0]=1;
 }
 
-bool TCA6416aPort0Values(char *buffer) {
+bool TCA6416a_input_port0_values(char *buffer) {
     readRegister(TCA6416A_ADDRESS, INPUT_PORT_0, (uint8_t *)buffer);
     return false;
 }
 
-bool TCA6416aPort1Values(char *buffer) {
+bool TCA6416a_input_port1_values(char *buffer) {
     readRegister(TCA6416A_ADDRESS, INPUT_PORT_1, (uint8_t *)buffer);
     return false;
 }
 
-bool TCA6416aPortsValues(uint16_t *buffer) {
+bool TCA6416a_input_ports_values(uint16_t *buffer) {
     uint8_t portValue;
-    TCA6416aPort0Values((char *)&portValue);
+    TCA6416a_input_port0_values((char *)&portValue);
     ((char*)buffer)[0] = portValue;
 
-    TCA6416aPort1Values((char *)&portValue);
+    TCA6416a_input_port1_values((char *)&portValue);
     ((char*)buffer)[1] = portValue;
     return false;
 }

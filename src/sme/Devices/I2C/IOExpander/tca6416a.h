@@ -18,11 +18,11 @@
 
 #define PORT0 0 
 #define PORT1 1
-bool TCA6416aInit(void);
-bool TCA6416aPort1Values(char *buffer);
-bool TCA6416aPort0Values(char *buffer);
-bool TCA6416aPortsValues(uint16_t *buffer);
-bool TCA6416aResetDevices(void);
+bool TCA6416a_init(void);
+bool TCA6416a_input_port1_values(char *buffer);
+bool TCA6416a_input_port0_values(char *buffer);
+bool TCA6416a_input_ports_values(uint16_t *buffer);
+bool TCA6416a_reset_devices(void);
 
 
 #endif /* TCA6416A_H_ */

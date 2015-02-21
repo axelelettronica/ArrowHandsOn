@@ -167,8 +167,8 @@ void sme_i2c_mgr_init(void) {
     sensors[TS221_POS].sensorValue = HTS221getValues;
 
     
-    sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
-    sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;
+    sensors[TCA6416_POS].sensorInit  = TCA6416a_init;
+    sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
     
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
         if (sensors[i].sensorInit())
@@ -177,7 +177,7 @@ void sme_i2c_mgr_init(void) {
         
     //if the IO extender as been initialized, reset the Devices
     if (sensors[TCA6416_POS].sensorInitialized)
-    TCA6416aResetDevices();
+    TCA6416a_reset_devices();
 }
 
 

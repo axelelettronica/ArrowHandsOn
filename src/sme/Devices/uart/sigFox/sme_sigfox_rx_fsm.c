@@ -108,7 +108,9 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i]){
                 print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
-                return SME_SFX_OK;
+                 port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
+                 port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
+                return SME_SFX_OK;                              
             } else
             return SME_SFX_KO;
 

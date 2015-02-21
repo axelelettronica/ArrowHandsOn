@@ -45,7 +45,7 @@ void sme_led_rgb_init(void) {
     
     leds_initilized.led_b_init=1;
     leds_initilized.led_r_init=1;
-    leds_initilized.led_g_init=1;    // enable RGB    tcc_enable(&tcc_rgb_instance);}void sme_led_red_on(void){    //ligth the RED led at maximun level.
+    leds_initilized.led_g_init=1;    // enable RGB    //tcc_enable(&tcc_rgb_instance);}void sme_led_red_on(void){    //ligth the RED led at maximun level.
     if(leds_initilized.led_r_init)
     tcc_set_compare_value(&tcc_rgb_instance, SME_CC_R_REGISTER, 0xffff);}void sme_led_green_on(void){    //ligth the GREEN led at maximun level
     if(leds_initilized.led_g_init)

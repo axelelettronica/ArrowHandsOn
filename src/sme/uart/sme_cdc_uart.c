@@ -54,7 +54,6 @@ static void cdc_task_rx(void *params);
 static void cdc_task(void *params);
 void configure_usart(struct usart_module *const cdc_uart_module);
 
-
 /* Function inizializing CDC UART
  *
  */
@@ -76,7 +75,7 @@ void configure_usart(struct usart_module *const cdc_uart_module)
 	}
 
 	usart_enable(cdc_uart_module);
-}
+    }
 
 
 int sme_cdc_mgr_init (void)
