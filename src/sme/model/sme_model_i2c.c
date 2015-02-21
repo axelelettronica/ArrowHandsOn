@@ -167,8 +167,7 @@ void sme_i2c_mgr_init(void) {
         if (sensors[i].sensorInit())
         sensors[i].sensorInitialized=1;
     }
-    
-    
+        
     //if the IO extender as been initialized, reset the Devices
     if (sensors[TCA6416_POS].sensorInitialized)
     TCA6416aResetDevices();

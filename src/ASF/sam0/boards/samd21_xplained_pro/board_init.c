@@ -76,6 +76,9 @@ void system_board_init(void)
     port_pin_set_output_level(SME_RESET_IOEXT_PIN, SME_RESET_IOEXT_INACTIVE);
 
 
+    port_pin_set_config(SME_SIGFOX_RTS__IOEXT_PIN, &pin_conf);
+    port_pin_set_output_level(SME_SIGFOX_RTS__IOEXT_PIN, SME_SIGFOX_RTS__IOEXT_ACTIVE);
+    
 	/* Set buttons as inputs */
 	pin_conf.direction  = PORT_PIN_DIR_INPUT;
 	pin_conf.input_pull = PORT_PIN_PULL_UP;
