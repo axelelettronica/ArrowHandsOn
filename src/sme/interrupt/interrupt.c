@@ -19,8 +19,7 @@ volatile uint8_t intDetect;
 
 static void extint0_detection_callback(void)
 {   
-        print_out("Bottone");
-    
+
     bool pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
     port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
     
@@ -48,8 +47,7 @@ static void extint0_detection_callback(void)
 
 static void extint15_detection_callback(void)
 {
-    print_dbg("Bottone");
-    
+
     bool pin_state=true;
     pin_state = port_pin_get_input_level(SME_BUTTON2_PIN);
             sme_led_red_off();
