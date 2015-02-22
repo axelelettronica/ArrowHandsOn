@@ -18,12 +18,11 @@ controllerQueueS interruptData;
 volatile uint8_t intDetect;
 
 static void extint0_detection_callback(void)
-{   
+{
 
     bool pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
-    port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
     
-    sme_led_green_off();
+    sme_led_green_brightness(SIXTEEN_LIGTH);
     
     //pin_state = port_pin_get_input_level(BUTTON_0_PIN);
     // just for first demo
@@ -50,9 +49,8 @@ static void extint15_detection_callback(void)
 
     bool pin_state=true;
     pin_state = port_pin_get_input_level(SME_BUTTON2_PIN);
-            sme_led_red_off();
     
-    port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE);
+    sme_led_blue_brightness(SIXTEEN_LIGTH);
 
     // just for first demo
     if (((intDetect&0x2) != 0x2) && (pin_state == true)) {
@@ -83,7 +81,7 @@ static void extint06_detection_callback(void)
     interruptData.intE = externalInt;
 
     /* We have not woken a task at the start of the ISR. */
-    xHigherPriorityTaskWoken = pdFALSE; 
+    xHigherPriorityTaskWoken = pdFALSE;
     
     xQueueSendFromISR(controllerQueue, (void *) &interruptData, &xHigherPriorityTaskWoken);
     

@@ -1,5 +1,5 @@
 /*
-* HTS221.c
+* LPS25H.c
 *
 * Created: 02/01/2015 20:50:20
 *  Author: mfontane

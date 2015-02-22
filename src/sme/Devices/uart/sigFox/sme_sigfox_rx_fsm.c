@@ -37,7 +37,9 @@ static sfxRxFSME crcCheck(void) {
         return tailerRec;
     }
     else {
-        sme_brigthness_led_red(0xffff);
+        sme_led_red_brightness(HALF_LIGTH);
+        sme_led_blue_off();
+        sme_led_green_off();
         print_dbg("wrong crc = %X calculated = %x \r\n", *receivedCrc, crc);
         return nullState;
     }
@@ -53,7 +55,9 @@ static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
             return payloadRec;
         }
     }
-    sme_brigthness_led_red(0xffff);
+    sme_led_red_brightness(HALF_LIGTH);
+    sme_led_blue_off();
+    sme_led_green_off();
     print_sfx ("find wrong Sequence = %X", sequence);
     print_sfx (" stored = %X, %X\n\r", sfxMessageIdx[0], sfxMessageIdx[1]);
 
@@ -110,6 +114,9 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
                 print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
                  port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
                  port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
+                 sme_led_blue_off();
+                 sme_led_green_off();
+                 sme_led_red_off();
                 return SME_SFX_OK;                              
             } else
             return SME_SFX_KO;
