@@ -13,6 +13,7 @@
 #include "../Devices/I2C/nfc/nxpNfc.h"
 #include "../Devices/I2C/Humidity/HTS221.h"
 #include "../Devices/I2C/Pressure/LPS25H.h"
+#include "../Devices/I2C/Accelerometer/LSM9DS1.h"
 #include "../Devices/I2C/IOExpander/tca6416a.h"
 #include "../Devices/I2C/I2C.h"
 #include "sme_cdc_io.h"
@@ -20,11 +21,14 @@
 #define TCA6416_POS 0
 
 /* Sensors list */
-#define LPS25_POS    1
-#define TS221_POS   (LPS25_POS+1)
+#define FIRST_I2C_SENSOR      1
+#define LPS25_POS             FIRST_I2C_SENSOR
+#define TS221_POS             (LPS25_POS+1)
+#define LSM9DS1_A_POS           (TS221_POS)      // LSM9DS1- Accelerometer - Main init 
+#define LSM9DS1_G_POS           (LSM9DS1_A_POS)  // LSM9DS1 - Gyroscope
+#define LSM9DS1_M_POS           (LSM9DS1_G_POS)  // LSM9DS1 - Magnetometer
 
-#define FIRST_I2C_SENSOR      LPS25_POS
-#define MAX_I2C_SENSORS       (TS221_POS+1)
+#define MAX_I2C_SENSORS       (TS221_POS+1)  // Postponed other sensors
 
 #define NXPNFC_POS  3
 #define MMA8452_POS 4
@@ -35,7 +39,7 @@ typedef bool (*readValue)(uint16_t*);
 // function pointer for the initialization of sensor
 typedef bool (*initSensor)(void);
 // function pointer decoding  Data on all sensor
-typedef bool (*sensorDecode)(uint16_t* buf, uint16_t *data1, uint16_t *data2);
+typedef bool (*sensorDecode)(uint16_t* buf, uint16_t *data1, ...);
 
 #define SME_MAX_I2C_READ_BUF_LEN     5
 
@@ -47,7 +51,7 @@ typedef struct {
     sensorDecode  decodeCb;
     uint16_t      decodedData1;
     uint16_t      decodedData2;
-
+    uint16_t      decodedData3;
 } sensorTaskStr;
 
 static sensorTaskStr sensors[MAX_I2C_SENSORS];
@@ -71,7 +75,8 @@ static void readAllValues(void)
                 if (read && sensors[i].decodeCb) {
                     sensors[i].decodeCb(buffer, 
                                &sensors[i].decodedData1,
-                               &sensors[i].decodedData2);
+                               &sensors[i].decodedData2,
+                               &sensors[i].decodedData3);
                 }
             }
         }
@@ -191,7 +196,19 @@ void sme_i2c_mgr_init(void) {
     
     sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
     sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;
-    
+
+    sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;
+    sensors[LSM9DS1_A_POS].sensorValue = LSM9DS1_A_getValues;
+    sensors[LSM9DS1_A_POS].decodeCb    = LSM9DS1_A_Decode;
+
+    sensors[LSM9DS1_M_POS].sensorInit  = LSM9DS1_M_Init;
+    sensors[LSM9DS1_M_POS].sensorValue = LSM9DS1_M_getValues;
+    sensors[LSM9DS1_M_POS].decodeCb    = LSM9DS1_M_Decode;
+
+    sensors[LSM9DS1_G_POS].sensorInit  = LSM9DS1_G_Init;
+    sensors[LSM9DS1_G_POS].sensorValue = LSM9DS1_G_getValues;
+    sensors[LSM9DS1_G_POS].decodeCb    = LSM9DS1_G_Decode;
+
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
         if (sensors[i].sensorInit && sensors[i].sensorInit()) {
             sensors[i].sensorInitialized=1;

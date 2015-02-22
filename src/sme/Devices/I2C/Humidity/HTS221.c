@@ -169,7 +169,6 @@ bool HTS221nit(void) {
 			}			
 		}
 	}
-	
 	return false;
 }
 
