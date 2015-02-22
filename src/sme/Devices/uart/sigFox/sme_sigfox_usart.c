@@ -101,9 +101,6 @@ status_code_genare_t sigfoxSendMessage(const uint8_t *msg, uint8_t len) {
 status_code_genare_t sigfoxReceivedMessage(uint8_t *msg, uint8_t len ){
     status_code_genare_t ret =  usart_read_buffer_job(&usart_sigfox, (uint8_t *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
     if (ret == STATUS_OK) {
-        port_pin_set_output_level(LED_0_PIN, LED_0_INACTIVE); // clear the led
-        sme_led_red_off();
-        sme_led_blue_off();
         memcpy((char *)msg, (char *)rx_buffer, MAX_SIGFOX_RX_BUFFER_LENGTH);
     }
     return ret;

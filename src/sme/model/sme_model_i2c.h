@@ -43,5 +43,5 @@ typedef struct {
 
 void sme_cdc_i2c(i2cQueueS *current_message);
 void sme_i2c_mgr_init(void);
-char *sme_i2c_get_read_str(void);
+int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len);
 #endif /* SME_CDC_I2C_H_ */

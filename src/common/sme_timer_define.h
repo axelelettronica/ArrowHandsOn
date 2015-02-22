@@ -12,9 +12,12 @@
 #include "../sme/sme_FreeRTOS.h"
 
 #define ONE_SECOND  (1000 / portTICK_RATE_MS)   // one second
+#define TWO_SECOND  (2000 / portTICK_RATE_MS)   // one second
+#define FIFTEEN_SECOND  (15000 / portTICK_RATE_MS)  //one Mminute Timeout
 
 
 
+#define HALF_MINUTE  (30000 / portTICK_RATE_MS)  //one Mminute Timeout
 #define ONE_MINUTE  (60000 / portTICK_RATE_MS)  //one Mminute Timeout
 #define FIVE_MINUTE (300000 / portTICK_RATE_MS) // 5 Minuts
 

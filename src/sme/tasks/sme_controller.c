@@ -23,6 +23,12 @@ static void control_task(void *params);
 xQueueHandle controllerQueue;
 static int keepTimeout;
 
+typedef enum {
+    SME_SFX_DEBUG_MSG,
+    SME_SFX_I2C_1_MSG
+}sme_sfx_report_t;
+
+
 int sme_ctrl_init(void)
 {
 
@@ -123,7 +129,7 @@ static void sfxTimeOut(void) {
     }
     else {
         print_sfx("no command sent, exit from command mode\r\n");
-        sendToSfxExitConf();        
+        sendToSfxExitConf();
     }
     #endif
 }
@@ -135,8 +141,9 @@ detect NFC interrupt:
 2) take GPS position
 3) Send all to SigFox
 */
+volatile  uint8_t data;
 static void performExecution( uint16_t intDetection) {
-    uint8_t data;
+    
     #if NOT_SENSOR
     
     // point 1
@@ -147,11 +154,45 @@ static void performExecution( uint16_t intDetection) {
 
     #else
     // check which is the interrupt that wake-up the task
-    if ((intDetection & NFC_FD_INT) == NFC_FD_INT) {
+    if ((intDetection & MASK_NFC_FD_INT) == MASK_NFC_FD_INT) {
+        data++;
     }
     #endif
 
     
+}
+
+static void enter_conf_mode(void) {
+    port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE);
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = enterConfMode;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Smart");
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+}
+
+static void enter_in_data_mode(void){
+    
+    port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = enterDataMode;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
 }
 
 
@@ -163,6 +204,76 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
+    sigFoxT *sfModel = getSigFoxModel(); 
+     
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    // point 1
+    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+
+}
+
+bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len, uint8_t msg_len) {
+
+    if (!msg || !len) {
+        return SME_ERR;
+    }
+    switch (type) {
+    case SME_SFX_DEBUG_MSG:
+         ((char*)msg)[0] = SME_SFX_DEBUG_MSG;
+         *len = sprintf((msg+1),"Smart");
+         (*len)++; // considering msg ID field
+    break;
+    case SME_SFX_I2C_1_MSG:
+        ((char*)msg)[0] = SME_SFX_I2C_1_MSG;
+        sme_i2c_get_read_str((msg+1), len, msg_len-1);
+        (*len)++; // considering msg ID field
+    break;
+    }
+
+    return SME_OK;
+}
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void button1Execution(void) {
+    char *msg = NULL;
+    char msg_len = 0;
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = dataIntMessage;
+    sfModel->message.dataMode.type = SIGFOX_DATA;
+
+    sme_sfx_fill_report(SME_SFX_I2C_1_MSG, sfModel->message.dataMode.payload,
+                        &sfModel->message.dataMode.length, SIG_FOX_MAX_PAYLOAD);
+
+    //point 3 SEND !!!!!!!!!!!
+    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+
+    executeCDCSigFox(sfModel);
+}
+
+
+
+/*
+* Third Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void nfcExecution(void) {
     sigFoxT *sfModel = getSigFoxModel();
 
     sfModel->messageType = dataIntMessage;
@@ -197,35 +308,6 @@ detect NFC interrupt:
 2) take GPS position
 3) Send all to SigFox
 */
-static void button1Execution(void) {
-    char *i2cbuf_ptr = NULL;
-    sigFoxT *sfModel = getSigFoxModel();
-
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-
-    // get I2C sensor report
-    i2cbuf_ptr = sme_i2c_get_read_str();
-
-    // point 1
-    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
-
-    //point 2 (could be a FSM because has to be wait the GSM wake-up)
-    gpsStartScan();
-
-    //point 3 SEND !!!!!!!!!!!
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-    executeCDCSigFox(sfModel); 
-}
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
 static void sme_gps_data_updateExecution(void) {
     uint8_t data;
     sigFoxT *sfModel = getSigFoxModel();
@@ -240,7 +322,7 @@ static void sme_gps_data_updateExecution(void) {
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
-    executeCDCSigFox(sfModel); 
+    executeCDCSigFox(sfModel);
 }
 
 /**
@@ -250,16 +332,21 @@ static void sme_gps_data_updateExecution(void) {
 *
 * \param params Parameters for the task. (Not used.)
 */
-static bool blink = false;
+
 static void control_task(void *params)
 {
-    //bool valueRead=false;
+    #ifdef VIRGIN_UNIT
+    uint8_t initialized=0;
+    int timeOut = TWO_SECOND;
+    #else
+    int timeOut = FIVE_MINUTE;
+    #endif
+    
     controllerQueueS current_message;
     //uint8_t value;
     
-
     for(;;) {
-        if (xQueueReceive(controllerQueue, &current_message, CONTROL_TASK_DELAY)) {
+        if (xQueueReceive(controllerQueue, &current_message, timeOut)) {
             switch(current_message.intE) {
                 case button1Int:
                 button1Execution();
@@ -275,7 +362,7 @@ static void control_task(void *params)
                 break;
 
                 case gpsData:
-                sme_gps_data_updateExecution();          
+                sme_gps_data_updateExecution();
                 break;
 
                 default:
@@ -284,10 +371,28 @@ static void control_task(void *params)
             clearInt(current_message.intE);
         }
         else {
-            blink != blink;
-            port_pin_set_output_level(SME_LED_Y2_PIN, blink);
-            sfxTimeOut();
+            #ifdef VIRGIN_UNIT
+            switch (initialized){
+                case 0:
+                enter_conf_mode();
+                initialized++;
+                break;
+                
+                case 1:
+                timeOut = CONTROL_TASK_DELAY;
+                enter_in_data_mode();
+                initialized++;
+                break;
+                
+                default:
+                sfxTimeOut();
+                break;
+            }
+            #else
+             sfxTimeOut();
+            #endif
         }
     }
 }
+
 

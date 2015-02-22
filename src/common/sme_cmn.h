@@ -17,6 +17,7 @@
 /* Mapping error codes */
 #define SME_OK           0
 #define SME_EPERM        1  /* Operation not permitted */
+#define SME_ERR          2  /* Generic error */
 #define SME_EIO          5  /* I/O error */
 #define SME_ENXIO        6  /* No such device or address */
 #define SME_ENOMEM      12  /* Out of memory */

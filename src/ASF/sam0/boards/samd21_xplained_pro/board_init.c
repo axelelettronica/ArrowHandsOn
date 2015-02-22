@@ -59,23 +59,47 @@ void system_board_init(void)
 	port_get_config_defaults(&pin_conf);
 
 #ifdef SMARTEVERYTHING
-	/* Configure LEDs as outputs, turn them off */
+	/* Configure OUTPUT Pin */
+    //first yellow led
 	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(SME_LED_Y1_PIN, &pin_conf);
 	port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
-	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+	
+	//second yellow led
 	port_pin_set_config(SME_LED_Y2_PIN, &pin_conf);
 	port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
-  
-	/* Set buttons as inputs */
-	pin_conf.direction  = PORT_PIN_DIR_INPUT;
-	pin_conf.input_pull = PORT_PIN_PULL_UP;
-	port_pin_set_config(SME_BUTTON1_PIN, &pin_conf);
-	/* Set buttons as inputs */
-	pin_conf.direction  = PORT_PIN_DIR_INPUT;
-	pin_conf.input_pull = PORT_PIN_PULL_UP;
-	port_pin_set_config(SME_BUTTON2_PIN, &pin_conf);
+	
+	// SFX RTS Pin
+	port_pin_set_config(SME_SIGFOX_RST_PIN, &pin_conf);
+	port_pin_set_output_level(SME_SIGFOX_RST_PIN, SME_SIGFOX_RTS__IOEXT_ACTIVE);
+        
+    // reset I_O Extender
+    port_pin_set_config(SME_RESET_IOEXT_PIN, &pin_conf);
+    port_pin_set_output_level(SME_RESET_IOEXT_PIN, SME_RESET_IOEXT_INACTIVE);
 
+	/* END Configure OUTPUT Pin */    
+    
+	
+    
+    
+	/* Configure INPUT Pin */
+	pin_conf.direction  = PORT_PIN_DIR_INPUT;
+	pin_conf.input_pull = PORT_PIN_PULL_UP;
+    
+	port_pin_set_config(SME_BUTTON1_PIN, &pin_conf);
+	port_pin_set_config(SME_BUTTON2_PIN, &pin_conf);
+	/* END Configure INPUT Pin */    
+    
+    
+    
+    
+    /* Configure INTERRUPT Pin */
+    pin_conf.direction  = PORT_PIN_DIR_INPUT;
+    pin_conf.input_pull = PORT_PIN_PULL_UP;
+    
+    port_pin_set_config(SME_INT_IOEXT_HW_PIN, &pin_conf);
+    /* END Configure INTERRUPT Pin */
+   
 #else
 	/* Configure LEDs as outputs, turn them off */
 	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
@@ -93,8 +117,7 @@ void system_board_init(void)
    
     port_pin_set_config(SME_RESET_IOEXT_PIN, &pin_conf);
     port_pin_set_output_level(SME_RESET_IOEXT_PIN, SME_RESET_IOEXT_INACTIVE);
-
-
+   
 	/* Set buttons as inputs */
 	pin_conf.direction  = PORT_PIN_DIR_INPUT;
 	pin_conf.input_pull = PORT_PIN_PULL_UP;

@@ -56,17 +56,19 @@
 #define GPS_FORCE_ON    0x40
 #define GPS_RESET       0x80
 
+#define INIT_P1         0b10000000
+#define INIT_P2         0b11001010
 #define RESET_P1        0xFE
 #define RESET_P2        0xBE
 /*
 Initialize the output extension with the configuration of input/output ports.
 Keep the reset High
 */
-bool TCA6416aInit(void) {
+bool TCA6416a_init(void) {
     bool ret = false;
     //readRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, &ret); //debug
     if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, INIT_CONF_PORT_0)!=false) {
-        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, 1); // keep the BLE reset High
+        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, INIT_P1); // keep the BLE reset High
         
         ret = true;
     }
@@ -81,15 +83,19 @@ bool TCA6416aInit(void) {
     return ret;
 }
 
-volatile uint8_t delay;
-bool TCA6416aResetDevices(void){
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, RESET_P1);
-
+volatile uint8_t resets[4];
+bool TCA6416a_reset_devices(void){
+    
     uint8_t actual;
+    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, RESET_P1);
+    readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[0] );
+    
     if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (uint8_t *)&actual) != false) {
-        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual&RESET_P2));
+        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, ((actual&RESET_P2)&(~SFX_WAKEUP)));
+            readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[1]);
     }
-
+    
+    uint8_t delay;
     // wait a while
     for (int i=0; i<1000; i++) {
         delay++;
@@ -97,25 +103,33 @@ bool TCA6416aResetDevices(void){
 
     // move the reset high
     writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, ~RESET_P1);
+    readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[2] );
+    
     writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, actual);
+    readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[3] );
+    
+    
+    //ENABLE Interrupt
+    extint_chan_enable_callback(SME_INT_IOEXT_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
+    resets[0]=1;
 }
 
-bool TCA6416aPort0Values(char *buffer) {
+bool TCA6416a_input_port0_values(char *buffer) {
     readRegister(TCA6416A_ADDRESS, INPUT_PORT_0, (uint8_t *)buffer);
     return false;
 }
 
-bool TCA6416aPort1Values(char *buffer) {
+bool TCA6416a_input_port1_values(char *buffer) {
     readRegister(TCA6416A_ADDRESS, INPUT_PORT_1, (uint8_t *)buffer);
     return false;
 }
 
-bool TCA6416aPortsValues(uint16_t *buffer) {
+bool TCA6416a_input_ports_values(uint16_t *buffer) {
     uint8_t portValue;
-    TCA6416aPort0Values((char *)&portValue);
+    TCA6416a_input_port0_values((char *)&portValue);
     ((char*)buffer)[0] = portValue;
 
-    TCA6416aPort1Values((char *)&portValue);
+    TCA6416a_input_port1_values((char *)&portValue);
     ((char*)buffer)[1] = portValue;
     return false;
 }

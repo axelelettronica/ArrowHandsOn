@@ -17,6 +17,7 @@
 #include "../Devices/I2C/IOExpander/tca6416a.h"
 #include "../Devices/I2C/I2C.h"
 #include "sme_cdc_io.h"
+#include "sme_cmn.h"
 
 #define TCA6416_POS 0
 
@@ -194,8 +195,8 @@ void sme_i2c_mgr_init(void) {
     sensors[TS221_POS].sensorValue = HTS221getValues;
     sensors[TS221_POS].decodeCb    = HTS221Decode;
     
-    sensors[TCA6416_POS].sensorInit  = TCA6416aInit;
-    sensors[TCA6416_POS].sensorValue = TCA6416aPort1Values;
+    sensors[TCA6416_POS].sensorInit  = TCA6416a_init;
+    sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
 
     sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;
     sensors[LSM9DS1_A_POS].sensorValue = LSM9DS1_A_getValues;
@@ -214,19 +215,32 @@ void sme_i2c_mgr_init(void) {
             sensors[i].sensorInitialized=1;
         }
     }
-    
-    
+        
     //if the IO extender as been initialized, reset the Devices
-    if (sensors[TCA6416_POS].sensorInitialized) {
-        TCA6416aResetDevices();
-    }
+    if (sensors[TCA6416_POS].sensorInitialized)
+    TCA6416a_reset_devices();
 }
 
 
 /*
- *  This function exports a preformatted string with all read sensors
+ *  This function exports a pre formatted string with all read sensors
  */
-char *sme_i2c_get_read_str(void) {
+int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len)
+{
+    uint8_t offset = 0;
+    
+    if (!msg || !len) {
+        return SME_ERR;
+    }
+
     readAllValues();
-    return buffer;
+
+    // Writing Temperature, pressure
+    *len = sprintf(msg, "%2d%4d", (sensors[LPS25_POS].decodedData1)/10,
+                   sensors[LPS25_POS].decodedData2);
+    offset += *len;
+    // Writing Humidity
+    *len += sprintf((msg+offset), "%2d", sensors[TS221_POS].decodedData2);
+
+    return SME_OK;
 }
