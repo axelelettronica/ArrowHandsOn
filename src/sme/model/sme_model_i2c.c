@@ -25,9 +25,9 @@
 #define FIRST_I2C_SENSOR      1
 #define LPS25_POS             FIRST_I2C_SENSOR
 #define TS221_POS             (LPS25_POS+1)
-#define LSM9DS1_A_POS           (TS221_POS)      // LSM9DS1- Accelerometer - Main init 
-#define LSM9DS1_G_POS           (LSM9DS1_A_POS)  // LSM9DS1 - Gyroscope
-#define LSM9DS1_M_POS           (LSM9DS1_G_POS)  // LSM9DS1 - Magnetometer
+#define LSM9DS1_A_POS         (TS221_POS+1)      // LSM9DS1- Accelerometer - Main init 
+#define LSM9DS1_G_POS         (LSM9DS1_A_POS+1)  // LSM9DS1 - Gyroscope
+#define LSM9DS1_M_POS         (LSM9DS1_G_POS+1)  // LSM9DS1 - Magnetometer
 
 #define MAX_I2C_SENSORS       (TS221_POS+1)  // Postponed other sensors
 
