@@ -228,12 +228,12 @@ bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len, uint8_
     switch (type) {
     case SME_SFX_DEBUG_MSG:
          ((char*)msg)[0] = SME_SFX_DEBUG_MSG;
-         *len = sprintf((msg+1),"Smart");
+         *len = sprintf(&(((char*)msg)[1]),"Smart");
          (*len)++; // considering msg ID field
     break;
     case SME_SFX_I2C_1_MSG:
         ((char*)msg)[0] = SME_SFX_I2C_1_MSG;
-        sme_i2c_get_read_str((msg+1), len, msg_len-1);
+        sme_i2c_get_read_str(&(((char*)msg)[1]), len, msg_len-1);
         (*len)++; // considering msg ID field
     break;
     }
@@ -257,6 +257,7 @@ static void button1Execution(void) {
 
     sme_sfx_fill_report(SME_SFX_I2C_1_MSG, sfModel->message.dataMode.payload,
                         &sfModel->message.dataMode.length, SIG_FOX_MAX_PAYLOAD);
+
 
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();

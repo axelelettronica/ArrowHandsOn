@@ -228,7 +228,7 @@ void sme_i2c_mgr_init(void) {
 int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len)
 {
     uint8_t offset = 0;
-    
+
     if (!msg || !len) {
         return SME_ERR;
     }
@@ -236,11 +236,13 @@ int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len)
     readAllValues();
 
     // Writing Temperature, pressure
-    *len = sprintf(msg, "%2d%4d", (sensors[LPS25_POS].decodedData1)/10,
+    *len = sprintf(msg, "%02d%04d", (sensors[LPS25_POS].decodedData1)/10,
                    sensors[LPS25_POS].decodedData2);
+
     offset += *len;
     // Writing Humidity
-    *len += sprintf((msg+offset), "%2d", sensors[TS221_POS].decodedData2);
+    *len += sprintf((msg+offset), "%2d", (sensors[TS221_POS].decodedData2)/10);
+
 
     return SME_OK;
 }
