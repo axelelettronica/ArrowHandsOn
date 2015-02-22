@@ -198,7 +198,8 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
-    sigFoxT *sfModel = getSigFoxModel();
+    sigFoxT *sfModel = getSigFoxModel(); 
+     
 
     sfModel->messageType = dataIntMessage;
     sfModel->message.dataMode.type = SIGFOX_DATA;
