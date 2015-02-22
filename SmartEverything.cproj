@@ -317,7 +317,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>28012653</ToolNumber>
+      <ToolNumber>28006555</ToolNumber>
       <ToolName>SAM-ICE</ToolName>
     </com_atmel_avrdbg_tool_samice>
   </PropertyGroup>
@@ -489,6 +489,7 @@
       <Value>DEBUG</Value>
       <Value>SMARTEVERYTHING</Value>
       <Value>BOARD=SAMD21_XPLAINED_PRO</Value>
+      <Value>VIRGIN_UNIT</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>

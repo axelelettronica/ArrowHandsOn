@@ -41,7 +41,7 @@ static void usart_gps_read_callback(const struct usart_module *const usart_modul
 static void usart_gps_write_callback(const struct usart_module *const usart_module)
 {
 
-	    sme_brigthness_led_green(VALID_GREEN_LEVEL);
+	    sme_led_green_brightness(VALID_GREEN_LEVEL);
 
 }
 

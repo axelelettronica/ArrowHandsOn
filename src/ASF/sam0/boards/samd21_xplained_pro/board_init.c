@@ -70,12 +70,16 @@ void system_board_init(void)
 	port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
 	
 	// SFX RTS Pin
-	port_pin_set_config(SME_SIGFOX_RST_PIN, &pin_conf);
-	port_pin_set_output_level(SME_SIGFOX_RST_PIN, SME_SIGFOX_RTS__IOEXT_ACTIVE);
+	port_pin_set_config(SME_SIGFOX_RTS_PIN, &pin_conf);
+	port_pin_set_output_level(SME_SIGFOX_RTS_PIN, SME_SIGFOX_RTS__IOEXT_ACTIVE);
         
     // reset I_O Extender
     port_pin_set_config(SME_RESET_IOEXT_PIN, &pin_conf);
     port_pin_set_output_level(SME_RESET_IOEXT_PIN, SME_RESET_IOEXT_INACTIVE);
+    
+    // step up pin
+    port_pin_set_config(STEP_UP_PIN_PIN, &pin_conf);
+    port_pin_set_output_level(STEP_UP_PIN_PIN, SME_RESET_IOEXT_INACTIVE);
 
 	/* END Configure OUTPUT Pin */    
     

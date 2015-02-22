@@ -14,10 +14,6 @@
 #include "sme_sigfox_rx_fsm.h"
 #include "..\..\IO\sme_rgb_led.h"
 
-
-#define VALID_RED_LEVEL   (0xFFFF / 2)
-#define VALID_BLUE_LEVEL  (0xFFFF / 16)
-
 /* interrupt USART variables */
 static struct usart_module usart_sigfox;
 volatile uint8_t rx_buffer[MAX_SIGFOX_RX_BUFFER_LENGTH];
@@ -43,8 +39,7 @@ static void usart_sigfox_read_callback(const struct usart_module *const usart_mo
 
 static void usart_sigfox_write_callback(const struct usart_module *const usart_module)
 {
-    sme_brigthness_led_red(VALID_RED_LEVEL);
-     sme_brigthness_led_blue(VALID_BLUE_LEVEL);
+    sme_led_red_brightness(HALF_LIGTH);
 }
 
 volatile int init;
