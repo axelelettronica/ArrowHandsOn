@@ -114,7 +114,7 @@ read also.
 #define CTRL_REG1   0x20
 #define POWER_UP    0x80
 #define BDU_SET     0x4
-
+#define ODR0_SET    0x1   // setting sensor reading period 1Hz
 
 #define CTRL_REG2   0x21
 #define CTRL_REG3   0x22
@@ -136,6 +136,18 @@ read also.
 */
 #define CALIB_START        0x30
 #define CALIB_END	       0x3F
+/*
+#define CALIB_T0_DEGC_X8   0x32
+#define CALIB_T1_DEGC_X8   0x33
+#define CALIB_T1_T0_MSB    0x35
+#define CALIB_T0_OUT_L     0x3C
+#define CALIB_T0_OUT_H     0x3D
+#define CALIB_T1_OUT_L     0x3E
+#define CALIB_T1_OUT_H     0x3F
+*/
+
+
+
 #endif
 static inline bool humidityReady(uint8_t data) {
 	return (data & 0x02);
@@ -145,12 +157,14 @@ static inline bool temperatureReady(uint8_t data) {
 }
 
 static uint8_t h0_rH, h1_rH;
-static uint16_t T0_degC, T1_degC, H0_T0, H1_T1, T0, T1;
+static uint16_t T0_degC, T1_degC, H0_T0, H1_T0, T0_OUT, T1_OUT;
+
 volatile uint8_t data;
 bool HTS221nit(void) {
 	if (readRegister(HTS221_ADDRESS, WHO_AM_I, &data)) {
 		if (data == WHO_AM_I_RETURN){
 			if (HTS221Activate()){
+                //HTS221BDUActivate();
 				return HTS221getCalibration();
 			}			
 		}
@@ -193,25 +207,25 @@ bool HTS221getCalibration(void) {
 					H0_T0 = data;
 					break;
 					case CALIB_START+7:
-					H0_T0 = data<<8;
+					H0_T0 |= data<<8;
 					break;
 					case CALIB_START+0xA:
-					H1_T1 = data;
+					H1_T0 = data;
 					break;
 					case CALIB_START+0xB:
-					H1_T1 = data <<8;
+					H1_T0 |= data <<8;
 					break;
 					case CALIB_START+0xC:
-					T0 = data;
+					T0_OUT = data;
 					break;
 					case CALIB_START+0xD:
-					T0 = data << 8;
+					T0_OUT |= data << 8;
 					break;
 					case CALIB_START+0xE:
-					T1 = data;
+					T1_OUT = data;
 					break;
 					case CALIB_START+0xF:
-					T1 = data << 8;
+					T1_OUT |= data << 8;
 					break;
 					
 					
@@ -259,6 +273,7 @@ bool HTS221Activate(void) {
 	uint8_t data;
 	if (readRegister(HTS221_ADDRESS, CTRL_REG1, &data)) {
 		data |= POWER_UP;
+        data |= ODR0_SET;
 		if (writeRegister(HTS221_ADDRESS, CTRL_REG1, data))
 		return true;
 	}
@@ -277,22 +292,70 @@ bool HTS221Deactivate(void) {
 }
 
 
-bool HTS221getValues(char *buffer){
-	
-	if (readRegister(HTS221_ADDRESS, STATUS_REG, (uint8_t*)buffer)) {
-		if (*buffer & TEMPERATURE_READY) {
-			if (readRegister(HTS221_ADDRESS, TEMP_H_REG, (uint8_t*)buffer)) {
-				if (readRegister(HTS221_ADDRESS, TEMP_L_REG, (uint8_t*)buffer)) {
+bool HTS221getValues(uint16_t *buffer)
+{
+    uint8_t data = 0;
+    uint8_t read = 0;
+    	
+	if (readRegister(HTS221_ADDRESS, STATUS_REG, &data)) {
+		if (data & TEMPERATURE_READY) {
+			if (readRegister(HTS221_ADDRESS, TEMP_H_REG, &read)) {
+                ((uint8_t*)buffer)[0] = read;
+				if (readRegister(HTS221_ADDRESS, TEMP_L_REG, &read)) {
+                    ((uint8_t*)buffer)[1] = read;
 				}
 			}
-		}
-		if (*buffer & HUMIDITY_READY) {
-			if (readRegister(HTS221_ADDRESS, HUMIDITY_H_REG, (uint8_t*)buffer)) {
-				if (readRegister(HTS221_ADDRESS, HUMIDITY_L_REG, (uint8_t*)buffer)) {
+		} else {
+           return false;
+        }
+
+		if (data & HUMIDITY_READY) {
+			if (readRegister(HTS221_ADDRESS, HUMIDITY_H_REG, &read)) {
+                 ((uint8_t*)buffer)[2] = read;
+				if (readRegister(HTS221_ADDRESS, HUMIDITY_L_REG, &read)) {
+                    ((uint8_t*)buffer)[3] = read;
 				}
 			}
-		}
+		} else {
+          return false;
+        }
+
 		return true;
 	} else
-	return false;
+	    return false;
+}
+
+bool HTS221Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2)
+{
+    uint16_t t_out = 0;
+    uint16_t h_out = 0;
+    double t_temp = 0.0;
+    double deg = 0.0;
+    double h_temp = 0.0;
+    double hum = 0.0; 
+
+    // Decode Temperature
+    t_out =  ((uint8_t*)buffer)[0] << 8; // MSB
+    t_out |= ((uint8_t*)buffer)[1];      // LSB
+
+    deg    = ((int16_t)(T1_degC) - (int16_t)(T0_degC))/8.0; // remove x8 multiple
+
+    // Calculate Temperature in decimal of grade centigrades i.e. 15.0 = 150.
+    t_temp   = (((int16_t)t_out - (int16_t)T0_OUT) * deg) / ((int16_t)T1_OUT - (int16_t)T0_OUT);
+    deg    = ((int16_t)T0_degC) / 8.0; // remove x8 multiple
+    *data1 = (int16_t)((deg + t_temp)*10);   // provide signed decimal measurement unit
+
+
+    // Decode Humidity
+    h_out =  ((uint8_t*)buffer)[2] << 8; // MSB
+    h_out |= ((uint8_t*)buffer)[3];      // LSB
+
+    hum = ((int16_t)(h1_rH) - (int16_t)(h0_rH))/2.0;  // remove x2 multiple
+
+    // Calculate humidity in decimal of grade centigrades i.e. 15.0 = 150.
+    h_temp = (((int16_t)h_out - (int16_t)H0_T0) * hum) / ((int16_t)H1_T0 - (int16_t)H0_T0);
+    hum    = ((int16_t)h0_rH) / 2.0; // remove x2 multiple
+    *data2 = (int16_t)((hum + h_temp)*10); // provide signed decimal measurement unit
+
+    return true;
 }
