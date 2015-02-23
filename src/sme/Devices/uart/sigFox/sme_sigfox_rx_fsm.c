@@ -10,6 +10,7 @@
 #include "sme_sigfox_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
 #include "sme_sfx_timer.h"
+#include "interrupt\interrupt.h"
 
 typedef enum {
     headerRec,
@@ -28,6 +29,18 @@ static sfxRxFSME       recFsm=headerRec;
 static uint8_t         crcCounter;
 
 
+static void clearLed(bool error) {
+    if (error) {
+        sme_led_red_brightness(HALF_LIGTH);
+        } else {
+        sme_led_red_off();
+    }
+    
+    sme_led_blue_off();
+    sme_led_green_off();
+    nurembergSent=false;
+}
+
 static sfxRxFSME crcCheck(void) {
     uint16_t crc = calculateCRC(answer.length, answer.type,
     answer.sequenceNumber, answer.payload);
@@ -37,9 +50,7 @@ static sfxRxFSME crcCheck(void) {
         return tailerRec;
     }
     else {
-        sme_led_red_brightness(HALF_LIGTH);
-        sme_led_blue_off();
-        sme_led_green_off();
+        clearLed(true);
         print_dbg("wrong crc = %X calculated = %x \r\n", *receivedCrc, crc);
         return nullState;
     }
@@ -55,9 +66,8 @@ static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
             return payloadRec;
         }
     }
-    sme_led_red_brightness(HALF_LIGTH);
-    sme_led_blue_off();
-    sme_led_green_off();
+    
+    clearLed(true);
     print_sfx ("find wrong Sequence = %X", sequence);
     print_sfx (" stored = %X, %X\n\r", sfxMessageIdx[0], sfxMessageIdx[1]);
 
@@ -112,11 +122,7 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i]){
                 print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
-                 port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
-                 port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
-                 sme_led_blue_off();
-                 sme_led_green_off();
-                 sme_led_red_off();
+                 clearLed(false);
                 return SME_SFX_OK;                              
             } else
             return SME_SFX_KO;
@@ -138,12 +144,13 @@ static uint8_t handleConf(uint8_t *msg, uint8_t msgMaxLen) {
         if (msg[i] != SIGFOX_END_MESSAGE) {
             answer.payload[answer.payloadPtr++]= msg[i];
             print_dbg(&msg[i]);
-        } else {
+            } else {
             // remove the charged timeout
             stopSfxCommandTimer();
 
             // end found check if the answer is ok
             if (SGF_CONF_ERROR != answer.payload[0]) {
+               clearLed(false);
                 return SME_SFX_OK;
                 } else {
                 return SME_SFX_KO;
@@ -161,6 +168,7 @@ uint8_t sfxHandleRx(uint8_t *msg, uint8_t msgMaxLen) {
     
     switch(sfxStatus){
         // first byte reset the payload ptr
+        case factoryResert:
         case enterConfMode:
         case confCdcMessage:
         case enterDataMode:

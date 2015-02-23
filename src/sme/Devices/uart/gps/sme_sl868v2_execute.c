@@ -58,7 +58,9 @@ uint8_t message[LS868V2_MAX_MSG_SIZE];
 
 
 int sendSl868v2Msg(const uint8_t *msg, uint8_t len) {
+#ifndef SMARTEVERYTHING    
     port_pin_toggle_output_level(LED_0_PIN); // just for debug
+#endif
     sl868v2SendMessage(msg, len);
     return SME_OK;
 }

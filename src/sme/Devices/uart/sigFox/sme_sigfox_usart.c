@@ -49,6 +49,16 @@ void sigFoxInit(void) {
     initSigFoxModel();
     initSfxTimer();
 
+    // init external SigFox Pin
+    struct port_config pin_conf;
+    port_get_config_defaults(&pin_conf);
+    pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+
+    // SFX RTS Pin
+    port_pin_set_config(SME_SIGFOX_RTS_PIN, &pin_conf);
+    port_pin_set_output_level(SME_SIGFOX_RTS_PIN, SME_SIGFOX_RTS_IOEXT_ACTIVE);
+
+
     // sigfox usart configuration
     struct usart_config config_usart;
 

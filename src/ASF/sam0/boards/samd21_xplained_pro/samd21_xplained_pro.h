@@ -47,8 +47,14 @@
 #include <conf_board.h>
 #include <compiler.h>
 
+#ifdef SMARTEVERYTHING
 #include "sme_pin_definition.h"
 
+#ifdef __cplusplus
+extern "C" {
+    #endif
+    
+#else //SMARTEVERYTHING
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -689,6 +695,8 @@ void system_board_init(void);
 #define LED_Toggle(led_gpio)  port_pin_toggle_output_level(led_gpio)
 
 /** @} */
+
+#endif //SMARTEVERYTHING
 
 #ifdef __cplusplus
 }

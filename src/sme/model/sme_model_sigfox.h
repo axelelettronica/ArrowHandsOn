@@ -10,10 +10,12 @@
 #ifndef SME_MODEL_SIGFOX_H_
 #define SME_MODEL_SIGFOX_H_
 
-#define SIGFOX_REGISTER_READ 'R'
+#define SIGFOX_REGISTER_READ  'R'
 #define SIGFOX_REGISTER_WRITE 'W'
+#define SIGFOX_FACTORY_RESET  'F'
 
 #define ENTER_CONF_MODE     "+++"
+#define RESET_FAB_MODE     "ATR\r"
 #define ENTER_DATA_MODE     "ATX\r"
 #define CONF_REGISTER       "ATS"
 #define SIGFOX_END_READ     '?'
@@ -39,7 +41,9 @@ typedef enum {
     dataCdcMessage,
 
     confIntMessage,
-    dataIntMessage
+    dataIntMessage,
+    
+    factoryResert
 } sigFoxMessageTypeE;
 
 

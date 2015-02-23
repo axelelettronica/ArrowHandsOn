@@ -41,6 +41,11 @@ static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConf
     setSfxStatus(msgType);
 
     switch (msgType){
+        
+        case factoryResert:
+         sendSigFoxMsg((uint8_t *)RESET_FAB_MODE,  sizeof(RESET_FAB_MODE)-1);
+         break;
+         
         case enterConfMode:
         sendSigFoxMsg((uint8_t *)ENTER_CONF_MODE,  sizeof(ENTER_CONF_MODE)-1);
         break;
@@ -144,6 +149,7 @@ bool executeCDCSigFox(const sigFoxT *msg) {
     switch (msg->messageType){
         
         case enterConfMode:
+        case factoryResert:
         case confCdcMessage:
         case confIntMessage:
         ret = sendSigFoxConfiguration(msg->messageType, &msg->message.confMode);

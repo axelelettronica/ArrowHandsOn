@@ -17,16 +17,18 @@
 controllerQueueS interruptData;
 volatile uint8_t intDetect;
 
+bool nurembergSent = false;
 static void extint0_detection_callback(void)
 {
 
     bool pin_state = port_pin_get_input_level(SME_BUTTON1_PIN);
-    
-    sme_led_green_brightness(SIXTEEN_LIGTH);
+
     
     //pin_state = port_pin_get_input_level(BUTTON_0_PIN);
     // just for first demo
-    if (((intDetect&0x1) != 0x1) && (pin_state == true)){
+    if (((intDetect&0x1) != 0x1) && (pin_state == true) && (!nurembergSent)){
+        sme_led_green_brightness(HALF_LIGTH);
+        nurembergSent = true;
         intDetect |=0x1;
         BaseType_t xHigherPriorityTaskWoken;
         interruptData.intE = button1Int;
@@ -49,11 +51,12 @@ static void extint15_detection_callback(void)
 
     bool pin_state=true;
     pin_state = port_pin_get_input_level(SME_BUTTON2_PIN);
-    
-    sme_led_blue_brightness(SIXTEEN_LIGTH);
 
     // just for first demo
-    if (((intDetect&0x2) != 0x2) && (pin_state == true)) {
+    if (((intDetect&0x2) != 0x2) && (pin_state == true) && (!nurembergSent)){
+        
+        sme_led_blue_brightness(HALF_LIGTH);
+        nurembergSent = true;
         intDetect |=0x2;
         BaseType_t xHigherPriorityTaskWoken;
 

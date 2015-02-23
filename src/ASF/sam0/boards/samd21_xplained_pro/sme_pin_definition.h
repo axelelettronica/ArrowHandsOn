@@ -10,6 +10,10 @@
 #define SME_PIN_DEFINITION_H_
 
 
+/** Name string macro */
+#define BOARD_NAME                "SmartEverithing"
+
+
 #define LED_ACTIVE                     false
 #define LED_INACTIVE                   !LED_ACTIVE
 
@@ -99,17 +103,17 @@
 #define SME_SIGFOX_MODULE              SERCOM4
 #define SME_SIGFOX_SERCOM_PINMUX_PAD0  PINMUX_PB12C_SERCOM4_PAD0
 #define SME_SIGFOX_SERCOM_PINMUX_PAD1  PINMUX_PB13C_SERCOM4_PAD1
-#define SME_SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED/*PINMUX_PB14C_SERCOM4_PAD2*/
-#define SME_SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED/*PINMUX_PB15C_SERCOM4_PAD3*/
+#define SME_SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
+#define SME_SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SME_SIGFOX_SERCOM_DMAC_ID_TX   SERCOM4_DMAC_ID_TX
 #define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM4_DMAC_ID_RX
 
 #define SME_SIGFOX_RTS_PIN                 PIN_PB14
-#define SME_SIGFOX_RTS__IOEXT_NAME         "RTS (SFX)"
-#define SME_SIGFOX_RTS__IOEXT_ACTIVE       LED_ACTIVE
-#define SME_SIGFOX_RTS__IOEXT_INACTIVE     LED_INACTIVE
-#define SME_SIGFOX_RTS__IOEXT_GPIO         SME_SIGFOX_RTS__IOEXT_PIN
-#define SME_SIGFOX_RTS__IOEXT              SME_SIGFOX_RTS__IOEXT_PIN
+#define SME_SIGFOX_RTS_IOEXT_NAME         "RTS (SFX)"
+#define SME_SIGFOX_RTS_IOEXT_ACTIVE       LED_ACTIVE
+#define SME_SIGFOX_RTS_IOEXT_INACTIVE     LED_INACTIVE
+#define SME_SIGFOX_RTS_IOEXT_GPIO         SME_SIGFOX_RTS_PIN
+#define SME_SIGFOX_RTS_IOEXT              SME_SIGFOX_RTS_PIN
 #else 
 #define SME_SIGFOX_SERCOM_MUX_SETTING  USART_RX_1_TX_0_XCK_1
 #define SME_SIGFOX_MODULE              SERCOM0
@@ -118,7 +122,7 @@
 #define SME_SIGFOX_SERCOM_PINMUX_PAD2  PINMUX_UNUSED
 #define SME_SIGFOX_SERCOM_PINMUX_PAD3  PINMUX_UNUSED
 #define SME_SIGFOX_SERCOM_DMAC_ID_TX   SERCOM0_DMAC_ID_TX
-#define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM0_DMAC_ID_RX
+#define SME_SIGFOX_SERCOM_DMAC_ID_RX   SERCOM0_DMAC_ID_RX 
 #endif
 #define SME_SIGFOX_BAUDRATE			   19200
 /** @} */
@@ -228,5 +232,36 @@
 #define INT0_EIC_MUX                    MUX_PA16A_EIC_EXTINT0
 #define INT0_EIC_PINMUX                 PINMUX_PA16A_EIC_EXTINT0
 #define INT0_EIC_LINE                   0
+
+
+
+
+/**
+ * \brief Turns off the specified LEDs.
+ *
+ * \param led_gpio LED to turn off (LEDx_GPIO).
+ *
+ * \note The pins of the specified LEDs are set to GPIO output mode.
+ */
+#define LED_Off(led_gpio)     port_pin_set_output_level(led_gpio, LED_ACTIVE)
+
+/**
+ * \brief Turns on the specified LEDs.
+ *
+ * \param led_gpio LED to turn on (LEDx_GPIO).
+ *
+ * \note The pins of the specified LEDs are set to GPIO output mode.
+ */
+#define LED_On(led_gpio)      port_pin_set_output_level(led_gpio, LED_INACTIVE)
+
+/**
+ * \brief Toggles the specified LEDs.
+ *
+ * \param led_gpio LED to toggle (LEDx_GPIO).
+ *
+ * \note The pins of the specified LEDs are set to GPIO output mode.
+ */
+#define LED_Toggle(led_gpio)  port_pin_toggle_output_level(led_gpio)
+
 
 #endif /* SME_PIN_DEFINITION_H_ */

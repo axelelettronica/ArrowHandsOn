@@ -13,4 +13,6 @@
 void sme_init_isr_global(void);
 void clearInt(eventE interrupt);
 
+
+extern bool nurembergSent;
 #endif /* INTERRUPT0_H_ */

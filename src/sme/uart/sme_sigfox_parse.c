@@ -22,7 +22,7 @@
 #define DBG_ENABLE_STR  '1'
 #define DBG_DISABLE_STR '0'
 
-char CDC_HELP_SIGFOX[]="Holp: sf <c/s> <mode> <register> <data> > \r\n";
+char CDC_HELP_SIGFOX[]="Help: sf <c/s> <mode> <register> <data> > \r\n";
 
 bool sme_dbg_sfx_enable = false;
 
@@ -35,19 +35,21 @@ static int parseCommandToken(sigFoxT *usartMsg){
         return ret;
     }
     
-    usartMsg->messageType = confCdcMessage;
+    // store the command message type 
     usartMsg->message.confMode.access = toupper(sme_cli_msg.token[2][0]);
+    
+    if (SIGFOX_FACTORY_RESET == usartMsg->message.confMode.access) {
+        usartMsg->messageType = factoryResert;
+        return ret;
+    }
+    
+    usartMsg->messageType = confCdcMessage;
     if (!((SIGFOX_REGISTER_READ == usartMsg->message.confMode.access) ||
     (SIGFOX_REGISTER_WRITE == usartMsg->message.confMode.access)))
     return SME_EINVAL;
     
     memcpy(usartMsg->message.confMode.registerAddr, sme_cli_msg.token[3], 3);
-    
-    // if the command is for read from register the parse is finish correctly
-    if (SIGFOX_REGISTER_READ == usartMsg->message.confMode.access) {
-        return SME_OK;
-    }
-    
+        
     // if the command is for write to register should contains something to write
     if (SIGFOX_REGISTER_WRITE==usartMsg->message.confMode.access) {
         if (sme_cli_msg.token_idx < 5) {
@@ -62,6 +64,7 @@ static int parseCommandToken(sigFoxT *usartMsg){
     
     return ret;
 }
+
 
 static int parseDataToken(sigFoxT *usartMsg ){
        
@@ -127,7 +130,7 @@ int parseSigFoxMsg(void) {
             case 's':
             err |= parseDataToken(usartMsg);
             break;
-           
+            
             default:
             // print help           
             return SME_EINVAL;
