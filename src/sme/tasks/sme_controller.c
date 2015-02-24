@@ -206,20 +206,20 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
-   /* sigFoxT *sfModel = getSigFoxModel();
+  /* sigFoxT *sfModel = getSigFoxModel();
     
 
     sfModel->messageType = dataIntMessage;
     sfModel->message.dataMode.type = SIGFOX_DATA;
-
     // point 1
-    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
+   sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
 
     //point 3 SEND !!!!!!!!!!!
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
+   sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
-    executeCDCSigFox(sfModel);*/
-   button1Execution(); // just for Nuremberg
+   executeCDCSigFox(sfModel);
+   button1Execution(); // just for Nuremberg */
+   gpsStartScan();
 
 }
 

@@ -17,7 +17,7 @@
 
 
 
-#define VALID_GREEN_LEVEL (0xFFFF / 8)
+#define VALID_BLUE_LEVEL (0xFFFF / 8)
 
 
 /* interrupt USART variables */
@@ -41,7 +41,7 @@ static void usart_gps_read_callback(const struct usart_module *const usart_modul
 static void usart_gps_write_callback(const struct usart_module *const usart_module)
 {
 
-	    sme_led_green_brightness(VALID_GREEN_LEVEL);
+	    sme_led_blue_brightness(VALID_BLUE_LEVEL);
 
 }
 
