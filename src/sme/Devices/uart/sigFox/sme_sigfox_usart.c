@@ -79,10 +79,8 @@ void sigFoxInit(void) {
 
     usart_enable(&usart_sigfox);
     
-    usart_register_callback(&usart_sigfox,
-    usart_sigfox_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
-    usart_register_callback(&usart_sigfox,
-    usart_sigfox_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
+    usart_register_callback(&usart_sigfox, usart_sigfox_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
+    usart_register_callback(&usart_sigfox, usart_sigfox_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
 
     usart_enable_callback(&usart_sigfox, USART_CALLBACK_BUFFER_TRANSMITTED);
     usart_enable_callback(&usart_sigfox, USART_CALLBACK_BUFFER_RECEIVED);

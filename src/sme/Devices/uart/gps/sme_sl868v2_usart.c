@@ -56,10 +56,8 @@ void uartInit(const struct usart_module *const module,
 
 	usart_enable(module);
 	
-	usart_register_callback(module, tx_callback_func, 
-                            USART_CALLBACK_BUFFER_TRANSMITTED);
-	usart_register_callback(module,	rx_callback_func, 
-                            USART_CALLBACK_BUFFER_RECEIVED);
+	usart_register_callback(module, tx_callback_func,  USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_register_callback(module,	rx_callback_func,  USART_CALLBACK_BUFFER_RECEIVED);
 
 	usart_enable_callback(module, USART_CALLBACK_BUFFER_TRANSMITTED);
 	usart_enable_callback(module, USART_CALLBACK_BUFFER_RECEIVED);
