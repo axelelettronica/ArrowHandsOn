@@ -8,8 +8,8 @@
 #include "tca6416a.h"
 #include "..\I2C.h"
 
-#define INIT_CONF_PORT_0 0x7F
-#define INIT_CONF_PORT_1 0x35//0x3F
+#define CONF_PORT_0 0x7F
+#define CONF_PORT_1 0x35//0x3F
 
 #if NOT_SENSOR
 #define TCA6416A_ADDRESS 0x1D
@@ -67,13 +67,13 @@ Keep the reset High
 bool TCA6416a_init(void) {
     bool ret = false;
     //readRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, &ret); //debug
-    if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, INIT_CONF_PORT_0)!=false) {
+    if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_0, CONF_PORT_0)!=false) {
         writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, INIT_P0); // keep the BLE reset High
         
         ret = true;
     }
 
-    if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_1, INIT_CONF_PORT_1)!=false){
+    if (writeRegister(TCA6416A_ADDRESS, CONFIG_PORT_1, CONF_PORT_1)!=false){
         writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, INIT_P1); // keep the resets High
         ret =  true;
         } else {

@@ -208,6 +208,7 @@ void sl868v2ProcessRx(void)
 uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen) 
 {
    if (rxMsg.idx < (SL868V2_MAX_MSG_LEN-1)) {
+       print_gps_msg("< %c", *msg);
       rxMsg.data[rxMsg.idx++] = *msg;
 
       if (*msg == '\n')  {

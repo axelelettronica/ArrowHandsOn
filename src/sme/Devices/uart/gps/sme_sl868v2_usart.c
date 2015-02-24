@@ -89,6 +89,7 @@ void sl868v2Init(void) {
 int 
 sl868v2SendMessage(const uint8_t *msg, uint8_t len) 
 {
+    print_gps_msg("> %s", msg);
 	//memset((char *)gps_rx_buffer,0,MAX_SL868V2_RX_BUFFER_LENGTH);
 	status_code_genare_t err =  usart_write_buffer_job(&usart_gps, (uint8_t *)msg, len);
 
