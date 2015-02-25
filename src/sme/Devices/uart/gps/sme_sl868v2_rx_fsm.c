@@ -81,7 +81,7 @@ static bool crcCheck(uint8_t data[], uint8_t len) {
         checksum ^=data[i++];
     }
     i++;
-    sprintf(checksum_str, "%x", checksum);
+    sprintf(checksum_str, "%0X", checksum);
     if (data[i++] != ((checksum > 15) ? checksum_str[0]:'0')) {
         print_err("Wrong Checksum\n");
         return false;
@@ -133,7 +133,7 @@ static void sl868v2ParseRx (void)
         offset+=3;
         msgPtrT.nmea_p.mtk_p.data_p  = &rxMsg.data[offset];
         /* Filling data */
-        while( &rxMsg.data[offset++] != '*') {
+        while( rxMsg.data[offset++] != '*') {
             i++;
         }
         msgPtrT.nmea_p.mtk_p.dataLength = i;
@@ -164,9 +164,8 @@ void gpsCompletedScan(void) {
     xQueueSend(controllerQueue, (void *) &gpsEvt, NULL);
 }
 
-#define SME_CTRL_COORD_LEN             11
-uint8_t ctrl_lat[SME_CTRL_COORD_LEN]  = {};
-uint8_t ctrl_long[SME_CTRL_COORD_LEN] = {};
+
+    
 void sl868v2ProcessRx(void) 
 {  
     uint32_t lat;
@@ -182,7 +181,7 @@ void sl868v2ProcessRx(void)
 
     if (msgPtrT.messageType == STD_NMEA) {
         if ((msgPtrT.nmea_p.std_p.talker_p[0] == 'G') &&
-            (msgPtrT.nmea_p.std_p.talker_p[1] == 'P')) {
+            (msgPtrT.nmea_p.std_p.talker_p[1] == 'N')) {
 
             if ((msgPtrT.nmea_p.std_p.sentenceId_p[0] == 'R') && 
                 (msgPtrT.nmea_p.std_p.sentenceId_p[1] == 'M') &&
@@ -192,10 +191,10 @@ void sl868v2ProcessRx(void)
                 //gpsStorePosition(lat,longit,alt);
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
                                 msgPtrT.nmea_p.std_p.dataLenght, 
-                                ctrl_lat, SME_CTRL_COORD_LEN, SME_LAT);
+                                SME_LAT);
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, 
                                 msgPtrT.nmea_p.std_p.dataLenght, 
-                                ctrl_long, SME_CTRL_COORD_LEN, SME_LONG);
+                                SME_LONG);
                 gpsStopScan();
                 gpsCompletedScan();
             }
@@ -208,6 +207,10 @@ void sl868v2ProcessRx(void)
 uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen) 
 {
    if (rxMsg.idx < (SL868V2_MAX_MSG_LEN-1)) {
+     
+      if ((*msg < 21) && !((*msg == '\n') || (*msg == '\r')))  {
+          return SME_OK;
+      }   
        print_gps_msg("< %c", *msg);
       rxMsg.data[rxMsg.idx++] = *msg;
 
@@ -220,31 +223,10 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
             }
             print_dbg(" received: %s", rxMsg.data);
         }
-        sl868InitRxData();
+        memset(&rxMsg, 0, sizeof(rxMsg));
+        
       }
    } 
 
-
-
-    /*
-    switch(cdcStatus){
-        // first byte reset the payload ptr
-        case enterConfMode:
-        case confCdcMessage:
-        // move the FSM to idle when finis is OK or ERROR
-        if (SME_OK != handleConf(msg, msgMaxLen)) {
-            answer.payloadPtr=0;
-        }
-        
-        case enterDataMode:
-        case dataCdcMessage:
-        if (SME_OK != handleData(msg, msgMaxLen)) {
-            answer.payloadPtr=0;
-        }
-        return SME_OK;
-
-        default:
-        return SME_EINVAL;
-    }*/
-    return SME_EINVAL;
+    return SME_OK;
 }

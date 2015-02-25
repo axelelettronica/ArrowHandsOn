@@ -115,7 +115,7 @@ void TCA6416a_gps_force_on(void) {
     
 
     // wait a while
-    for (int i=0; i<10000; i++) {
+    for (int i=0; i<20000; i++) {
         delay++;
     }
     
