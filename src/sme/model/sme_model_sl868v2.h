@@ -129,7 +129,7 @@ typedef enum {
     SME_COORD_UNDEF
 } sme_coord_t;
 
-void sme_parse_coord(uint8_t in[], uint8_t in_len, uint8_t out_str[],
-uint8_t out_len, sme_coord_t type);
+void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type);
+int  sme_sl868v2_get_latlong (char *msg, uint8_t *len, uint8_t msg_len);
 
 #endif /* SME_MODEL_SL868V2_H_ */

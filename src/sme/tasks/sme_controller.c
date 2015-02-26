@@ -26,7 +26,8 @@ static int keepTimeout;
 
 typedef enum {
     SME_SFX_DEBUG_MSG,
-    SME_SFX_I2C_1_MSG
+    SME_SFX_I2C_1_MSG,
+    SME_SFX_GPS_1_MSG
 }sme_sfx_report_t;
 
 int sme_ctrl_init(void)
@@ -105,6 +106,10 @@ bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len, uint8_
         sme_i2c_get_read_str(&(((char*)msg)[1]), len, msg_len-1);
         (*len)++; // considering msg ID field
         break;
+        case SME_SFX_GPS_1_MSG:
+            ((char*)msg)[0] = SME_SFX_GPS_1_MSG;
+            sme_sl868v2_get_latlong(&(((char*)msg)[1]), len, msg_len-1);
+            break;
     }
     
     return SME_OK;
@@ -193,8 +198,8 @@ static void button1Execution(void) {
 
     // point 1
     //sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Smart");
-    sme_sfx_fill_report(SME_SFX_I2C_1_MSG, sfModel->message.dataMode.payload,
-    &sfModel->message.dataMode.length, SIG_FOX_MAX_PAYLOAD);
+    sme_sfx_fill_report(SME_SFX_GPS_1_MSG, sfModel->message.dataMode.payload,
+    &sfModel->message.dataMode.length, 12);
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
 
