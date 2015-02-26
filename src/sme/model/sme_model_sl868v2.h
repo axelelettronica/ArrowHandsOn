@@ -120,7 +120,7 @@ void initSl868v2Model(void);
 #define  SL868V2_CLEAR_ORBIT_CMD  "$PMTK127*36\r\n"      // clear predicted orbit data
 #define  SL868V2_SET_FIXINT_CMD   "$PMTK220,1000*1F\r\n" // set position fix interval to 1000 
 
-
+#define SL868V2_CONF_CMD "PMTK"
 
 typedef enum {
     SME_LAT,

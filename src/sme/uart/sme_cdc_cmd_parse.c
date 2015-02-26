@@ -170,6 +170,10 @@ int cdc_parser_dbg (void)
             case 'g':
             sme_dbg_gps_enable = !sme_dbg_gps_enable;
             wrong = false;
+            
+            case 'm':
+            sme_dbg_gps_msg_enable = !sme_dbg_gps_msg_enable;
+            wrong = false;
             break;
 
             default:

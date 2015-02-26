@@ -16,6 +16,7 @@
 #include "../devices/uart/gps/sme_sl868v2_execute.h"
 #include "../interrupt/interrupt.h"
 #include "../Devices/I2C/nfc/nxpNfc.h"
+#include "Devices/I2C/IOExpander/tca6416a.h"
 
 static void control_task(void *params);
 
@@ -180,6 +181,9 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button1Execution(void) {
+    
+    TCA6416a_gps_force_on();
+    
     char *msg = NULL;
     char msg_len = 0;
     sigFoxT *sfModel = getSigFoxModel();

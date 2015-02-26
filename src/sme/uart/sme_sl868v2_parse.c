@@ -14,7 +14,8 @@
 
 
 static int parseNmeaCommandToken(sl868v2T *usartMsg);
-bool sme_dbg_gps_enable = false;
+bool sme_dbg_gps_enable = true;
+bool sme_dbg_gps_msg_enable = true;
 
 
 int getTalkerType(uint8_t *in, sl868v2MsgE *nmeaType)
@@ -153,6 +154,14 @@ int parseSl868v2Msg(void) {
         switch(sme_cli_msg.token[1][0]) {
             case 'c':
                 err |= parseNmeaCommandToken(usartMsg);
+            break;
+            
+             case 'd':
+                usartMsg->messageType=MTK_NMEA;
+                memcpy(usartMsg->nmea_msg.mtk.talker, SL868V2_CONF_CMD, sizeof(usartMsg->nmea_msg.mtk.talker));
+                memset(usartMsg->nmea_msg.mtk.msgId, 0x30, sizeof(usartMsg->nmea_msg.mtk.msgId));
+                 memset(usartMsg->nmea_msg.mtk.data, 0, MTK_NMEA_MAX_DATA_LEN);
+                 usartMsg->nmea_msg.mtk.dataLenght=0;
             break;
             
             default:

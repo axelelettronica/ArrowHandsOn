@@ -13,7 +13,7 @@
 #include "sme\model\sme_model_sl868v2.h"
 #include "./sme_sl868v2_usart.h"
 #include "..\..\IO\sme_rgb_led.h"
-//#include "sme_gps_timer.h"
+#include "sme_gps_timer.h"
 
 
 
@@ -40,9 +40,7 @@ static void usart_gps_read_callback(const struct usart_module *const usart_modul
 
 static void usart_gps_write_callback(const struct usart_module *const usart_module)
 {
-
-	    sme_led_blue_brightness(VALID_BLUE_LEVEL);
-
+    ;
 }
 
 volatile int init;
@@ -56,10 +54,8 @@ void uartInit(const struct usart_module *const module,
 
 	usart_enable(module);
 	
-	usart_register_callback(module, tx_callback_func, 
-                            USART_CALLBACK_BUFFER_TRANSMITTED);
-	usart_register_callback(module,	rx_callback_func, 
-                            USART_CALLBACK_BUFFER_RECEIVED);
+	usart_register_callback(module, tx_callback_func,  USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_register_callback(module,	rx_callback_func,  USART_CALLBACK_BUFFER_RECEIVED);
 
 	usart_enable_callback(module, USART_CALLBACK_BUFFER_TRANSMITTED);
 	usart_enable_callback(module, USART_CALLBACK_BUFFER_RECEIVED);
@@ -68,6 +64,9 @@ void uartInit(const struct usart_module *const module,
 
 
 void sl868v2Init(void) {
+    
+    initGpsTimer();
+
     // gps usart configuration
     struct usart_config config_usart;
 
@@ -82,14 +81,14 @@ void sl868v2Init(void) {
 
     uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
              usart_gps_read_callback);
-    
-    //initGpsTimer();
+
 }
 
 int 
 sl868v2SendMessage(const uint8_t *msg, uint8_t len) 
 {
-	//memset((char *)gps_rx_buffer,0,MAX_SL868V2_RX_BUFFER_LENGTH);
+    print_gps_msg("> %s", msg);
+	memset((char *)gps_rx_buffer,0,MAX_SL868V2_RX_BUFFER_LENGTH);
 	status_code_genare_t err =  usart_write_buffer_job(&usart_gps, (uint8_t *)msg, len);
 
     // message sent w or w/ success, is it possible to release now the semaphore
@@ -116,7 +115,7 @@ sl868v2ReceivedMessage(uint8_t *msg, uint8_t len )
         //*msg = gps_rx_buffer[0];
         sme_led_green_off();
         return SME_OK;
-	} else {
-        return SME_EIO;
+
     }
+    return SME_EIO;
 }

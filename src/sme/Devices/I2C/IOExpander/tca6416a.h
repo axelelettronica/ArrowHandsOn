@@ -24,5 +24,7 @@ bool TCA6416a_input_port0_values(char *buffer);
 bool TCA6416a_input_ports_values(uint16_t *buffer);
 bool TCA6416a_reset_devices(void);
 
+void TCA6416a_gps_force_on(void);
+
 
 #endif /* TCA6416A_H_ */
