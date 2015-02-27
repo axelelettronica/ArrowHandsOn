@@ -95,23 +95,23 @@ bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len, uint8_
     if (!msg || !len) {
         return SME_ERR;
     }
+
+    ((char*)msg)[0] = type; // check HEX after 9
+
     switch (type) {
         case SME_SFX_DEBUG_MSG:
-        ((char*)msg)[0] = SME_SFX_DEBUG_MSG;
-        *len = sprintf(&(((char*)msg)[1]),"Smart");
-        (*len)++; // considering msg ID field
-        break;
+            *len = sprintf(&(((char*)msg)[1]),"Smart");
+            break;
         case SME_SFX_I2C_1_MSG:
-        ((char*)msg)[0] = SME_SFX_I2C_1_MSG;
-        sme_i2c_get_read_str(&(((char*)msg)[1]), len, msg_len-1);
-        (*len)++; // considering msg ID field
-        break;
+            sme_i2c_get_read_str(&(((char*)msg)[1]), len, msg_len-1);
+            break;
         case SME_SFX_GPS_1_MSG:
-            ((char*)msg)[0] = SME_SFX_GPS_1_MSG;
             sme_sl868v2_get_latlong(&(((char*)msg)[1]), len, msg_len-1);
             break;
+        default:
+            print_err("Do Nothing %d\n", type);
     }
-    
+    (*len)++; // considering msg ID field
     return SME_OK;
 }
 
@@ -177,17 +177,9 @@ static void enter_in_data_mode(void){
 }
 
 
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void button1Execution(void) {
+static void sfxSendExecution(sme_sfx_report_t msg_id) {
     
-    TCA6416a_gps_force_on();
+    //TCA6416a_gps_force_on();
     
     char *msg = NULL;
     char msg_len = 0;
@@ -198,7 +190,7 @@ static void button1Execution(void) {
 
     // point 1
     //sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Smart");
-    sme_sfx_fill_report(SME_SFX_GPS_1_MSG, sfModel->message.dataMode.payload,
+    sme_sfx_fill_report(msg_id, sfModel->message.dataMode.payload,
     &sfModel->message.dataMode.length, 12);
     //point 3 SEND !!!!!!!!!!!
     sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
@@ -206,6 +198,29 @@ static void button1Execution(void) {
     executeCDCSigFox(sfModel);
 }
 
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void button1Execution(void) {
+
+    sfxSendExecution(SME_SFX_I2C_1_MSG);
+}
+
+/*
+* First Use case
+detect NFC interrupt:
+1) take data from sensor
+2) take GPS position
+3) Send all to SigFox
+*/
+static void sme_gps_data_updateExecution(void) {
+    //TCA6416a_gps_force_on();
+    sfxSendExecution(SME_SFX_GPS_1_MSG);
+}
 
 /*
 * First Use case
@@ -215,21 +230,12 @@ detect NFC interrupt:
 3) Send all to SigFox
 */
 static void button2Execution(void) {
-  /* sigFoxT *sfModel = getSigFoxModel();
-    
-
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-    // point 1
-   sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
-
-    //point 3 SEND !!!!!!!!!!!
-   sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-   executeCDCSigFox(sfModel);
-   button1Execution(); // just for Nuremberg */
+#if DEBUG_SIGFOX
+   // Just send with SFX the gps cached/default values
+   sme_gps_data_updateExecution();
+#else
    gpsStartScan();
-
+#endif
 }
 
 
@@ -239,12 +245,27 @@ uint8_t msgCounter=0;
 uint8_t   timeoutCounter=2;
 
 static void debugSigFox(void){
+    static uint8_t msg_toggle = 0;
+    uint8_t msg_toggle_set = 2;
     timeoutCounter++;
     if (timeoutCounter==3) {
         timeoutCounter =0;
         msgCounter++;
-        print_sfx("Sending DEBUG MSG\n\r");
-        button1Execution();
+        switch (msg_toggle%msg_toggle_set) {
+           case 0:
+               button1Execution();
+               msg_toggle++;
+           break;
+           case 1:
+               button2Execution();
+               msg_toggle++;
+           break;
+           // Add more test messages here
+           default:
+           break;
+        } 
+        print_sfx("Sending DEBUG MSG: %d  (total sent%d)\n\r", 
+                  msg_toggle%msg_toggle_set, msg_toggle);
     }
 }
 #endif
@@ -307,29 +328,6 @@ static void nfcExecution(void) {
 }
 
 
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void sme_gps_data_updateExecution(void) {
-    uint8_t data;
-    sigFoxT *sfModel = getSigFoxModel();
-
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-
-    // point 1
-    sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
-    //readCachedGPSPosition();
-
-    //point 3 SEND !!!!!!!!!!!
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-    executeCDCSigFox(sfModel);
-}
 
 /**
 *

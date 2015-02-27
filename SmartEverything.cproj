@@ -317,7 +317,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>28012653</ToolNumber>
+      <ToolNumber>28006555</ToolNumber>
       <ToolName>SAM-ICE</ToolName>
     </com_atmel_avrdbg_tool_samice>
   </PropertyGroup>
@@ -489,13 +489,13 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
-      <Value>VIRGIN_UNIT</Value>
+      <Value>VIRGIN_UNIT_marked_undefined</Value>
       <Value>DEBUG</Value>
+      <Value>DEBUG_SIGFOX</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>
     <ListValues>
-      <Value>DEBUG_SIGFOX</Value>
       <Value>NOT_SENSOR</Value>
     </ListValues>
   </armgcc.compiler.preprocessor.UndefSymbols>
