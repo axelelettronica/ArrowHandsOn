@@ -16,9 +16,9 @@ xSemaphoreHandle gps_tx_sem;
 
 
 #define SME_CTRL_COORD_LEN             9
-static uint8_t ctrl_lat[SME_CTRL_COORD_LEN]  = {'0','4','1','3','9','0','2','0','5'};
+static uint8_t ctrl_lat[SME_CTRL_COORD_LEN]  = {'0','4','1','3','5','3','7','4','4'};
 static uint8_t lat_direction = 1; // 1= north
-static uint8_t ctrl_long[SME_CTRL_COORD_LEN] = {'0','0','2','1','5','4','0','0','7'};
+static uint8_t ctrl_long[SME_CTRL_COORD_LEN] = {'0','0','2','1','2','8','1','9','3'};
 static uint8_t long_direction = 1; // 1= East
 static uint16_t ctrl_alt = 36;      
 static uint8_t quality = '0';      // Fixed for now
@@ -50,6 +50,7 @@ void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type)
     uint8_t comma = 0;
     uint8_t i = 0, j = 0, k = 0;
     uint8_t *out;
+    uint8_t dir = NULL;
     uint8_t out_len = 0;
     
 
@@ -57,11 +58,13 @@ void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type)
     case SME_LAT:
         out = ctrl_lat;
         out_len = SME_CTRL_COORD_LEN;
+        dir = &lat_direction;
         comma = 3;
     break;
     case SME_LONG:
         out = ctrl_long;
         out_len = SME_CTRL_COORD_LEN;
+        dir = &long_direction;
         comma = 5;
     break;
     default: 
@@ -88,6 +91,9 @@ void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type)
         while (in[i] != ',') {
             out[k++] = in[i++]; 
         }
+        i++;
+        // To be added ad UT
+        //*dir = ((in[i] == 'N') || (in[i] == 'E')) ? 1 : 0;
     }
 }
 

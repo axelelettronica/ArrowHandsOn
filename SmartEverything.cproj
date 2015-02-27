@@ -489,7 +489,6 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
-      <Value>VIRGIN_UNIT_marked_undefined</Value>
       <Value>DEBUG</Value>
       <Value>DEBUG_SIGFOX</Value>
     </ListValues>
@@ -497,6 +496,7 @@
   <armgcc.compiler.preprocessor.UndefSymbols>
     <ListValues>
       <Value>NOT_SENSOR</Value>
+      <Value>VIRGIN_UNIT</Value>
     </ListValues>
   </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
