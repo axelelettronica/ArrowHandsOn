@@ -30,15 +30,8 @@ static void gpsTimerCallback( TimerHandle_t pxTimer )
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( pxTimer );
     print_err("TimeOut, GPS Position scanning not acknowledged\r\n");
-    for (i = 0 ; i < 11 ; ++i) {
-        port_pin_set_output_level(SME_LED_Y2_PIN, 
-                             ((i==0) ? SME_LED_Y2_INACTIVE:
-                              SME_LED_Y2_ACTIVE)); // toggle the led
-        delay_ms(500);
-    }
-    port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE); // clear the led
-
-    sme_led_red_off();
+    sme_led_blue_off();
+    gpsCompletedScan();
     timedOut = true;
 }
 
@@ -51,7 +44,7 @@ void initGpsTimer(void){
     /* The timers will NOT auto-reload themselves when they expire. */
     pdFALSE,
     /* Assign each timer a unique id. */
-    GPS_TIMEOUT_ID,
+    ( void * )GPS_TIMEOUT_ID,
     /* callback when it expires. */
     gpsTimerCallback
     );
@@ -59,8 +52,7 @@ void initGpsTimer(void){
 
 
 void stopGpsCommandTimer(void){
-    port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE); // clear the led
-    sme_led_red_off();
+    sme_led_blue_off();
     xTimerStop( gpsCommandTimeOut, 0 );
 }
 
@@ -73,12 +65,9 @@ void startGpsCommandTimer(void) {
         print_err("startgpsCommandTimer - Timer NO started");
     }
     else {
-        sme_led_blue_off();
-        sme_led_green_off();
-        sme_led_red_off();
-        sme_led_red_on();
-        port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE); // clear the led
-        print_gps("Timer gpsCommandTimeOut started\r\n");
+        sme_led_blue_brightness(SIXTEEN_LIGTH);
+        print_gps("%s","Timer gpsCommandTimeOut started\n");
         timedOut = false;
     }
+    
 }

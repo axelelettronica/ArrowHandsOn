@@ -54,8 +54,7 @@ static void extint15_detection_callback(void)
 
     // just for first demo
     if (((intDetect&0x2) != 0x2) && (pin_state == true) && (!nurembergSent)){
-        
-        sme_led_blue_brightness(HALF_LIGTH);
+
         nurembergSent = true;
         intDetect |=0x2;
         BaseType_t xHigherPriorityTaskWoken;

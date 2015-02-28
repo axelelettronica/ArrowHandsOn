@@ -76,6 +76,7 @@ bool TCA6416a_init(void) {
     return ret;
 }
 
+#define GPS_FORCE_RESET_MASK   0b01001010 
 volatile uint8_t resets[4];
 bool TCA6416a_reset_devices(void){
     
@@ -84,7 +85,8 @@ bool TCA6416a_reset_devices(void){
     readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[0] );
     
     if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (uint8_t *)&actual) != false) {
-        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, ((actual&RESET_P2)&(~SFX_WAKEUP_PIN)));
+       // writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual&GPS_FORCE_RESET_MASK));
+        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual&(~GPS_RESET_PIN) &(~SFX_WAKEUP_PIN)));
             readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[1]);
     }
     
@@ -105,23 +107,46 @@ bool TCA6416a_reset_devices(void){
     //ENABLE Interrupt
     extint_chan_enable_callback(SME_INT_IOEXT_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
     resets[0]=1;
+
+    TCA6416a_gps_force_on();
 }
 
 void TCA6416a_gps_force_on(void) {
     bool ret = false;
-    uint8_t delay;
+    uint8_t delay=0;
+    uint8_t data = 0;
+    // Activate force on moving low
+    if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, &data)) {
+        data &= ~GPS_FORCE_ON_PIN;
+        if (writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, data)) {
+            return true;
+        }
+    }
     
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, VALUE_GPS_FORCE_ON); // keep the resets High
-    
+    //writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, VALUE_GPS_FORCE_ON); 
 
     // wait a while
     for (int i=0; i<20000; i++) {
         delay++;
     }
-    
-    
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, INIT_P1); // keep the resets High
-        
+  /*  
+    if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, &data)) {
+        data |= GPS_FORCE_ON_PIN;
+        if (writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, data)) {
+            return true;
+        }
+    }
+    */
+
+    // keep the resets High
+
+    //writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, INIT_P1); 
+   // if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, &data)) {
+   //     data |= GPS_RESET_PIN;
+   //     if (writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, data)) {
+   //         return true;
+   //     }
+   // }    
 }
 
 bool TCA6416a_input_port0_values(char *buffer) {

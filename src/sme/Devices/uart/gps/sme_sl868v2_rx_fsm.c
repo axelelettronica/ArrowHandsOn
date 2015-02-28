@@ -11,6 +11,7 @@
 #include "../../../tasks/sme_controller.h"
 #include "sme\Devices\uart\gps\sme_sl868v2_execute.h"
 #include "sme/Devices/uart/gps/sme_gps_timer.h"
+#include "../../IO/sme_rgb_led.h"
 
 
 #define SL868V2_MAX_MSG_LEN   80    
@@ -140,7 +141,7 @@ static void sl868v2ParseRx (void)
 
     }
     // check checksum
-    crcCheck(rxMsg.data, rxMsg.idx);
+    //crcCheck(rxMsg.data, rxMsg.idx);
 }
 
 
@@ -162,6 +163,12 @@ void gpsCompletedScan(void) {
 
     gpsEvt.intE = gpsData;
     xQueueSend(controllerQueue, (void *) &gpsEvt, NULL);
+    
+    // Blink Blue Led
+    for (int i = 0; i<1000; ++i) {
+        sme_led_blue_off();
+    }
+    sme_led_blue_brightness(SIXTEEN_LIGTH);
 }
 
 
@@ -187,16 +194,14 @@ void sl868v2ProcessRx(void)
                 (msgPtrT.nmea_p.std_p.sentenceId_p[1] == 'M') &&
                 (msgPtrT.nmea_p.std_p.sentenceId_p[2] == 'C')) {
 
-                //lat = getLat(msgPtrT.nmea_p.std_p.data_p, lat_p, lat_len);
-                //gpsStorePosition(lat,longit,alt);
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
                                 msgPtrT.nmea_p.std_p.dataLenght, 
                                 SME_LAT);
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, 
                                 msgPtrT.nmea_p.std_p.dataLenght, 
                                 SME_LONG);
-                gpsStopScan();
-                gpsCompletedScan();
+
+                gpsCompletedScan();  // Notify Lat/Long Update
             }
         }
     }
@@ -216,6 +221,7 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
 
       if (*msg == '\n')  {
         if (rxMsg.idx > 3) {
+            print_gps_msg("< %s", *msg);
             rxMsg.data[rxMsg.idx] = '\0';
             if (crcCheck(rxMsg.data, rxMsg.idx)) {
                 sl868v2ParseRx();
