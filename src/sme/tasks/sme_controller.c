@@ -9,26 +9,19 @@
 #include "sme_controller.h"
 #include "..\interrupt\interruptHandle.h"
 #include "..\Devices\I2C\Accelerometer\LSM9DS1.h"
-#include "..\model\sme_model_sigfox.h"
-#include "..\model\sme_model_i2c.h"
-#include "..\Devices\uart\sigFox\sme_sigfox_execute.h"
-#include "..\Devices\uart\sigFox\sme_sfx_timer.h"
-#include "../devices/uart/gps/sme_sl868v2_execute.h"
-#include "../interrupt/interrupt.h"
-#include "../Devices/I2C/nfc/nxpNfc.h"
-#include "Devices/I2C/IOExpander/tca6416a.h"
+#include "common/sme_timer_define.h"
+#include "behaviour/sme_gps_behaviour.h"
+#include "behaviour/sme_interrupt_behaviour.h"
+#include "behaviour/sme_button_behaviour.h"
+#include "model/sme_model_sigfox.h"
+#include "Devices/uart/sigFox/sme_sigfox_execute.h"
+#include "interrupt/interrupt.h"
 
 static void control_task(void *params);
 
 #define KEEP_TIMEOUT 276 // number of %minute in 23Hour
 xQueueHandle controllerQueue;
 static int keepTimeout;
-
-typedef enum {
-    SME_SFX_DEBUG_MSG,
-    SME_SFX_I2C_1_MSG,
-    SME_SFX_GPS_1_MSG
-}sme_sfx_report_t;
 
 int sme_ctrl_init(void)
 {
@@ -48,20 +41,6 @@ int sme_ctrl_init(void)
     
     return err;
 }
-
-
-static void sendToSigFoxValue(uint8_t sensorData){
-    sigFoxT *sfModel = getSigFoxModel();
-
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.length++;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-    sfModel->message.dataMode.payload[0]=sensorData;
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-    executeCDCSigFox(sfModel);
-}
-
 
 /**
 *
@@ -87,60 +66,6 @@ static void sendToSfxExitConf(void){
     sfModel->messageType = enterDataMode;
 
     executeCDCSigFox(sfModel);
-}
-
-
-bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len, uint8_t msg_len) {
-    
-    if (!msg || !len) {
-        return SME_ERR;
-    }
-
-    ((char*)msg)[0] = type; // check HEX after 9
-
-    switch (type) {
-        case SME_SFX_DEBUG_MSG:
-            *len = sprintf(&(((char*)msg)[1]),"Smart");
-            break;
-        case SME_SFX_I2C_1_MSG:
-            sme_i2c_get_read_str(&(((char*)msg)[1]), len, msg_len-1);
-            break;
-        case SME_SFX_GPS_1_MSG:
-            sme_sl868v2_get_latlong(&(((char*)msg)[1]), len, msg_len-1);
-            break;
-        default:
-            print_err("Do Nothing %d\n", type);
-    }
-    (*len)++; // considering msg ID field
-    return SME_OK;
-}
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-volatile  uint8_t data;
-static void performExecution( uint16_t intDetection) {
-    
-    #if NOT_SENSOR
-    
-    // point 1
-    LSM9DS1getValues((char *)&data);
-
-    //point 3
-    sendToSigFoxValue(data);
-
-    #else
-    // check which is the interrupt that wake-up the task
-    if ((intDetection & MASK_NFC_FD_INT) == MASK_NFC_FD_INT) {
-        data++;
-    }
-    #endif
-
-    
 }
 
 static void enter_conf_mode(void) {
@@ -177,66 +102,7 @@ static void enter_in_data_mode(void){
 }
 
 
-static void sfxSendExecution(sme_sfx_report_t msg_id) {
-    
-    //TCA6416a_gps_force_on();
-    
-    char *msg = NULL;
-    char msg_len = 0;
-    sigFoxT *sfModel = getSigFoxModel();
 
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-
-    // point 1
-    //sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Smart");
-    sme_sfx_fill_report(msg_id, sfModel->message.dataMode.payload,
-    &sfModel->message.dataMode.length, 12);
-    //point 3 SEND !!!!!!!!!!!
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-    executeCDCSigFox(sfModel);
-}
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void button1Execution(void) {
-
-    sfxSendExecution(SME_SFX_I2C_1_MSG);
-}
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void sme_gps_data_updateExecution(void) {
-    //TCA6416a_gps_force_on();
-    sfxSendExecution(SME_SFX_GPS_1_MSG);
-}
-
-/*
-* First Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void button2Execution(void) {
-#if DEBUG_SIGFOX
-   // Just send with SFX the gps cached/default values
-   sme_gps_data_updateExecution();
-#else
-   gpsStartScan();
-#endif
-}
 
 
 #if DEBUG_SIGFOX
@@ -292,42 +158,6 @@ static void sfxTimeOut(void) {
     }
     #endif
 }
-
-/*
-* Third Use case
-detect NFC interrupt:
-1) take data from sensor
-2) take GPS position
-3) Send all to SigFox
-*/
-static void nfcExecution(void) {
-    sigFoxT *sfModel = getSigFoxModel();
-
-    sfModel->messageType = dataIntMessage;
-    sfModel->message.dataMode.type = SIGFOX_DATA;
-
-    // point 1
-    int offset;
-    for (int page=0; page<255/NFC_PAGE_SIZE; page++){
-        if (readUserData(page)) {
-            
-            sfModel->message.dataMode.length+=NFC_PAGE_SIZE;
-
-            offset = ((page)*NFC_PAGE_SIZE);
-            memcpy(&sfModel->message.dataMode.payload[offset],getLastNfcPage(),NFC_PAGE_SIZE);
-        }
-    }
-
-    //point 2 (could be a FSM because has to be wait the GSM wake-up)
-    // getPosition();
-
-    //point 3 SEND !!!!!!!!!!!
-    sfModel->message.dataMode.sequenceNumber = getNewSequenceNumber();
-
-    executeCDCSigFox(sfModel);
-}
-
-
 
 /**
 *
