@@ -19,6 +19,7 @@
 #include "sme_cdc_io.h"
 #include "sme_cmn.h"
 #include "Devices/I2C/Accelerometer/LSM9DS1.h"
+#include "Devices/I2C/proximity_ambient/vl6180x.h"
 
 #define TCA6416_POS 0
 #define NXPNFC_POS            1
@@ -27,12 +28,14 @@
 #define FIRST_I2C_SENSOR      2
 #define LPS25_POS             FIRST_I2C_SENSOR
 #define TS221_POS             (LPS25_POS+1)
-#define LSM9DS1_A_POS         (TS221_POS+1)      // LSM9DS1- Accelerometer - Main init
-#define LSM9DS1_G_POS         (LSM9DS1_A_POS+1)  // LSM9DS1 - Gyroscope
-#define LSM9DS1_M_POS         (LSM9DS1_G_POS+1)  // LSM9DS1 - Magnetometer
+#define VL6180X_POS           (TS221_POS+1)
+#define LSM9DS1_A_POS         (VL6180X_POS+1)      // LSM9DS1- Accelerometer - Main init
+#define LSM9DS1_G_POS         (LSM9DS1_A_POS+1)    // LSM9DS1 - Gyroscope
+#define LSM9DS1_M_POS         (LSM9DS1_G_POS+1)    // LSM9DS1 - Magnetometer
 
 
 #define MAX_I2C_SENSORS       (LSM9DS1_M_POS+1)  // Postponed other sensors
+
 
 
 #define MMA8452_POS 4
@@ -192,7 +195,10 @@ void sme_i2c_mgr_init(void) {
     sensors[TCA6416_POS].sensorInit  = TCA6416a_init;
     sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
 
-    sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;
+    sensors[VL6180X_POS].sensorInit  = vl6180x_init;
+    sensors[VL6180X_POS].sensorValue = vl6180x_get_light;
+    
+    sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;    
     sensors[LSM9DS1_A_POS].sensorValue = LSM9DS1_A_getValues;
     sensors[LSM9DS1_A_POS].decodeCb    = LSM9DS1_A_Decode;
 

@@ -372,7 +372,7 @@ int  LSM9DS1_get_AGM_str (char *msg, uint8_t *len, uint8_t msg_len,
         ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
     }
 
-    *len = 6;
+    *len = j;
     return SME_OK;
 }
 
