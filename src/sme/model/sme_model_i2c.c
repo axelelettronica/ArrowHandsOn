@@ -13,6 +13,7 @@
 #include "../Devices/I2C/nfc/nxpNfc.h"
 #include "../Devices/I2C/Humidity/HTS221.h"
 #include "../Devices/I2C/Pressure/LPS25H.h"
+#include "../Devices/I2C/Accelerometer/LSM9DS1.h"
 #include "../Devices/I2C/IOExpander/tca6416a.h"
 #include "../Devices/I2C/I2C.h"
 #include "sme_cdc_io.h"
@@ -31,65 +32,54 @@
 #define LSM9DS1_M_POS         (LSM9DS1_G_POS+1)  // LSM9DS1 - Magnetometer
 
 
-#define MAX_I2C_SENSORS       (TS221_POS+1)  // Postponed other sensors
+#define MAX_I2C_SENSORS       (LSM9DS1_M_POS+1)  // Postponed other sensors
 
 
 #define MMA8452_POS 4
 
 
 
-// function pointer for the readValues functions on all sensor
-typedef bool (*readValue)(uint16_t*);
-// function pointer for the initialization of sensor
-typedef bool (*initSensor)(void);
-// function pointer decoding  Data on all sensor
-typedef bool (*sensorDecode)(uint16_t* buf, uint16_t *data1, ...);
-
-#define SME_MAX_I2C_READ_BUF_LEN     5
-
-
-
-
-typedef struct {
-    bool          sensorInitialized;
-    initSensor    sensorInit;
-    readValue     sensorValue;
-    sensorDecode  decodeCb;
-    uint16_t      decodedData1;
-    uint16_t      decodedData2;
-    uint16_t      decodedData3;
-} sensorTaskStr;
-
+#define SME_MAX_I2C_READ_BUF_LEN     10
 static sensorTaskStr sensors[MAX_I2C_SENSORS];
 
 xQueueHandle i2cCommandQueue;
 
 char buffer[SME_MAX_I2C_READ_BUF_LEN];
 
-static void readAllValues(void)
+static void readSensor(uint8_t idx)
 {
     bool read = false;
 
-    memset(buffer, 0, SME_MAX_I2C_READ_BUF_LEN);
-    for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_SENSORS; ++i) {
-        if (sensors[i].sensorInitialized == true) {
-            if (sensors[i].sensorValue) {
-                read = sensors[i].sensorValue(buffer);
+    if ((idx >= FIRST_I2C_SENSOR) && (idx < MAX_I2C_SENSORS)) {
+        if (sensors[idx].sensorInitialized == true) {
+            if (sensors[idx].sensorValue) {
+                memset(buffer, 0, SME_MAX_I2C_READ_BUF_LEN);
+                read = sensors[idx].sensorValue(buffer);
 
-                if (read && sensors[i].decodeCb) {
-                    sensors[i].decodeCb(buffer,
-                    &sensors[i].decodedData1,
-                    &sensors[i].decodedData2,
-                    &sensors[i].decodedData3);
+                if (read && sensors[idx].decodeCb) {
+                    sensors[idx].decodeCb(buffer,
+                    &sensors[idx].decodedData1,
+                    &sensors[idx].decodedData2,
+                    &sensors[idx].decodedData3);
                 }
             }
         }
+    } else {
+        print_err("Unforeseen sensor %d\n", idx);
+    }
+}
+
+
+static void readAllValues(void)
+{
+    for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_SENSORS; ++i) {
+         readSensor(i);
     }
 }
 
 
 static void readGenericRegister(i2cMessageS command) {
-        uint8_t data;
+    uint8_t data;
     switch (command.fields.sensorId) {
 
         // it is a 16 bytes page
@@ -202,7 +192,7 @@ void sme_i2c_mgr_init(void) {
     sensors[TCA6416_POS].sensorInit  = TCA6416a_init;
     sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
 
-    /*sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;
+    sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;
     sensors[LSM9DS1_A_POS].sensorValue = LSM9DS1_A_getValues;
     sensors[LSM9DS1_A_POS].decodeCb    = LSM9DS1_A_Decode;
 
@@ -212,7 +202,7 @@ void sme_i2c_mgr_init(void) {
 
     sensors[LSM9DS1_G_POS].sensorInit  = LSM9DS1_G_Init;
     sensors[LSM9DS1_G_POS].sensorValue = LSM9DS1_G_getValues;
-    sensors[LSM9DS1_G_POS].decodeCb    = LSM9DS1_G_Decode;*/
+    sensors[LSM9DS1_G_POS].decodeCb    = LSM9DS1_G_Decode;
     
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
         if (sensors[i].sensorInit && sensors[i].sensorInit()) {
@@ -228,7 +218,7 @@ void sme_i2c_mgr_init(void) {
 /*
  *  This function exports a pre formatted string with all read sensors
  */
-int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len)
+int  sme_i2c_get_press_hum_read_str (char *msg, uint8_t *len, uint8_t msg_len)
 {
     uint8_t offset = 0;
 
@@ -246,6 +236,47 @@ int  sme_i2c_get_read_str (char *msg, uint8_t *len, uint8_t msg_len)
     // Writing Humidity
     *len += sprintf((msg+offset), "%2d", (sensors[TS221_POS].decodedData2)/10);
 
+    return SME_OK;
+}
 
+
+
+/*
+ *  This function exports a pre formatted string with all read sensors
+ */
+int  sme_i2c_get_read_str (sme_i2c_msg_str_E type, char *msg, uint8_t *len, uint8_t msg_len)
+{
+    uint8_t offset = 0;
+
+    if (!msg || !len) {
+        return SME_ERR;
+    }
+
+    switch (type) {
+    case SME_I2C_PRESS_HUM_TEMP_STR:    
+        readSensor(LPS25_POS);
+        readSensor(TS221_POS);
+        sme_i2c_get_press_hum_read_str(msg, len, msg_len);
+        break;
+
+    case SME_I2C_XL_STR:
+        readSensor(LSM9DS1_A_POS);
+        LSM9DS1_get_A_str(msg, len, msg_len, &sensors[LSM9DS1_A_POS]);
+        break;
+
+    case SME_I2C_GYRO_STR:
+        readSensor(LSM9DS1_G_POS);
+        LSM9DS1_get_G_str(msg, len, msg_len, &sensors[LSM9DS1_G_POS]);
+        break;
+
+    case SME_I2C_MAGNET_STR:
+        readSensor(LSM9DS1_M_POS);
+        LSM9DS1_get_M_str(msg, len, msg_len, &sensors[LSM9DS1_M_POS]);
+        break;
+    default:
+         print_err("I2C GET error %d", type);
+    break;
+    }
+    
     return SME_OK;
 }

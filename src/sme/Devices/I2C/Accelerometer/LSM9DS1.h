@@ -22,17 +22,21 @@ bool LSM9DS1_A_Deactivate(void);
 bool LSM9DS1_A_Init(void);
 bool LSM9DS1_A_getValues(uint16_t *buffer);
 bool LSM9DS1_A_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3);
+int  LSM9DS1_get_A_str (char *msg, uint8_t *len, uint8_t msg_len, void *sensor);
 
 bool LSM9DS1_M_Activate(void);
 bool LSM9DS1_M_Deactivate(void);
 bool LSM9DS1_M_Init(void);
 bool LSM9DS1_M_getValues(uint16_t *buffer);
 bool LSM9DS1_M_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3);
+int  LSM9DS1_get_M_str (char *msg, uint8_t *len, uint8_t msg_len, void *sensor);
 
 bool LSM9DS1_G_Activate(void);
 bool LSM9DS1_G_Deactivate(void);
 bool LSM9DS1_G_Init(void);
 bool LSM9DS1_G_getValues(uint16_t *buffer);
 bool LSM9DS1_G_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3);
+int  LSM9DS1_get_G_str (char *msg, uint8_t *len, uint8_t msg_len, void *sensor);
+
 
 #endif /* LSM9DS1_H_ */

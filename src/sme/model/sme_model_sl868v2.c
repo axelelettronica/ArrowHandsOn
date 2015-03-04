@@ -92,7 +92,7 @@ void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type)
             out[k++] = in[i++]; 
         }
         i++;
-        // To be added ad UT
+        // To be added and UT
         //*dir = ((in[i] == 'N') || (in[i] == 'E')) ? 1 : 0;
     }
 }
@@ -148,6 +148,7 @@ int  sme_sl868v2_get_latlong (char *msg, uint8_t *len, uint8_t msg_len)
     }
     ((char *)msg)[j] = ((0xF & quality)<<4) | (0xF & n_satellites);
 
-*len = 11;
+    *len = 11;
+
     return SME_OK;
 }
