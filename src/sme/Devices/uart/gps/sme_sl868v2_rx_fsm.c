@@ -229,7 +229,7 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
             }
             print_dbg(" received: %s", rxMsg.data);
         }
-        memset(&rxMsg, 0, sizeof(rxMsg));
+        //memset(&rxMsg, 0, sizeof(rxMsg));
         
       }
    } 

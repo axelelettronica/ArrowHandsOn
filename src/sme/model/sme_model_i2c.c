@@ -206,7 +206,7 @@ void sme_i2c_mgr_init(void) {
     sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
 
     sensors[VL6180X_POS].sensorInit  = vl6180x_init;
-    sensors[VL6180X_POS].sensorValue = vl6180x_get_light;
+    sensors[VL6180X_POS].sensorValue = vl6180x_get_light_polling;
 
 
 
