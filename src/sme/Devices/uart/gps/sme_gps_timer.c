@@ -30,8 +30,9 @@ static void gpsTimerCallback( TimerHandle_t pxTimer )
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( pxTimer );
     print_err("TimeOut, GPS Position scanning not acknowledged\r\n");
-    sme_led_blue_off();
     gpsCompletedScan();
+
+
     timedOut = true;
 }
 

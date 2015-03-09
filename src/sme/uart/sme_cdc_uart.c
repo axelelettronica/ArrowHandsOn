@@ -75,7 +75,7 @@ void configure_usart(struct usart_module *const cdc_uart_module)
 	}
 
 	usart_enable(cdc_uart_module);
-    }
+}
 
 
 int sme_cdc_mgr_init (void)

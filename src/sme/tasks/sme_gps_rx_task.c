@@ -15,12 +15,13 @@
 #define GPS_STACK_SIZE	  	 (configMINIMAL_STACK_SIZE)
 #define GPS_TASK_PRIORITY    (tskIDLE_PRIORITY + 2)
 #define GPS_SEMAPHORE_DELAY  ONE_SECOND
-//#define GPS_RX_SEMAPHORE_DELAY  (51 / portTICK_RATE_MS)
+#define GPS_RX_TASK_DELAY    (1 / portTICK_RATE_MS) // 1 msec
+
 
 #define SME_GPS_MAX_DATA_LEN MAX_SL868V2_RX_BUFFER_LENGTH
 /* task variables */
 
-xSemaphoreHandle gps_rx_sem;
+
 /* task variables */
 
 //! Queue for incoming terminal characters
@@ -39,20 +40,17 @@ volatile uint8_t test;
 */
 static void gpsRxTask(void *params)
 {
-	uint8_t msg[SME_GPS_MAX_DATA_LEN];
 
-    // Trigger the RX interrupt
-    xSemaphoreGive(gps_rx_sem);
-    sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN);
+    uint8_t msg[SME_GPS_MAX_DATA_LEN];
+    
+	for (;;) {		
+        while (sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN) == SME_OK){
+             xQueueSendFromISR(gps_msg_in_queue, (char *)&msg[0], NULL);
+        } 
 
-	for (;;) {
-		if (pdTRUE == xSemaphoreTake(gps_rx_sem, GPS_SEMAPHORE_DELAY)) {
-            if (sl868v2ReceivedMessage(msg, SME_GPS_MAX_DATA_LEN) == SME_OK){
-                 xQueueSend(gps_msg_in_queue, (char *)&msg[0], NULL);
-                //sl868v2HandleRx(msg, SME_GPS_MAX_DATA_LEN);
-        	} 
-		}
-	}
+        vTaskDelay(1);
+	} 
+
 }
 
 static void gpsProcRx_task(void *params)
@@ -68,21 +66,17 @@ static void gpsProcRx_task(void *params)
              sl868v2HandleRx(&current_char_ptr, SME_GPS_MAX_DATA_LEN);
             // Set zero-terminator at head
 			current_char_ptr = '\0';
-            //vTaskDelay(GPS_SEMAPHORE_DELAY);
         }
 
        //xSemaphoreGive(gps_msg_mutex);
-       
-       vTaskDelay(GPS_SEMAPHORE_DELAY);
+
+       vTaskDelay(GPS_RX_TASK_DELAY);
 	}
 }
 
 BaseType_t sme_gps_mgr_init(void)
 {
-	// create the sigFox semaphore
-	gps_rx_sem = xSemaphoreCreateBinary();
-    
-    gps_msg_in_queue = xQueueCreate(64, sizeof(uint8_t));
+    gps_msg_in_queue = xQueueCreate(1024, sizeof(uint8_t));
     //gps_msg_mutex = xSemaphoreCreateMutex();
 
 	sl868InitRxData();	

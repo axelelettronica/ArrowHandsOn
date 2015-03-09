@@ -16,8 +16,6 @@
 
 //! semaphore for incoming execution command
 
-extern xSemaphoreHandle gps_rx_sem;
-
 
 
 BaseType_t sme_gps_mgr_init(void);

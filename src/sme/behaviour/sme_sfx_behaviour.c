@@ -19,7 +19,7 @@ static bool sme_sfx_fill_report (sme_sfx_report_t type, char *msg, uint8_t *len,
         return SME_ERR;
     }
 
-    ((char*)msg)[0] = type; // check HEX after 9
+    ((char*)msg)[0] = type; 
 
     switch (type) {
         case SME_SFX_DEBUG_MSG:

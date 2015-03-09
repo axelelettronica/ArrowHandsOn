@@ -11,10 +11,10 @@
 
 #define GPS_1_SEC_TIMER     (1000 / portTICK_RATE_MS)
 #define GPS_60_SEC_TIMER    (60*GPS_1_SEC_TIMER) 
-#define GPS_SCAN_TIMEOUT    (2*GPS_60_SEC_TIMER) // 2 min
+#define GPS_SCAN_TIMEOUT    (1*GPS_60_SEC_TIMER) // 1 min
 #define GPS_5_MIN_TIMER     (5*GPS_60_SEC_TIMER) // 5 min
 
-#define GPS_TIMEOUT_ID 1
+#define GPS_TIMEOUT_ID        1
 
 bool isGpsCommandTimerExpired(void);
 

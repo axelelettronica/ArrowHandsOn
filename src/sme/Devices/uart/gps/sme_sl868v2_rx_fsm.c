@@ -14,7 +14,7 @@
 #include "../../IO/sme_rgb_led.h"
 
 
-#define SL868V2_MAX_MSG_LEN   80    
+#define SL868V2_MAX_MSG_LEN   100    
 typedef struct {
     xSemaphoreHandle sem;
     uint8_t idx;
@@ -72,7 +72,7 @@ static bool crcCheck(uint8_t data[], uint8_t len) {
 
     char checksum = 0;
     char checksum_str[3]={};
-    uint8_t i = 0; i = 1;
+    uint8_t i = 1;
 
     while (data[i] != '*') {
         if (i >= len) {
@@ -84,10 +84,10 @@ static bool crcCheck(uint8_t data[], uint8_t len) {
     i++;
     sprintf(checksum_str, "%0X", checksum);
     if (data[i++] != ((checksum > 15) ? checksum_str[0]:'0')) {
-        print_err("Wrong Checksum\n");
+        print_err("Wrong MSB Checksum %d (%d)\n", data[i-1],checksum);
         return false;
     } else if (data[i++] != ((checksum > 15) ? checksum_str[1] : checksum_str[0])) {
-        print_err("Wrong Checksum\n");
+        print_err("Wrong LSB Checksum %d (%d)\n", data[i-1],checksum);
         return false;
     };
     return true;
@@ -163,46 +163,75 @@ void gpsCompletedScan(void) {
 
     gpsEvt.intE = gpsData;
     xQueueSend(controllerQueue, (void *) &gpsEvt, NULL);
-    
-    // Blink Blue Led
-    for (int i = 0; i<1000; ++i) {
-        sme_led_blue_off();
-    }
-    sme_led_blue_brightness(SIXTEEN_LIGTH);
+
+    sme_led_blue_off();
+
+    // set GPS in standby
+    sendSl868v2Msg(SL868V2_SET_STDBY_CMD, 
+                   sizeof(SL868V2_SET_STDBY_CMD));
 }
 
+typedef enum  {
+  NMEA_UNMANAGED,
+  NMEA_RMC,
+  NMEA_GGA  
+}sl868v2_nmea_out_msg_id;
 
+
+sl868v2_nmea_out_msg_id 
+sl868v2IdentifyNmeaRxMsg(uint8_t talker_p[], uint8_t sentenceId_p[])
+{
+    if ((talker_p[0] == 'G') && ((talker_p[1] == 'P')||
+        (talker_p[1] == 'L') || (talker_p[1] == 'N'))) {
+        if ((sentenceId_p[0] == 'R') && 
+            (sentenceId_p[1] == 'M') &&
+            (sentenceId_p[2] == 'C')) {        
+            return NMEA_RMC;
+        }
+        if ((sentenceId_p[0] == 'G') && 
+            (sentenceId_p[1] == 'G') &&
+            (sentenceId_p[2] == 'A')) {        
+            return NMEA_GGA;
+        }
+    }
+
+    return NMEA_UNMANAGED;
+}
     
 void sl868v2ProcessRx(void) 
 {  
     uint32_t lat;
     uint32_t longit;
     uint32_t alt;
-
+    sl868v2_nmea_out_msg_id nmea_msg_id;
     if (cold_boot) {
         // set GPS in standby at first message
         sendSl868v2Msg(SL868V2_SET_STDBY_CMD, 
                        sizeof(SL868V2_SET_STDBY_CMD));
         cold_boot = false;
     }
+    
+
 
     if (msgPtrT.messageType == STD_NMEA) {
-        if ((msgPtrT.nmea_p.std_p.talker_p[0] == 'G') &&
-            (msgPtrT.nmea_p.std_p.talker_p[1] == 'N')) {
-
-            if ((msgPtrT.nmea_p.std_p.sentenceId_p[0] == 'R') && 
-                (msgPtrT.nmea_p.std_p.sentenceId_p[1] == 'M') &&
-                (msgPtrT.nmea_p.std_p.sentenceId_p[2] == 'C')) {
-
+        nmea_msg_id = sl868v2IdentifyNmeaRxMsg(msgPtrT.nmea_p.std_p.talker_p,
+                                               msgPtrT.nmea_p.std_p.sentenceId_p);
+        switch(nmea_msg_id) {
+        case NMEA_RMC:
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
                                 msgPtrT.nmea_p.std_p.dataLenght, 
                                 SME_LAT);
                 sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, 
                                 msgPtrT.nmea_p.std_p.dataLenght, 
                                 SME_LONG);
-
-                gpsCompletedScan();  // Notify Lat/Long Update
-            }
+        break;
+        case NMEA_GGA:
+                sl868v2_parse_ssa(msgPtrT.nmea_p.std_p.data_p, 
+                                  msgPtrT.nmea_p.std_p.dataLenght);
+        break;
+        case NMEA_UNMANAGED:
+        default:
+        break;
         }
     }
 }
@@ -211,17 +240,19 @@ void sl868v2ProcessRx(void)
 
 uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen) 
 {
-   if (rxMsg.idx < (SL868V2_MAX_MSG_LEN-1)) {
+   if (rxMsg.idx < (SL868V2_MAX_MSG_LEN-2)) {
      
       if ((*msg < 21) && !((*msg == '\n') || (*msg == '\r')))  {
           return SME_OK;
-      }   
-       print_gps_msg("< %c", *msg);
+      }  else if (*msg == '$') {
+         memset(&rxMsg, 0, sizeof(rxMsg));
+      }
+
       rxMsg.data[rxMsg.idx++] = *msg;
 
       if (*msg == '\n')  {
         if (rxMsg.idx > 3) {
-            print_gps_msg("< %s", *msg);
+            //print_gps_msg("< %s", *msg);
             rxMsg.data[rxMsg.idx] = '\0';
             if (crcCheck(rxMsg.data, rxMsg.idx)) {
                 sl868v2ParseRx();
@@ -229,10 +260,12 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
             }
             print_dbg(" received: %s", rxMsg.data);
         }
-        memset(&rxMsg, 0, sizeof(rxMsg));
-        
+        //memset(&rxMsg, 0, sizeof(rxMsg));       
       }
-   } 
+   } else {
+       print_err("ERR: Msg too big drop it: %s", rxMsg.data);
+       memset(&rxMsg, 0, sizeof(rxMsg));
+   }
 
     return SME_OK;
 }
