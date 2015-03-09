@@ -138,6 +138,10 @@ Note: Upper nibble should be set to 0x4 i.e. For ALS gain of 1.0 write 0x46.
 #define VL6180X_RESULT_HISTORY_BUFFER6               0x0058
 #define VL6180X_RESULT_HISTORY_BUFFER7               0x0059
 #define VL6180X_RESULT_HISTORY_BUFFER8               0x0060  // end of FIFO
+
+/*
+[7:0] result__range_val: Final range result value presented to the user for use. Unit is in mm.
+*/
 #define VL6180X_RESULT_RANGE_VAL                     0x0062
 #define VL6180X_RESULT_RANGE_RAW                     0x0064
 #define VL6180X_RESULT_RANGE_RETURN_RATE             0x0066
@@ -162,8 +166,8 @@ Note: Upper nibble should be set to 0x4 i.e. For ALS gain of 1.0 write 0x46.
 
 #define ALS_SINGLE_MODE_MASK                         0b111000
 #define ALS_SINGLE_MODE_READY                        0b100000
-#define RAQNGE_SINGLE_MODE_MASK                      0b111
-#define RAQNGE_SINGLE_MODE_READY                     0b100
+#define RANGE_SINGLE_MODE_MASK                       0b111
+#define RANGE_SINGLE_MODE_READY                      0b100
 
 #define CLEAR_RANGE_INT                              0b001
 #define CLEAR_ALS_INT                                0b010

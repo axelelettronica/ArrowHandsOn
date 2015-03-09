@@ -23,6 +23,13 @@ ALS lux resolution (with glass) = (RESULT__ALS_VAL (without glass) / RESULT__ALS
 
 bool vl6180x_init(void);
 
+
+/* 
+read both ligth and proximity
+*/
+bool vl6180x_get_light_range_polling(char *value);
+
+
 /*
 Light level (in lux) = ALS lux resolution × RESULT__ALS_VAL/ Analog Gain × 100ms /ALS integration time
 
@@ -35,5 +42,10 @@ range and resolution required.
 
 */
 bool vl6180x_get_light_polling(char *value);
+
+bool vl6180x_get_range__polling(char *value);
+
+
+bool vl6180x_decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2,  uint16_t *data3);
 
 #endif /* VL6180X_H_ */

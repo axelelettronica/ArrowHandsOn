@@ -35,4 +35,9 @@ bool LSM9DS1_G_Init(void);
 bool LSM9DS1_G_getValues(uint16_t *buffer);
 bool LSM9DS1_G_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3);
 
+
+float LSM9DS1_get_a_lsb_sensitivity(void);
+float LSM9DS1_get_g_lsb_sentivity(void);
+float LSM9DS1_get_m_lsb_sentivity(void);
+
 #endif /* LSM9DS1_H_ */

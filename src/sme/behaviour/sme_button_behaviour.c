@@ -13,7 +13,12 @@
 
 void button1Execution(void) {
 
-    sfxSendExecution(SME_SFX_I2C_1_MSG);
+    //sfxSendExecution(SME_SFX_I2C_1_MSG);
+    //sfxSendExecution(SME_SFX_I2C_XL_MSG);
+    //sfxSendExecution(SME_SFX_I2C_GYR_MSG);
+    //sfxSendExecution(SME_SFX_I2C_MAG_MSG);
+    sfxSendExecution(SME_SFX_DEBUG_MSG);
+
 }
 
 void button2Execution(void) {

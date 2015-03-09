@@ -10,6 +10,7 @@ https://github.com/kriswiner/VL6180X/blob/master/VL6180Xbasic.ino
 #include <stdbool.h>
 #include "..\I2C.h"
 #include "vl6180_reg.h"
+#include "sme_cmn.h"
 
 typedef enum {  // define lower nibble of ALS gain register
     alsGain20 = 0,  // ALS gain of 20
@@ -201,14 +202,12 @@ these operations should be performed at any one time and once started must be al
 complete before another measurement is started. This is because any current operation will
 be aborted if another is started.
 */
-    volatile uint8_t status;
-    volatile uint16_t alsRaw;
-    volatile uint32_t alsInt;
-    volatile uint8_t rawData[2] = {0, 0};
-    volatile float als;
 bool vl6180x_get_light_polling(char *value) {
-
-
+    uint8_t status;
+    uint16_t alsRaw;
+    uint32_t alsInt;
+    uint8_t rawData[2] = {0, 0};
+    float als;
     writeRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSALS_START, START_SINGLE_MODE);
 
     if (readRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_INTERRUPT_STATUS_GPIO, &status)) {
@@ -220,7 +219,7 @@ bool vl6180x_get_light_polling(char *value) {
             status = status & ALS_SINGLE_MODE_MASK;
         }
         
-        if (readBufferRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_INTERRUPT_STATUS_GPIO, rawData, 2)) {
+        if (readBufferRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_ALS_VAL, rawData, 2)) {
             writeRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSTEM_INTERRUPT_CLEAR, CLEAR_ALS_INT);
             
             uint16_t alsraw = (uint16_t) (((uint16_t) rawData[0] << 8) | rawData[1]); //get 16-bit als raw value
@@ -265,17 +264,45 @@ these operations should be performed at any one time and once started must be al
 complete before another measurement is started. This is because any current operation will
 be aborted if another is started.
 */
-bool vl6180x_get_range(char *value){
-    uint8_t gain=0;
-    uint16_t integration_t=0, ligth_value=0;
-    
-    if (readRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSALS_ANALOGUE_GAIN, &gain)) {
-        if (readBufferRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSALS_INTEGRATION_PERIOD, &integration_t, 2)){
-            if (readBufferRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSALS_INTEGRATION_PERIOD, &ligth_value, sizeof(integration_t))) {
-                return true;
+bool vl6180x_get_range_polling(char *value){
+    uint8_t status;
+    uint16_t alsRaw;
+    uint8_t rawData[2] = {0, 0};
+    writeRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSRANGE_START, START_SINGLE_MODE);
+
+    if (readRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_INTERRUPT_STATUS_GPIO, &status)) {
+        status = status & RANGE_SINGLE_MODE_MASK;
+        while (status != RANGE_SINGLE_MODE_READY) {
+            if (!readRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_INTERRUPT_STATUS_GPIO, &status)) {
+                return false;
             }
+            status = status & RANGE_SINGLE_MODE_MASK;
         }
+        
+        if (readRegister_16Bit(VL6180X_ADDRESS, VL6180X_RESULT_RANGE_VAL, rawData)) {
+            value[0]=rawData[0];
+            writeRegister_16Bit(VL6180X_ADDRESS, VL6180X_SYSTEM_INTERRUPT_CLEAR, CLEAR_ALS_INT);
+            return true;
+        }
+        
+        return false; //should never arrive here
     }
-    
+
     return false;
 }
+
+
+bool vl6180x_get_light_range_polling(char *value) {
+    
+    vl6180x_get_light_polling(value);
+    
+    vl6180x_get_range_polling(&value[4]);
+}
+
+
+bool vl6180x_decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3){
+    memcpy(data1, buffer, 5);
+    return true;
+}
+
+

@@ -31,6 +31,7 @@
 #define SIGFOX_KEEP     0x02
 #define SIGFOX_BIT      0x03
 #define SIGFOX_CONFIRM  0x10
+#define SIG_FOX_DATA_PAYLOAD 0x0C
 
 
 typedef enum {

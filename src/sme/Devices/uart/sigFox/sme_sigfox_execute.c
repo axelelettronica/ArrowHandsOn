@@ -22,10 +22,11 @@ uint8_t message[sizeof(sigFoxDataMessage)];
 
 
 static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
-    print_sfx("send Sequence Number=");
-    char seq[4];
-    sprintf(seq, "%d", msg[SFX_SEQUENCE_POS]);
-    print_sfx(seq);
+    
+    print_sfx("send SFX msg =");
+    for (int i=0; i<len; i++) {
+        print_sfx("%X-", msg[i]);
+    }        
     print_sfx("\r\n");
 
     sigfoxSendMessage(msg, len);

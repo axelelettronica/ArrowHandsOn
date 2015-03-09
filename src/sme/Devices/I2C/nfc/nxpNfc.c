@@ -1,6 +1,3 @@
-#include "..\I2C.h"
-#include "nxpNfc.h"
-#include <string.h>
 /*
 * nxpNfc.c
 *
@@ -8,21 +5,15 @@
 *  Author: mfontane
 */
 
-uint8_t  nfcPageBuffer[NFC_PAGE_SIZE];
-typedef union manufactoringDataUnion{
-    struct {
-        uint8_t  slaveAddr;
-        uint8_t  serialNumber[6];
-        uint8_t  internalData[3];
-        uint16_t lockBytes;
-        uint32_t capabilityContainer;
-    } manufS;
-    uint8_t  pagemanufr[16];
-} manufactoringDataU;
 
-static manufactoringDataU manuf;
+#include <string.h>
+#include "..\I2C.h"
+#include "nxpNfc.h"
+#include "model\NT3H1101_model.h"
 
-inline uint8_t* getLastNfcPage(void) {
+
+
+inline const uint8_t* get_last_ncf_page(void) {
     return nfcPageBuffer;
 }
 
@@ -45,8 +36,18 @@ bool nxpInit(void){
     bool ret=true;
 
     ret &= readManufactoringData();
-    ret &= getConfiguration();
-    //ret &= getSessionReg();
+    
+     /*uint8_t data[NFC_PAGE_SIZE];
+    
+    
+    memset(data,0x20, sizeof(data));
+    
+    nfc_write_user_data(1, "1234567890123456", 16);
+    nfc_write_user_data(2, "0987654321654321", 16);
+    
+    ret &= nfc_read_user_data(1);
+    ret &= nfc_read_user_data(2);*/
+
     return ret;
 }
 
@@ -58,7 +59,8 @@ bool getSessionReg(void) {
     return readBufferRegister(NXPNFC_ADDRESS, SESSION_REG, nfcPageBuffer, sizeof(nfcPageBuffer));
 }
 
-bool readUserData(uint8_t page){
+
+bool nfc_read_user_data(uint8_t page) {
     uint8_t reg = USER_START_REG+page;
     // if the requested page is out of the register exit with error
     if (reg > USER_END_REG) {
@@ -74,6 +76,28 @@ bool readUserData(uint8_t page){
 }
 
 
+bool nfc_write_user_data(uint8_t page, const uint8_t* data, uint16_t dataLen) {
+    uint8_t dataSend[NFC_PAGE_SIZE +1]; // data plus register
+    
+    uint8_t reg = USER_START_REG+page;
+    
+    // if the requested page is out of the register exit with error
+    if (reg > USER_END_REG) {
+        return false;
+    }
+    
+    uint8_t pages = dataLen/NFC_PAGE_SIZE +1;
+    for (int i=reg; i<=page+pages; i++) {
+        // reach the end of pages exit with success because of the others.
+        if (i > USER_END_REG) {
+            return true;
+        }
+        dataSend[0] = i; // store the register
+        memcpy(&dataSend[1], &data[i-reg], NFC_PAGE_SIZE);
+        writeBufferRegister(NXPNFC_ADDRESS, dataSend, sizeof(dataSend));
+    }
+}
+
 bool readSRAM(void){
     bool ret=false;
     for (int i = SRAM_START_REG, j=0; i<=SRAM_END_REG; i++,j++) {
@@ -84,13 +108,4 @@ bool readSRAM(void){
         //memcpy(&userData[offset], pageBuffer, sizeof(pageBuffer));
     }
     return ret;
-}
-
-
-bool getNxpUserData(char* buffer) {
-    if (readUserData(2)) {
-        memcpy(buffer, getLastNfcPage(), 9);
-        return true;
-    } else
-    return false;
 }
