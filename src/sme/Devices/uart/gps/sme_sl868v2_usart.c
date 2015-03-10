@@ -26,22 +26,7 @@ static struct usart_module usart_gps;
 volatile uint8_t gps_rx_buffer[MAX_SL868V2_RX_BUFFER_LENGTH] = {};
 /* interrupt USART variables */
 
-static void usart_gps_read_callback(const struct usart_module *const usart_module)
-{
-	
-	BaseType_t xHigherPriorityTaskWoken; 
-	xSemaphoreGiveFromISR(gps_rx_sem, &xHigherPriorityTaskWoken );
-	
-	 /* If xHigherPriorityTaskWoken was set to true you
-    we should yield.  The actual macro used here is 
-    port specific. */
-    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );		
-}
 
-static void usart_gps_write_callback(const struct usart_module *const usart_module)
-{
-    ;
-}
 
 volatile int init;
 void uartInit(const struct usart_module *const module,
@@ -53,13 +38,6 @@ void uartInit(const struct usart_module *const module,
 	}
 
 	usart_enable(module);
-	
-	usart_register_callback(module, tx_callback_func,  USART_CALLBACK_BUFFER_TRANSMITTED);
-	usart_register_callback(module,	rx_callback_func,  USART_CALLBACK_BUFFER_RECEIVED);
-
-	usart_enable_callback(module, USART_CALLBACK_BUFFER_TRANSMITTED);
-	usart_enable_callback(module, USART_CALLBACK_BUFFER_RECEIVED);
-    
 }
 
 
@@ -79,9 +57,12 @@ void sl868v2Init(void) {
     config_usart.pinmux_pad2 = SME_GPS_SERCOM_PINMUX_PAD2;
     config_usart.pinmux_pad3 = SME_GPS_SERCOM_PINMUX_PAD3;
 
-    uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
-             usart_gps_read_callback);
+    //uartInit(&usart_gps, &config_usart, usart_gps_write_callback,
+    //         usart_gps_read_callback);
+	while (usart_init(&usart_gps, SME_GPS_MODULE, &config_usart) != STATUS_OK) {
+	}
 
+	usart_enable(&usart_gps);
 }
 
 int 
@@ -106,16 +87,11 @@ sl868v2SendMessage(const uint8_t *msg, uint8_t len)
 int 
 sl868v2ReceivedMessage(uint8_t *msg, uint8_t len )
 { 
-	status_code_genare_t ret =  usart_read_buffer_job(&usart_gps, (uint8_t *)gps_rx_buffer, 
-                                                      MAX_SL868V2_RX_BUFFER_LENGTH);
+    uint16_t temp;
 
-	if (ret == STATUS_OK) {
-		memcpy((char *)msg, (char *)gps_rx_buffer, MAX_SL868V2_RX_BUFFER_LENGTH);
-        memset((char *)gps_rx_buffer,0,MAX_SL868V2_RX_BUFFER_LENGTH);
-        //*msg = gps_rx_buffer[0];
-        sme_led_green_off();
+   	if (usart_read_wait(&usart_gps, &temp) == STATUS_OK) {
+        *msg = temp;
         return SME_OK;
-
     }
     return SME_EIO;
 }

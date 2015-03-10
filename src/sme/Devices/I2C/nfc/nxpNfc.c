@@ -37,11 +37,12 @@ bool nxpInit(void){
 
     ret &= readManufactoringData();
     
-     /*uint8_t data[NFC_PAGE_SIZE];
+    uint8_t data[NFC_PAGE_SIZE];
     
-    
+    data[0]=03;
+    data[1]= 5 + sizeof ("METTO QUESTO");
     memset(data,0x20, sizeof(data));
-    
+  /*  
     nfc_write_user_data(1, "1234567890123456", 16);
     nfc_write_user_data(2, "0987654321654321", 16);
     
