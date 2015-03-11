@@ -14,14 +14,18 @@
 extern xSemaphoreHandle i2c_sem;
 
 /* Number of times to try to send packet if failed. */
-#define TIMEOUT 1
+#define TIMEOUT 10
 
 void configure_i2c_master(void);
 
 uint8_t readRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *data);
+uint8_t readRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *data);
 bool readBufferRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *buffer, uint8_t bufferLen);
+bool readBufferRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *buffer, uint8_t bufferLen);
 
 //void readRegisters(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t * dest, int bytesToRead);
 bool writeRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite);
+bool writeRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t dataToWrite);
+bool writeBufferRegister(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len);
 
 #endif /* I2C_H_ */

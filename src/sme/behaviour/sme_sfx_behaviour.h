@@ -18,7 +18,7 @@ typedef enum {  // Do not exchange the MSG Orders!!!!!!
     SME_SFX_I2C_MAG_MSG = 5,
 
     /* ADD NEW MESSAGES FROM NOW ON. KEEP THE INCREMENTAL NUNBERING */
-
+    SME_SFX_END_MSG
 
 }sme_sfx_report_t;
 

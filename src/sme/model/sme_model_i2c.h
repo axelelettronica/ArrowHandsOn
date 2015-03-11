@@ -35,7 +35,6 @@ typedef struct {
 * some of the command need an extra buffer to be completed
 */
 typedef enum {
-    justForDebugToBeRemoved,
     allSensorsReadValue,
     sensorReadValue,
     sensorReadRegister,
@@ -63,8 +62,11 @@ typedef enum {
     SME_I2C_PRESS_HUM_TEMP_STR,
     SME_I2C_XL_STR,
     SME_I2C_GYRO_STR,
-    SME_I2C_MAGNET_STR
+    SME_I2C_MAGNET_STR,
+    SME_I2C_PROX_STR,
+    SME_I2C_All_SENSOR
 } sme_i2c_msg_str_E;
+
 
 void sme_cdc_i2c(i2cQueueS *current_message);
 void sme_i2c_mgr_init(void);

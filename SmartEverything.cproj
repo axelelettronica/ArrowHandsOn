@@ -315,10 +315,9 @@
           <SwdClock>4000000</SwdClock>
         </InterfaceProperties>
         <InterfaceName>SWD</InterfaceName>
-        <JlinkConfigFile>C:\Users\speirano\Desktop\workspace\SME\smarteverything\jlink.config</JlinkConfigFile>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>28006555</ToolNumber>
+      <ToolNumber>28006446</ToolNumber>
       <ToolName>SAM-ICE</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <com_atmel_avrdbg_tool_atmelice>
@@ -356,6 +355,7 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
+      <Value>NT3H1201</Value>
       <Value>NDEBUG</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
@@ -500,6 +500,7 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
+      <Value>NT3H1201</Value>
       <Value>DEBUG</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
@@ -720,9 +721,9 @@
     <Folder Include="src\sme\Devices\I2C\Humidity\" />
     <Folder Include="src\sme\Devices\I2C\Accelerometer" />
     <Folder Include="src\sme\Devices\I2C\IOExpander" />
+    <Folder Include="src\sme\Devices\I2C\nfc\model" />
     <Folder Include="src\sme\Devices\I2C\proximity_ambient" />
     <Folder Include="src\sme\Devices\I2C\Pressure" />
-    <Folder Include="src\sme\Devices\I2C\ZXYAxis" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
     <Folder Include="src\sme\Devices\IO" />
     <Folder Include="src\sme\Devices\uart" />
@@ -855,6 +856,12 @@
     <Compile Include="src\sme\behaviour\sme_button_behaviour.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\behaviour\sme_decode_i2c_sfx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\behaviour\sme_decode_i2c_sfx.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\behaviour\sme_gps_behaviour.c">
       <SubType>compile</SubType>
     </Compile>
@@ -867,12 +874,6 @@
     <Compile Include="src\sme\behaviour\sme_interrupt_behaviour.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\behaviour\sme_nfc_behaviour.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\behaviour\sme_nfc_behaviour.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\behaviour\sme_sfx_behaviour.c">
       <SubType>compile</SubType>
     </Compile>
@@ -882,10 +883,19 @@
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\model\NT3H1101_model.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\model\NT3H1101_model.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180x.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180x.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180_reg.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\IO\sme_rgb_led.c">
@@ -973,15 +983,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Pressure\LPS25H.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\ZXYAxis\privateZXYAxis.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\ZXYAxis\ZXYAxis.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\ZXYAxis\ZXYAxis.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\sigFox\sme_sigfox_usart.c">

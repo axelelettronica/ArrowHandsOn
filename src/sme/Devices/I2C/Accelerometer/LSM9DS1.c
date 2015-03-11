@@ -162,9 +162,19 @@ put this in PD(Power Down) it is possible to set both Accel and Gyro (using CTRL
 #endif
 
 float  a_lsb_sentivity = A_LSB_SENSIT_2MG;     //  FC[1:0] register set to 0
-float  g_lsb_sentivity = G_LSB_SENSIT_245MDPS; //  FC[1:0] register set to 0
-float  m_lsb_sentivity = M_LSB_SENSIT_4MG;     //  FC[1:0] register set to 0
+inline float LSM9DS1_get_a_lsb_sensitivity(void) {
+    return a_lsb_sentivity;
+}
 
+float  g_lsb_sentivity = G_LSB_SENSIT_245MDPS; //  FC[1:0] register set to 0
+inline float LSM9DS1_get_g_lsb_sentivity(void) {
+    return g_lsb_sentivity;
+}
+
+float  m_lsb_sentivity = M_LSB_SENSIT_4MG;     //  FC[1:0] register set to 0
+inline float LSM9DS1_get_m_lsb_sentivity(void) {
+    return m_lsb_sentivity;
+}
 /*****************************************************************************/
 /*                         Accelerometer / Gyroscope                         */
 /*****************************************************************************/
@@ -335,53 +345,8 @@ bool LSM9DS1_A_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16
     return true;
 }
 
-/*
- *  This function exports a formatted string with Magnetic sensor info
- *
- *    <Msgid><X-Axis><Y-Axis><Z-Axis>
- *    - Msg Id  : 1 byte   (0x5)
- *    - X-Axis  : 2 bytes  in milli gauss
- *    - Y-Axis  : 2 bytes  in milli gauss
- *    - Z-Axis  : 2 bytes  in milli gauss
- */
-int  LSM9DS1_get_AGM_str (char *msg, uint8_t *len, uint8_t msg_len, 
-                          sensorTaskStr *sensor, float sensitivity)
-{  
-    float coord_f = 0;
-    uint8_t i = 0, j = 0;
 
-    if (!msg || !len || !sensor) {
-        return SME_ERR;
-    }
 
-    coord_f = ((int16_t)(sensor->decodedData1)*g_lsb_sentivity);
-    // copy x-axis 2-bytes in the right order
-    for (i = 0; i < 2 ; ++i, ++j) {
-        ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
-    }
-
-    coord_f = ((int16_t)(sensor->decodedData2)*g_lsb_sentivity);
-    // copy y-axis 2-bytes in the right order
-    for (i = 0; i < 2 ; ++i, ++j) {
-        ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
-    }
-
-    coord_f = ((int16_t)(sensor->decodedData3)*g_lsb_sentivity);
-    // copy y-axis 2-bytes in the right order
-    for (i = 0; i < 2 ; ++i, ++j) {
-        ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
-    }
-
-    *len = j;
-    return SME_OK;
-}
-
-int  LSM9DS1_get_A_str (char *msg, uint8_t *len, 
-                        uint8_t msg_len, void *sensor)
-{
-    return LSM9DS1_get_AGM_str(msg, len, msg_len, 
-                              (sensorTaskStr *)sensor, a_lsb_sentivity);
-}
 
 bool LSM9DS1_G_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16_t *data3)
 {
@@ -410,12 +375,6 @@ bool LSM9DS1_G_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16
     return true;
 }
 
-int LSM9DS1_get_G_str (char *msg, uint8_t *len, 
-                       uint8_t msg_len, void *sensor)
-{
-    return LSM9DS1_get_AGM_str(msg, len, msg_len, 
-                               (sensorTaskStr *)sensor, g_lsb_sentivity);
-}
 
 /*****************************************************************************/
 /*                                Magnetometer                               */
@@ -527,17 +486,4 @@ bool LSM9DS1_M_Decode(uint16_t *buffer, uint16_t *data1, uint16_t *data2, uint16
     return true;
 }
 
-/*
- *  This function exports a formatted string with Magnetic sensor info
- *
- *    <Msgid><X-Axis><Y-Axis><Z-Axis>
- *    - Msg Id  : 1 byte   (0x5)
- *    - X-Axis  : 2 bytes  in milli gauss
- *    - Y-Axis  : 2 bytes  in milli gauss
- *    - Z-Axis  : 2 bytes  in milli gauss
- */
-int  LSM9DS1_get_M_str (char *msg, uint8_t *len, uint8_t msg_len, void *sensor)
-{  
-    return LSM9DS1_get_AGM_str(msg, len, msg_len, 
-                               (sensorTaskStr *)sensor, m_lsb_sentivity);
-}
+
