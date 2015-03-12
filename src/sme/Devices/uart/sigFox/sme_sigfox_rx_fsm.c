@@ -59,7 +59,7 @@ static sfxRxFSME crcCheck(void) {
 /*
 * If Telit SFX return an error state different from TELIT_SFX_NO_ERROR 
 * discharge all the other incoming bytes and exit with error (LED RED) 
-*/
+*/ 
 static sfxRxFSME check_msg_error(void) {
 
 // only in case of SFX answer for a sent message check the error
