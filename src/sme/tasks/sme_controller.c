@@ -16,6 +16,7 @@
 #include "model/sme_model_sigfox.h"
 #include "Devices/uart/sigFox/sme_sigfox_execute.h"
 #include "interrupt/interrupt.h"
+#include "behaviour/sme_sfx_behaviour.h"
 
 static void control_task(void *params);
 
@@ -101,37 +102,24 @@ static void enter_in_data_mode(void){
     executeCDCSigFox(sfModel);
 }
 
-
-
-
+#define COUNTER_FIVE_MINUTE 1
+#define TEN_MINUTE_COUNTER  2
+#define A_QUARTER_COUNTER   3
+#define COUNTER_75_MINUTE   15
 
 #if DEBUG_SIGFOX
-char debugSFXMsg[100];
-uint8_t msgCounter=0;
-uint8_t   timeoutCounter=2;
+char        debugSFXMsg[100];
+uint8_t     msgCounter=0;
+uint8_t     timeoutCounter=2;
 
 static void debugSigFox(void){
     static uint8_t msg_toggle = 0;
-    uint8_t msg_toggle_set = 2;
     timeoutCounter++;
-    if (timeoutCounter==3) {
+    if (timeoutCounter >= COUNTER_75_MINUTE) {
         timeoutCounter =0;
-        msgCounter++;
-        switch (msg_toggle%msg_toggle_set) {
-           case 0:
-               button1Execution();
-               msg_toggle++;
-           break;
-           case 1:
-               button2Execution();
-               msg_toggle++;
-           break;
-           // Add more test messages here
-           default:
-           break;
-        } 
-        print_sfx("Sending DEBUG MSG: %d  (total sent%d)\n\r", 
-                  msg_toggle%msg_toggle_set, msg_toggle);
+        
+        button1Execution();
+        
     }
 }
 #endif
@@ -198,9 +186,13 @@ static void control_task(void *params)
                 break;
 
                 case gpsData:
-                sme_gps_data_updateExecution();
+                sfxSendExecution(SME_SFX_GPS_1_MSG);
                 break;
 
+                case allSensorSend:
+                sfxSendExecution(SME_SFX_DEBUG_MSG);
+                break;
+                
                 default:
                 print_dbg("Interrupt Not Handled\n");
             }
@@ -221,7 +213,7 @@ static void control_task(void *params)
                 
                 case 2:
                 timeOut = CONTROL_TASK_DELAY;
-                sendToSfxKeep();                
+                sendToSfxKeep();
                 initialized++;
                 break;
                 

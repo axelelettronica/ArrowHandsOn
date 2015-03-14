@@ -17,24 +17,13 @@ inline const uint8_t* get_last_ncf_page(void) {
     return nfcPageBuffer;
 }
 
-bool readManufactoringData(void) {
-    bool ret = false;
-    
-    ret = readBufferRegister(NXPNFC_ADDRESS, MANUFACTORING_DATA_REG, manuf.pagemanufr, sizeof(manuf.pagemanufr));
-    return ret;
-    
-}
-
-void getNxpSerialNumber(char* buffer) {
-    for(int i=0; i<6; i++) {
-        buffer[i] = manuf.manufS.serialNumber[i];
-    }
-}
 
 
 bool nxpInit(void){
     bool ret=true;
 
+    
+    ret &= nfc_read_configuration_register();
     ret &= readManufactoringData();
     
     uint8_t data[NFC_PAGE_SIZE];
@@ -50,7 +39,24 @@ bool nxpInit(void){
     ret &= nfc_read_user_data(2);*/
 
     return ret;
+
 }
+bool readManufactoringData(void) {
+    bool ret = false;
+    
+    ret = readBufferRegister(NXPNFC_ADDRESS, MANUFACTORING_DATA_REG, manuf.page, sizeof(manuf.page));
+    return ret;
+    
+}
+
+bool nfc_read_configuration_register(void){
+    bool ret=false;
+
+    ret = readBufferRegister(NXPNFC_ADDRESS, CONFIG_REG, configuration.page, sizeof(configuration.page));
+    
+    return ret;
+}
+
 
 bool getConfiguration(void) {
     return readBufferRegister(NXPNFC_ADDRESS, CONFIG_REG, nfcPageBuffer, sizeof(nfcPageBuffer));
@@ -99,7 +105,7 @@ bool nfc_write_user_data(uint8_t page, const uint8_t* data, uint16_t dataLen) {
     }
 }
 
-bool readSRAM(void){
+bool nfc_read_sram_register(void){
     bool ret=false;
     for (int i = SRAM_START_REG, j=0; i<=SRAM_END_REG; i++,j++) {
         ret = readBufferRegister(NXPNFC_ADDRESS, i, nfcPageBuffer, sizeof(nfcPageBuffer));
@@ -109,4 +115,13 @@ bool readSRAM(void){
         //memcpy(&userData[offset], pageBuffer, sizeof(pageBuffer));
     }
     return ret;
+}
+
+
+
+
+void getNxpSerialNumber(char* buffer) {
+    for(int i=0; i<6; i++) {
+        buffer[i] = manuf.manufS.serialNumber[i];
+    }
 }

@@ -16,6 +16,7 @@ typedef enum {
     externalInt,
     nfcInt,
     gpsData,
+    allSensorSend,
     bteInt
 }eventE;
 

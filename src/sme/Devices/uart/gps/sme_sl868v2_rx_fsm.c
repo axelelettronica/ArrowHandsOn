@@ -145,10 +145,10 @@ static void sl868v2ParseRx (void)
 }
 
 
-void gpsStartScan(void) {
+void gpsStartScan(exec_callback call_back) {
     sendSl868v2Msg(SL868V2_WARM_RST_CMD,
     sizeof(SL868V2_WARM_RST_CMD));
-    startGpsCommandTimer();
+    startGpsCommandTimer(call_back);
     scan_in_progress = true;
 }
 void gpsStopScan(void) {
@@ -158,18 +158,7 @@ void gpsStopScan(void) {
     scan_in_progress = false;
 }
 
-void gpsCompletedScan(void) {
-    controllerQueueS gpsEvt;
 
-    gpsEvt.intE = gpsData;
-    xQueueSend(controllerQueue, (void *) &gpsEvt, NULL);
-
-    sme_led_blue_off();
-
-    // set GPS in standby
-    sendSl868v2Msg(SL868V2_SET_STDBY_CMD,
-    sizeof(SL868V2_SET_STDBY_CMD));
-}
 
 typedef enum  {
     NMEA_UNMANAGED,
@@ -218,17 +207,14 @@ void sl868v2ProcessRx(void)
         msgPtrT.nmea_p.std_p.sentenceId_p);
         switch(nmea_msg_id) {
             case NMEA_RMC:
-            sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght,
-            SME_LAT);
-            sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght,
-            SME_LONG);
+                sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght, SME_LAT);
+                sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght, SME_LONG);
             break;
+            
             case NMEA_GGA:
-            sl868v2_parse_ssa(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght);
+                sl868v2_parse_ssa(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght);
             break;
+            
             case NMEA_UNMANAGED:
             default:
             break;

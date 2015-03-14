@@ -130,7 +130,7 @@ void sme_i2c_mgr_init(void) {
     
     memset(sensors, 0, sizeof(sensorTaskStr));
     
-    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)readSRAM;
+    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)nfc_read_sram_register;
     sensors[NXPNFC_POS].sensorInit  = nxpInit;
 
     sensors[LPS25_POS].sensorInit  = LPS25Hnit;
@@ -185,8 +185,9 @@ int  sme_i2c_get_read_str (sme_i2c_msg_str_E type, char *msg, uint8_t *len, uint
 
     switch (type) {
     case SME_I2C_PRESS_HUM_TEMP_STR:    
+/*
         readSensor(LPS25_POS);
-        readSensor(TS221_POS);
+        readSensor(TS221_POS);*/
         sme_i2c_get_press_hum_read_str(buffer, msg, len, msg_len);
         break;
 

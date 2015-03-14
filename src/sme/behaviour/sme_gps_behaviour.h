@@ -10,8 +10,7 @@
 #define SME_GPS_BEHAVIOUR_H_
 
 
-
-void sme_gps_data_updateExecution(void);
-
+void sme_gps_button2_behaviour(void);
+void sme_gps_button1_behaviour(void);
 
 #endif /* SME_GPS_BEHAVIOUR_H_ */
