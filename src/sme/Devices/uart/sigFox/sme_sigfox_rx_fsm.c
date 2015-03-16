@@ -56,6 +56,26 @@ static sfxRxFSME crcCheck(void) {
     }
 }
 
+/*
+* If Telit SFX return an error state different from TELIT_SFX_NO_ERROR 
+* discharge all the other incoming bytes and exit with error (LED RED) 
+*/ 
+static sfxRxFSME check_msg_error(void) {
+
+// only in case of SFX answer for a sent message check the error
+    if ((answer.type & SIGFOX_CONFIRM ) == SIGFOX_CONFIRM) {
+        if (answer.payload[0]!=TELIT_SFX_NO_ERROR){
+            clearLed(true);
+            print_dbg("ErrorCode = %X \r\n", 0);
+            return nullState;
+        }
+    }
+    
+    crcCounter =0;
+    return crcRec;
+    
+}
+
 static sfxRxFSME checkSequenceConsistence(uint8_t sequence) {
     
     for(int i=0; i<MAX_MESSAGE_OUT; i++ ) {
@@ -103,9 +123,7 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             case payloadRec:
             answer.payload[answer.payloadPtr++]= msg[i];
             if (answer.payloadPtr == answer.length) {
-                
-                crcCounter =0;
-                recFsm = crcRec;
+                recFsm = check_msg_error();
             }
             break;
 

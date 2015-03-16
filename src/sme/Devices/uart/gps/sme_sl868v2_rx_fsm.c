@@ -146,6 +146,14 @@ static void sl868v2ParseRx (void)
 
 
 void gpsStartScan(void) {
+    // Check if it is required to enable step up.
+    // This is requied if just the battery pack power supply is provided.
+    bool pin_state = port_pin_get_input_level(EXT_INT_PIN_POUT);
+    if (!pin_state) {
+        // no further power supply is present, enable STEP_UP
+        port_pin_set_output_level(STEP_UP_PIN_PIN, true);
+        print_dbg("Enabling STEP-UP\n");
+    }
     sendSl868v2Msg(SL868V2_WARM_RST_CMD,
     sizeof(SL868V2_WARM_RST_CMD));
     startGpsCommandTimer();
@@ -156,6 +164,13 @@ void gpsStopScan(void) {
     sizeof(SL868V2_WARM_RST_CMD));
     stopGpsCommandTimer();
     scan_in_progress = false;
+    
+    bool pin_state = port_pin_get_output_level(STEP_UP_PIN_PIN);
+    if (pin_state) {
+       // Deactivate Step-up
+       port_pin_set_output_level(STEP_UP_PIN_PIN, false);
+       print_dbg("Disabling STEP-UP\n");
+    }
 }
 
 void gpsCompletedScan(void) {

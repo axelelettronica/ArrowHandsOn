@@ -13,12 +13,15 @@ detect NFC interrupt:
 2) take GPS position
 3) Send all to SigFox
 */
-void performExecution( uint16_t intDetection) {
-    
-    uint8_t data;
+volatile  uint8_t data;
+void performExecution( uint16_t intDetection) {       
 
     // check which is the interrupt that wake-up the task
     if ((intDetection & MASK_NFC_FD_INT) == MASK_NFC_FD_INT) {
+        data++;
+    }
+    
+    if ((intDetection & MASK_I9AX_INT_M) == MASK_I9AX_INT_M) { 
         data++;
     }
 }
