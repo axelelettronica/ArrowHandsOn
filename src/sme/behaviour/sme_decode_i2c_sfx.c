@@ -82,19 +82,19 @@ int  LSM9DS1_get_AGM_str (char *msg, uint8_t *len, uint8_t msg_len,
         return SME_ERR;
     }
 
-    coord_f = ((int16_t)(sensor->decodedData1)*LSM9DS1_get_g_lsb_sentivity());
+    coord_f = ((int16_t)(sensor->decodedData1)*sensitivity);
     // copy x-axis 2-bytes in the right order
     for (i = 0; i < 2 ; ++i, ++j) {
         ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
     }
 
-    coord_f = ((int16_t)(sensor->decodedData2)*LSM9DS1_get_g_lsb_sentivity());
+    coord_f = ((int16_t)(sensor->decodedData2)*sensitivity);
     // copy y-axis 2-bytes in the right order
     for (i = 0; i < 2 ; ++i, ++j) {
         ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
     }
 
-    coord_f = ((int16_t)(sensor->decodedData3)*LSM9DS1_get_g_lsb_sentivity());
+    coord_f = ((int16_t)(sensor->decodedData3)*sensitivity);
     // copy y-axis 2-bytes in the right order
     for (i = 0; i < 2 ; ++i, ++j) {
         ((char *)msg)[j] = ((0xFF << (0x8*(1-i))) & ((uint16_t)coord_f)) >> (0x8*(1-i));
@@ -105,7 +105,7 @@ int  LSM9DS1_get_AGM_str (char *msg, uint8_t *len, uint8_t msg_len,
 }
 
 int  LSM9DS1_get_A_str (char *msg, uint8_t *len,
-uint8_t msg_len, void *sensor)
+                        uint8_t msg_len, void *sensor)
 {
     return LSM9DS1_get_AGM_str(msg, len, msg_len,
     (sensorTaskStr *)sensor, LSM9DS1_get_a_lsb_sensitivity());
@@ -113,7 +113,7 @@ uint8_t msg_len, void *sensor)
 
 
 int LSM9DS1_get_G_str (char *msg, uint8_t *len,
-uint8_t msg_len, void *sensor)
+                       uint8_t msg_len, void *sensor)
 {
     return LSM9DS1_get_AGM_str(msg, len, msg_len,
     (sensorTaskStr *)sensor, LSM9DS1_get_g_lsb_sentivity());

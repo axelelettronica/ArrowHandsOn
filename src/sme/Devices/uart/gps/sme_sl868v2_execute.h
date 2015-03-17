@@ -26,7 +26,9 @@
 int  executeSl868v2(const sl868v2T *data);
 int  sendSl868v2Msg(const uint8_t *msg, uint8_t len);
 
+typedef void (*exec_callback)(void);
+
 //  GPS exported API to drive GPS management
-void gpsStartScan(void);
-void gpsCompletedScan(void);
+void gpsStartScan(exec_callback call_back);
+void gpsStopScan(void);
 #endif /* SME_SL868V2_EXECUTE_H_ */

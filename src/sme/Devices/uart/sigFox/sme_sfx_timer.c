@@ -29,7 +29,7 @@ static void sfxTimerCallback( TimerHandle_t pxTimer )
     configASSERT( pxTimer );
     print_sfx("TimeOut\r\n");
     sme_led_red_off();
-    sme_led_blue_off();
+    //sme_led_blue_off();
      port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_INACTIVE);
 }
 

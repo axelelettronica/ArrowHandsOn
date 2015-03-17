@@ -13,17 +13,22 @@
 #define NXPNFC_ADDRESS 85  // 0x4 is the default for every NXP io ho visto 85
 
 #define MANUFACTORING_DATA_REG 0x0
-
 #define USER_START_REG 0x1
-#ifdef NT3H1201
-#define USER_END_REG   0x77 // for th 2K
-#else
+
+
+#ifdef NT3H1201             // for th 2K
+#define USER_END_REG   0x77 
+#define CONFIG_REG	   0x7A
+#elif  NT3H1101                     // for th 1K
 #define USER_END_REG   0x38 // just the first 8 bytes for th 1K
+#define CONFIG_REG	   0x3A
+#else
+#error NO NFC MODEL DEFINITION 
 #endif
 
 #define SRAM_START_REG 0xF8
 #define SRAM_END_REG   0xFB // just the first 8 bytes
-#define CONFIG_REG	   0x3A
+
 #define SESSION_REG	   0xFE
 
 
@@ -53,9 +58,10 @@ bool nfc_read_user_data(uint8_t page);
 bool nfc_write_user_data(uint8_t page, const uint8_t* data, uint16_t dataLen);
 bool getNxpUserData(char* buffer);
 bool getConfiguration(void);
-bool readSRAM(void);
+bool nfc_read_sram_register(void);
 bool getSessionReg(void);
 bool nxpInit(void);
+bool nfc_read_configuration_register(void);
 
 const uint8_t* get_last_ncf_page(void);
 

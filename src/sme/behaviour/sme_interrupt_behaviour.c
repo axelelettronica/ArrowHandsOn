@@ -1,5 +1,6 @@
 #include <stdint-gcc.h>
 #include "interrupt\interruptHandle.h"
+#include "Devices\I2C\IOExpander\tca6416a.h"
 /*
  * sme_interrupt_behaviour.c
  *
@@ -13,15 +14,18 @@ detect NFC interrupt:
 2) take GPS position
 3) Send all to SigFox
 */
-volatile  uint8_t data;
+volatile uint16_t newValue;
 void performExecution( uint16_t intDetection) {       
-
+    uint8_t data;
     // check which is the interrupt that wake-up the task
     if ((intDetection & MASK_NFC_FD_INT) == MASK_NFC_FD_INT) {
+         
+         TCA6416a_input_ports_values(&newValue);
         data++;
     }
     
     if ((intDetection & MASK_I9AX_INT_M) == MASK_I9AX_INT_M) { 
+        TCA6416a_input_ports_values(&newValue);
         data++;
     }
 }

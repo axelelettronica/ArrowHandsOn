@@ -19,6 +19,7 @@
 
 static TimerHandle_t gpsCommandTimeOut;
 static bool timedOut;
+static exec_callback sme_callback;
 
 inline bool isGpsCommandTimerExpired(void) {
     return timedOut;
@@ -26,14 +27,19 @@ inline bool isGpsCommandTimerExpired(void) {
 
 static void gpsTimerCallback( TimerHandle_t pxTimer )
 {
+    print_gps("GPS: %s\n",__FUNCTION__);
     uint8_t i;
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( pxTimer );
-    print_err("TimeOut, GPS Position scanning not acknowledged\r\n");
-    gpsCompletedScan();
 
+    if (sme_gps_position_fixed()) {
+        sme_callback();       
+        timedOut = true;
+    } else {      
+        print_err("TimeOut, GPS Position scanning not acknowledged, Restarting\r\n");
+        startGpsCommandTimer(sme_callback);
+    }
 
-    timedOut = true;
 }
 
 void initGpsTimer(void){
@@ -52,13 +58,18 @@ void initGpsTimer(void){
 }
 
 
-void stopGpsCommandTimer(void){
+void stopGpsCommandTimer(void)
+{
+    print_gps("GPS: %s\n", __FUNCTION__);
     sme_led_blue_off();
     xTimerStop( gpsCommandTimeOut, 0 );
 }
 
 
-void startGpsCommandTimer(void) {
+void startGpsCommandTimer(exec_callback call_back) 
+{
+    print_gps("GPS: %s\n",__FUNCTION__);
+    sme_callback = call_back;
     // start or rest the timer
     BaseType_t start =  xTimerStart(gpsCommandTimeOut, 0 );
     if(start != pdPASS )

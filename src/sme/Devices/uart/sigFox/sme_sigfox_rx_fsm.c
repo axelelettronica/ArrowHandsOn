@@ -36,7 +36,7 @@ static void clearLed(bool error) {
         sme_led_red_off();
     }
     
-    sme_led_blue_off();
+    //sme_led_blue_off();  bue is for gps
     sme_led_green_off();
     nurembergSent=false;
 }
@@ -140,8 +140,8 @@ static uint8_t handleData(uint8_t *msg, uint8_t msgMaxLen) {
             recFsm = headerRec;
             if (SFX_MSG_TAILER == msg[i]){
                 print_sfx("msg %0X completed received\n\r", answer.sequenceNumber);
-                 clearLed(false);
-                return SME_SFX_OK;                              
+                clearLed(false);
+                return SME_SFX_OK;
             } else
             return SME_SFX_KO;
 

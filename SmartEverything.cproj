@@ -355,7 +355,8 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
-      <Value>NT3H1201</Value>
+      <Value>NT3H1101</Value>
+      <Value>DEBUG_SIGFOX</Value>
       <Value>NDEBUG</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
@@ -363,7 +364,6 @@
     <ListValues>
       <Value>NOT_SENSOR</Value>
       <Value>VIRGIN_UNIT</Value>
-      <Value>DEBUG_SIGFOX</Value>
     </ListValues>
   </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
@@ -500,8 +500,9 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
-      <Value>NT3H1201</Value>
+      <Value>NT3H1101</Value>
       <Value>DEBUG</Value>
+      <Value>DEBUG_SIGFOX_ignore</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>

@@ -42,3 +42,4 @@ uint16_t interruptDetection(void) {
 void interruptValueInitializzation(void) {
     TCA6416a_input_ports_values(&portsValue);
 }
+

@@ -145,23 +145,32 @@ static void sl868v2ParseRx (void)
 }
 
 
-void gpsStartScan(void) {
+void gpsStartScan(exec_callback call_back) {
+    
+    print_gps("GPS status: %s\n",__FUNCTION__);
+
     // Check if it is required to enable step up.
-    // This is requied if just the battery pack power supply is provided.
+    // This is required if just the battery pack power supply is provided.
     bool pin_state = port_pin_get_input_level(EXT_INT_PIN_POUT);
     if (!pin_state) {
         // no further power supply is present, enable STEP_UP
         port_pin_set_output_level(STEP_UP_PIN_PIN, true);
-        print_dbg("Enabling STEP-UP\n");
+        port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE);
+        print_gps("Enabling STEP-UP\n");
     }
     sendSl868v2Msg(SL868V2_WARM_RST_CMD,
     sizeof(SL868V2_WARM_RST_CMD));
-    startGpsCommandTimer();
+    startGpsCommandTimer(call_back);
     scan_in_progress = true;
 }
+
+
 void gpsStopScan(void) {
-    sendSl868v2Msg(SL868V2_WARM_RST_CMD,
-    sizeof(SL868V2_WARM_RST_CMD));
+
+    print_gps("GPS status: %s\n",__FUNCTION__);
+
+    sendSl868v2Msg(SL868V2_SET_STDBY_CMD,
+    sizeof(SL868V2_SET_STDBY_CMD));
     stopGpsCommandTimer();
     scan_in_progress = false;
     
@@ -169,22 +178,12 @@ void gpsStopScan(void) {
     if (pin_state) {
        // Deactivate Step-up
        port_pin_set_output_level(STEP_UP_PIN_PIN, false);
-       print_dbg("Disabling STEP-UP\n");
+       port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
+       print_gps("Disabling STEP-UP\n");
     }
 }
 
-void gpsCompletedScan(void) {
-    controllerQueueS gpsEvt;
 
-    gpsEvt.intE = gpsData;
-    xQueueSend(controllerQueue, (void *) &gpsEvt, NULL);
-
-    sme_led_blue_off();
-
-    // set GPS in standby
-    sendSl868v2Msg(SL868V2_SET_STDBY_CMD,
-    sizeof(SL868V2_SET_STDBY_CMD));
-}
 
 typedef enum  {
     NMEA_UNMANAGED,
@@ -233,17 +232,14 @@ void sl868v2ProcessRx(void)
         msgPtrT.nmea_p.std_p.sentenceId_p);
         switch(nmea_msg_id) {
             case NMEA_RMC:
-            sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght,
-            SME_LAT);
-            sme_parse_coord(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght,
-            SME_LONG);
+                sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght, SME_LAT);
+                sme_parse_coord(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght, SME_LONG);
             break;
+            
             case NMEA_GGA:
-            sl868v2_parse_ssa(msgPtrT.nmea_p.std_p.data_p,
-            msgPtrT.nmea_p.std_p.dataLenght);
+                sl868v2_parse_ssa(msgPtrT.nmea_p.std_p.data_p, msgPtrT.nmea_p.std_p.dataLenght);
             break;
+            
             case NMEA_UNMANAGED:
             default:
             break;
@@ -267,7 +263,6 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
 
         if (*msg == '\n')  {
             if (rxMsg.idx > 3) {
-                //print_gps_msg("< %s", *msg);
                 rxMsg.data[rxMsg.idx] = '\0';
                 if (crcCheck(rxMsg.data, rxMsg.idx)) {
                     sl868v2ParseRx();
@@ -275,10 +270,9 @@ uint8_t sl868v2HandleRx(uint8_t *msg, uint8_t msgMaxLen)
                 }
                 print_dbg(" received: %s", rxMsg.data);
             }
-            //memset(&rxMsg, 0, sizeof(rxMsg));
         }
         } else {
-        print_err("ERR: Msg too big drop it: %s", rxMsg.data);
+        print_err("ERR: Msg too big, drop it: %s", rxMsg.data);
         memset(&rxMsg, 0, sizeof(rxMsg));
     }
 
