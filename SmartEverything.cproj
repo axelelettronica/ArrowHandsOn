@@ -317,7 +317,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>28006446</ToolNumber>
+      <ToolNumber>28006555</ToolNumber>
       <ToolName>SAM-ICE</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <com_atmel_avrdbg_tool_atmelice>
@@ -503,6 +503,7 @@
       <Value>NT3H1101</Value>
       <Value>DEBUG_SIGFOX</Value>
       <Value>DEBUG</Value>
+      <Value>DEBUG_SIGFOX_ignore</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>

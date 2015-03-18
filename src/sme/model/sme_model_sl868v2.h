@@ -132,5 +132,5 @@ typedef enum {
 void sme_parse_coord(uint8_t in[], uint8_t in_len, sme_coord_t type);
 void sl868v2_parse_ssa(uint8_t in[], uint8_t in_len);
 int  sme_sl868v2_get_latlong (char *msg, uint8_t *len, uint8_t msg_len);
-
+bool sme_gps_position_fixed(void);
 #endif /* SME_MODEL_SL868V2_H_ */

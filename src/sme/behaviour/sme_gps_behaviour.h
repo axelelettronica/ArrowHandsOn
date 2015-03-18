@@ -12,5 +12,6 @@
 
 void sme_gps_button2_behaviour(void);
 void sme_gps_button1_behaviour(void);
-
+void sme_gps_stop_behaviour(void);
+void sme_gps_only_behaviour(void);
 #endif /* SME_GPS_BEHAVIOUR_H_ */

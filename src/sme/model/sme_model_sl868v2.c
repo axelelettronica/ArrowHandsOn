@@ -18,13 +18,6 @@ xSemaphoreHandle gps_tx_sem;
 #define SME_CTRL_COORD_LEN             9
 #define SME_CTRL_LAT_MINUTES_START     2
 #define SME_CTRL_LONG_MINUTES_START    3
-static uint8_t ctrl_lat[SME_CTRL_COORD_LEN]  = {'0','4','1','3','5','3','7','4','4'};
-static uint8_t lat_direction = 1; // 1= north
-static uint8_t ctrl_long[SME_CTRL_COORD_LEN] = {'0','0','2','1','2','8','1','9','3'};
-static uint8_t long_direction = 1; // 1= East
-static uint16_t ctrl_alt = 36;      
-static uint8_t quality = 0;      // Fixed for now
-static uint8_t n_satellites = 3; // Fixed for now
 
 typedef struct {
    uint16_t  lat_deg;
@@ -39,6 +32,12 @@ typedef struct {
 }sl868v2CachedDataT;
 
 static sl868v2CachedDataT gpsRxData = {};
+
+bool sme_gps_position_fixed()
+{
+    return (gpsRxData.quality && (gpsRxData.n_satellites > 3));
+}
+
 
 void releaseSl868v2Model(void){
     xSemaphoreGive(gps_tx_sem);

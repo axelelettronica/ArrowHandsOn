@@ -30,4 +30,5 @@ typedef void (*exec_callback)(void);
 
 //  GPS exported API to drive GPS management
 void gpsStartScan(exec_callback call_back);
+void gpsStopScan(void);
 #endif /* SME_SL868V2_EXECUTE_H_ */

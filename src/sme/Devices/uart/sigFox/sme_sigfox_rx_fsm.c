@@ -36,7 +36,7 @@ static void clearLed(bool error) {
         sme_led_red_off();
     }
     
-    sme_led_blue_off();
+    //sme_led_blue_off();  bue is for gps
     sme_led_green_off();
     nurembergSent=false;
 }
