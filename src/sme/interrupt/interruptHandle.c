@@ -9,7 +9,7 @@
 #include <stdint-gcc.h>
 #include "..\Devices\I2C\IOExpander\tca6416a.h"
 #include <stddef.h>
-#include "..\EXTINT_QUICK_START_CALLBACK1\src\ASF\sam0\drivers\extint\extint.h"
+#include "extint.h"
 #include "sme_pin_definition.h"
 uint16_t portsValue;
 
