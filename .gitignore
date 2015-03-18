@@ -4,3 +4,4 @@ LED_TOGGLE1
 reference
 USB_SERIAL_TEST
 jlink*.*
+Documentation/schema/*.*
