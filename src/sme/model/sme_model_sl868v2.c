@@ -35,7 +35,7 @@ static sl868v2CachedDataT gpsRxData = {};
 
 bool sme_gps_position_fixed()
 {
-    return (gpsRxData.quality && (gpsRxData.n_satellites > 3));
+    return (gpsRxData.quality && (gpsRxData.n_satellites > 4));
 }
 
 

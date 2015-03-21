@@ -502,7 +502,6 @@
       <Value>SMARTEVERYTHING</Value>
       <Value>NT3H1101</Value>
       <Value>DEBUG</Value>
-      <Value>DEBUG_SIGFOX_ignore</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>
