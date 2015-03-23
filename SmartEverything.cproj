@@ -501,6 +501,7 @@
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
       <Value>NT3H1101</Value>
+      <Value>DEBUG_SIGFOX</Value>
       <Value>DEBUG</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
@@ -508,7 +509,6 @@
     <ListValues>
       <Value>NOT_SENSOR</Value>
       <Value>VIRGIN_UNIT</Value>
-      <Value>DEBUG_SIGFOX</Value>
     </ListValues>
   </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>

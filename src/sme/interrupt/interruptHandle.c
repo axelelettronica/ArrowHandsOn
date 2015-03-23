@@ -9,6 +9,8 @@
 #include <stdint-gcc.h>
 #include "..\Devices\I2C\IOExpander\tca6416a.h"
 #include <stddef.h>
+#include "extint.h"
+#include "sme_pin_definition.h"
 uint16_t portsValue;
 
 
@@ -41,5 +43,7 @@ uint16_t interruptDetection(void) {
 
 void interruptValueInitializzation(void) {
     TCA6416a_input_ports_values(&portsValue);
+    // clear Interrupt
+    extint_chan_clear_detected(SME_INT_IOEXT_EIC_LINE);
 }
 

@@ -151,13 +151,19 @@ void gpsStartScan(exec_callback call_back) {
 
     // Check if it is required to enable step up.
     // This is required if just the battery pack power supply is provided.
-    bool pin_state = port_pin_get_input_level(EXT_INT_PIN_POUT);
-    if (!pin_state) {
+    bool pin_state = port_pin_get_input_level(EXT_POW_PIN_PIN);
+    //if (!pin_state) {
         // no further power supply is present, enable STEP_UP
-        port_pin_set_output_level(STEP_UP_PIN_PIN, true);
+        port_pin_set_output_level(STEP_UP_PIN_POUT, true);
         port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE);
         print_gps("Enabling STEP-UP\n");
-    }
+        
+        pin_state = port_pin_get_output_level(STEP_UP_PIN_POUT);
+        if (!pin_state) {
+            print_gps("Enabling STEP-UP FAILED!\n");
+            port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
+        }
+    //}
     sendSl868v2Msg(SL868V2_WARM_RST_CMD,
     sizeof(SL868V2_WARM_RST_CMD));
     startGpsCommandTimer(call_back);
@@ -174,10 +180,10 @@ void gpsStopScan(void) {
     stopGpsCommandTimer();
     scan_in_progress = false;
     
-    bool pin_state = port_pin_get_output_level(STEP_UP_PIN_PIN);
+    bool pin_state = port_pin_get_output_level(STEP_UP_PIN_POUT);
     if (pin_state) {
        // Deactivate Step-up
-       port_pin_set_output_level(STEP_UP_PIN_PIN, false);
+       port_pin_set_output_level(STEP_UP_PIN_POUT, false);
        port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_INACTIVE);
        print_gps("Disabling STEP-UP\n");
     }

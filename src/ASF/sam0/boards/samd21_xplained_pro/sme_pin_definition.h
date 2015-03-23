@@ -188,10 +188,10 @@
 /* @} */
 
 #ifdef SMARTEVERYTHING
-#define STEP_UP_PIN_PIN                 PIN_PB05
-#define EXT_INT_PIN_POUT                PIN_PB04
+#define STEP_UP_PIN_POUT                PIN_PB05
+#define EXT_POW_PIN_PIN                 PIN_PB04
 #else
-#define STEP_UP_PIN_PIN                 LED0_PIN
+#define STEP_UP_PIN_POUT                LED0_PIN
 #endif
 
 

@@ -43,7 +43,7 @@ static void extint0_detection_callback(void)
             /* Actual macro used here is port specific.*/
             portYIELD_FROM_ISR (xHigherPriorityTaskWoken);
         }
-    }
+    }        
 }
 
 static void extint15_detection_callback(void)
@@ -73,6 +73,9 @@ static void extint15_detection_callback(void)
             portYIELD_FROM_ISR (xHigherPriorityTaskWoken);
         }
     }
+    
+        // clear Interrupt
+        extint_chan_clear_detected(INT_BUTTON2_EIC_LINE);
 }
 
 
@@ -93,6 +96,7 @@ static void extint06_detection_callback(void)
         /* Actual macro used here is port specific.*/
         portYIELD_FROM_ISR (xHigherPriorityTaskWoken);
     }
+    
     
 }
 
@@ -145,18 +149,26 @@ void sme_init_isr_global(void) {
     system_interrupt_enable_global();
 }
 
+
 void clearInt(eventE interrupt) {
     switch( interrupt) {
         case button1Int:
         intDetect &= ~0x1;
+        // clear Interrupt
+        extint_chan_clear_detected(INT_BUTTON1_EIC_LINE);
         break;
 
         case button2Int:
         intDetect &= ~0x2;
+        // clear Interrupt
+        extint_chan_clear_detected(INT_BUTTON2_EIC_LINE);
         break;
 
-        default:
+
         case externalInt:
+        // clear Interrupt
+        extint_chan_clear_detected(SME_INT_IOEXT_EIC_LINE);
+        default:
         case nfcInt:
         case bteInt:
         break;

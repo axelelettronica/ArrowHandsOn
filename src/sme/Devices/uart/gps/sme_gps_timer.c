@@ -74,7 +74,7 @@ void startGpsCommandTimer(exec_callback call_back)
     BaseType_t start =  xTimerStart(gpsCommandTimeOut, 0 );
     if(start != pdPASS )
     {
-        print_err("startgpsCommandTimer - Timer NO started");
+        print_err("startgpsCommandTimer - Timer NO started\n");
     }
     else {
         sme_led_blue_brightness(SIXTEEN_LIGTH);

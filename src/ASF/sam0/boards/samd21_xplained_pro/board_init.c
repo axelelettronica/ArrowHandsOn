@@ -74,8 +74,8 @@ void system_board_init(void)
     port_pin_set_output_level(SME_RESET_IOEXT_PIN, SME_RESET_IOEXT_INACTIVE);
     
     // step up pin
-    port_pin_set_config(STEP_UP_PIN_PIN, &pin_conf);
-    port_pin_set_output_level(STEP_UP_PIN_PIN, SME_RESET_IOEXT_INACTIVE);
+    port_pin_set_config(STEP_UP_PIN_POUT, &pin_conf);
+    port_pin_set_output_level(STEP_UP_PIN_POUT, false);
 
 	/* END Configure OUTPUT Pin */    
     
@@ -90,7 +90,7 @@ void system_board_init(void)
 	port_pin_set_config(SME_BUTTON2_PIN, &pin_conf);
     
     // initializing External Power detection Pin
-    port_pin_set_config(EXT_INT_PIN_POUT, &pin_conf);
+    port_pin_set_config(EXT_POW_PIN_PIN, &pin_conf);
 	/* END Configure INPUT Pin */    
     
     
