@@ -722,6 +722,7 @@
     <Folder Include="src\sme\Devices\I2C\Accelerometer" />
     <Folder Include="src\sme\Devices\I2C\IOExpander" />
     <Folder Include="src\sme\Devices\I2C\nfc\model" />
+    <Folder Include="src\sme\Devices\I2C\nfc\nfcSpecification" />
     <Folder Include="src\sme\Devices\I2C\proximity_ambient" />
     <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
@@ -887,6 +888,24 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\model\NT3H1101_model.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefText.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefText.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefUri.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\nfcForum.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\nfcForum.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180x.c">

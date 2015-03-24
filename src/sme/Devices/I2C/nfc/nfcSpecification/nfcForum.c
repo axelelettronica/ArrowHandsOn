@@ -1,0 +1,41 @@
+/*
+ * nfcForum.c
+ *
+ * Created: 3/23/2015 10:30:07 PM
+ *  Author: smkk
+ */ 
+
+#include "nfcForum.h"
+#include <string.h>
+
+
+uint8_t composeNDEFText(uint8_t bodyLength, NDEFRecordStr *ndefRecord) {
+	memset(ndefRecord,0, sizeof(NDEFRecordStr));//init
+	ndefRecord->header |= 1;
+	ndefRecord->header |= BIT_SR;
+
+	ndefRecord->typeLength =1;
+
+	ndefRecord->type.typeCode=NDEF_TEXT;
+
+	//	return addNDEFTextPayload(bodyLength, ndefRecord);
+	ndefRecord->type.typePayload.text.status=0x2;
+	ndefRecord->type.typePayload.text.language[0]='e';
+	ndefRecord->type.typePayload.text.language[1]='n';
+
+	ndefRecord->payloadLength = bodyLength+3; // added the typePayload
+	return sizeof(ndefRecord->header) +
+			sizeof(ndefRecord->typeLength) +
+			sizeof(ndefRecord->payloadLength) +
+			sizeof(ndefRecord->type.typePayload.text) +
+			sizeof(ndefRecord->type.typeCode);
+}
+
+
+void composeNDEFMBME(bool isFirstRecord, bool isLastRecord, NDEFRecordStr *ndefRecord) {
+	if (isFirstRecord)
+		ndefRecord->header |= BIT_MB;
+
+	if (isLastRecord)
+		ndefRecord->header |= BIT_ME;
+}
