@@ -2,7 +2,7 @@
 * tca6416a.c
 *
 * Created: 1/21/2015 8:46:36 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 #include "tca6416a.h"

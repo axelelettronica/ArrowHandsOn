@@ -1,3 +1,10 @@
+/*
+* sme_sigfox_parse.c
+*
+* Created: 11/01/2015 12:22:09
+*  Author: smkk
+*/
+
 #include "sme_cdc_cmd_parse.h"
 #include "sme_cmn.h"
 #include "sme_cdc_uart.h"
@@ -5,12 +12,6 @@
 #include <ctype.h>
 #include "..\model\sme_model_sigfox.h"
 #include "sme\Devices\uart\sigFox\sme_sigfox_execute.h"
-/*
-* sme_sigfox_parse.c
-*
-* Created: 11/01/2015 12:22:09
-*  Author: mfontane
-*/
 
 #define SIGFOX_DATA_C     'D'
 #define SIGFOX_KEEP_C     'K'

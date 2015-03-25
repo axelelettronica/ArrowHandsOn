@@ -2,7 +2,7 @@
  * sme_i2c_parse.h
  *
  * Created: 1/22/2015 10:34:22 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

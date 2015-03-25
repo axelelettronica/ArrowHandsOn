@@ -5,7 +5,7 @@
  * sme_interrupt_behaviour.c
  *
  * Created: 3/1/2015 9:44:06 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 /*
 * First Use case

@@ -2,7 +2,7 @@
 * vl6180x.c
 *
 * Created: 3/1/2015 10:33:08 PM
-*  Author: mfontane
+*  Author: smkk
 
 https://github.com/kriswiner/VL6180X/blob/master/VL6180Xbasic.ino
 */

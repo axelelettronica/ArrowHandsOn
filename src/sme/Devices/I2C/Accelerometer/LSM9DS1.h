@@ -2,7 +2,7 @@
  * LSM9DS1.h
  *
  * Created: 05/01/2015 19:49:15
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

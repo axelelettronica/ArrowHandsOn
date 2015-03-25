@@ -2,7 +2,7 @@
  * IncFile1.h
  *
  * Created: 02/01/2015 20:50:30
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

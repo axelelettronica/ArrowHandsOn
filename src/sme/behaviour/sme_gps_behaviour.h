@@ -2,7 +2,7 @@
  * sme_gps_behaviour.h
  *
  * Created: 3/1/2015 9:59:52 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

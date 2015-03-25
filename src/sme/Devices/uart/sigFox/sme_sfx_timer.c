@@ -2,7 +2,7 @@
 * sme_sfx_timer.c
 *
 * Created: 1/31/2015 1:11:39 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 #include <stdbool.h>

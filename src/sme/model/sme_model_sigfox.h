@@ -3,7 +3,7 @@
 * sme_model_sigfox.h
 *
 * Created: 1/22/2015 11:18:32 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 

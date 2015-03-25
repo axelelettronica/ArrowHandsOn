@@ -2,7 +2,7 @@
  * sme_gps_behaviour.c
  *
  * Created: 3/1/2015 9:59:41 PM
- *  Author: mfontane
+ *  Author: smkk
  */
 
 #include "sme_sfx_behaviour.h"

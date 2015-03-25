@@ -2,7 +2,7 @@
  * sme_FreeRTOS.h
  *
  * Created: 03/01/2015 15:37:13
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

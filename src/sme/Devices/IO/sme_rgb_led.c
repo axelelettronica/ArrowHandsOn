@@ -2,7 +2,7 @@
 * sme_rgb_led.c
 *
 * Created: 2/7/2015 11:13:33 PM
-*  Author: mfontane
+*  Author: smkk
 */
 #include "tcc.h"
 #include "sme_rgb_led.h"

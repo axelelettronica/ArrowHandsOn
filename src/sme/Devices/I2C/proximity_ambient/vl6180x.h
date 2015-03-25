@@ -2,7 +2,7 @@
  * vl6180x.h
  *
  * Created: 3/1/2015 10:32:19 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

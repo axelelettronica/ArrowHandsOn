@@ -2,7 +2,7 @@
  * sme_sigfox_parse.h
  *
  * Created: 11/01/2015 12:21:59
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

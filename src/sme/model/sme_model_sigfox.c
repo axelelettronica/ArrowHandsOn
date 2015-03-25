@@ -2,7 +2,7 @@
 * s_sigfox.c
 *
 * Created: 1/22/2015 11:37:04 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 
