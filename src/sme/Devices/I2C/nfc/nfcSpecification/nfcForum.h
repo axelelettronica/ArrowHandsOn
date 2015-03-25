@@ -36,15 +36,7 @@ typedef struct {
 #define MASK_IL  0x08
 #define MASK_TNF 0x07
 
-typedef union {
-	NDEFTextTypeStr text;
-	NDEFUriTypeStr uri;
-} NDEFTypeUnion;
 
-typedef struct {
-	uint8_t typeCode;
-	NDEFTypeUnion typePayload;
-}NDEFTypeStr;
 
 typedef struct {
 	uint8_t     header;

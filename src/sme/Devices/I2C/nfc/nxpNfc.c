@@ -20,8 +20,10 @@ inline const uint8_t* get_last_ncf_page(void) {
 
 
 
-#define DEMO_TEXT "PoppI"
+#define DEMO_TEXT "Mangia"
+#define DEMO_TEXT2 "Pippo"
 
+static uint8_t debug[NFC_PAGE_SIZE*3];
 bool nxpInit(void){
 	NDEFRecordStr record;
 	bool    ret=true;
@@ -30,22 +32,40 @@ bool nxpInit(void){
 	ret &= nfc_read_configuration_register();
 	ret &= readManufactoringData();
 
-	uint8_t data[NFC_PAGE_SIZE];
+//	uint8_t data[NFC_PAGE_SIZE];
 	NDEFHeaderStr header;
 
-
-	recordLength = composeNDEFText(sizeof(DEMO_TEXT)-1, &record);
 	header.startByte = NDEF_START_BYTE;
+
+	// write first record
+	recordLength = composeNDEFText(sizeof(DEMO_TEXT)-1, &record);	
+	composeNDEFMBME(true, false, &record); // this is the first record
 	header.payloadLength = sizeof(DEMO_TEXT)-1 + recordLength;
-	composeNDEFMBME(true, true, &record);
 
-	memcpy(data, &header, sizeof(header));
-	memcpy(&data[sizeof(header)], &record, recordLength);
-	memcpy(&data[sizeof(header)+recordLength], DEMO_TEXT, (sizeof(DEMO_TEXT)-1));
-	data[sizeof(header)+recordLength+sizeof(DEMO_TEXT)-1] = NDEF_END_BYTE;
+	// store on the big array
+	memcpy(&debug[sizeof(header)], &record, recordLength);
+	memcpy(&debug[sizeof(header)+recordLength], DEMO_TEXT, (sizeof(DEMO_TEXT)-1));
+	uint8_t newRecordPtr = sizeof(header)+recordLength+(sizeof(DEMO_TEXT)-1);
 
 
-	nfc_write_user_data(0, data, NFC_PAGE_SIZE);
+
+	// write second record
+	recordLength = composeNDEFText(sizeof(DEMO_TEXT2)-1, &record);
+	composeNDEFMBME(false, true, &record); // this is the lastrecord
+	header.payloadLength += sizeof(DEMO_TEXT2)-1 + recordLength;
+
+	// store on the big array
+	memcpy(&debug[newRecordPtr], &record, recordLength);
+	memcpy(&debug[newRecordPtr+recordLength], DEMO_TEXT2, (sizeof(DEMO_TEXT2)-1));
+
+	// write header and teiler
+	memcpy(debug, &header, sizeof(header));
+
+	debug[recordLength+(sizeof(DEMO_TEXT))+newRecordPtr] = NDEF_END_BYTE;
+
+	for (uint8_t i=0; i<3;i++){
+		nfc_write_user_data(i, &debug[NFC_PAGE_SIZE*i], NFC_PAGE_SIZE);
+	}
 
 
 	return ret;

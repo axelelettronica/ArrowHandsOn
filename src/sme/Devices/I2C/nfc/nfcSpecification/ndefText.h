@@ -25,5 +25,5 @@ typedef struct {
 }NDEFTextTypeStr;
 
 
-//uint8_t addNDEFTextPayload(uint8_t bodyLength, NDEFRecordStr *ndefRecord);
+uint8_t addNDEFTextRecord(NDEFTextTypeStr *typeStr);
 #endif /* NDEFTEXT_H_ */
