@@ -17,11 +17,13 @@
 #include "../model/sme_model_sigfox.h"
 #include "../model/sme_model_sl868v2.h"
 #include "sme_cdc_io.h"
+#include "../Devices/IO/sme_generic_io.h"
 
 static char CDC_HELP_DBG[]   ="Help: dbg <verbose dump level>:\r\n\tdbg e|d|s|g: "
 "enable errors and/or debugs\r\n\tdbg 0: all disabled\r\n";
 static char CDC_HELP_SL868V2[]="Help: gps [c] <Standard NMEA Sentence> (between '$' and '*') ...\r\n";
 static char CDC_HELP_NA[]="TBD\n";
+static char CDC_HELP_MISC[]="Help: cmd [step-up] <on|off>  (Step-up on/off)";
 
 typedef enum {
     CDC_0,
@@ -39,7 +41,8 @@ typedef enum {
     CDC_D_I2C,
     CDC_SIGFOX,
     CDC_SL868V2,
-    CDC_CMD_MAX,
+    CDC_CMD,
+    CDC_CMD_MAX
 } sme_cdc_cmd_t;
 
 
@@ -61,6 +64,7 @@ static int cdc_parser_dbg (void);
 static int cdc_parser_dbg_i2c(void);
 static int cdc_parser_dbg_sl868v2(void);
 static int cdc_parser_dbg_sigfox(void);
+static int cdc_parser_misc_cmd(void);
 
 static int sme_cdc_cmd_execute(cmd_cb_t *cmd_cb);
 
@@ -75,7 +79,8 @@ cmd_cb_t  cmd_cb[] = {
     {CDC_DBG,     "dbg",  (cmd_callback)cdc_parser_dbg},
     {CDC_D_I2C,   "i2c",  (cmd_callback)cdc_parser_dbg_i2c},
     {CDC_SIGFOX,  "sf" ,  (cmd_callback)cdc_parser_dbg_sigfox},
-    {CDC_SL868V2, "gps",  (cmd_callback)cdc_parser_dbg_sl868v2}
+    {CDC_SL868V2, "gps",  (cmd_callback)cdc_parser_dbg_sl868v2},
+    {CDC_CMD,     "cmd",  (cmd_callback)cdc_parser_misc_cmd},
 };
 
 
@@ -226,6 +231,42 @@ int cdc_parser_dbg_sl868v2(void)
     }
     return err;
 }
+
+
+/*
+* I.E. cmd [s] <on|off>
+*      Activate/Deactivate the step-up
+*/
+int cdc_parser_misc_cmd(void)
+{
+    int err = SME_EINVAL;
+     
+    // read operation
+    if (sme_cli_msg.token[1][0] != 0) {
+        switch(sme_cli_msg.token[1][0]) {
+
+        case 's':
+             // stepup debug
+             if (sme_cli_msg.token[2][1] == 'n') {
+                 voltageStepUp(true);
+                 err = SME_OK;
+             } else  if (sme_cli_msg.token[2][1] == 'f') {
+                 voltageStepUp(false);
+                 err = SME_OK;
+             }
+        break;
+
+        default:
+        break;
+        }
+    }
+
+    if (err) {
+        print_out(CDC_CMD);
+    }
+    return err;
+}
+
 
 int sme_cdc_cmd_execute(cmd_cb_t *cmd)
 {
