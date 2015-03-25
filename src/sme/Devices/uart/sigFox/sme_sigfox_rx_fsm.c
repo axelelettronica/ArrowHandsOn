@@ -2,7 +2,7 @@
 * sme_sigfox_rx_fsm.c
 *
 * Created: 1/25/2015 8:42:56 PM
-*  Author: mfontane
+*  Author: smkk
 */
 #include "sme_sigfox_rx_fsm.h"
 #include "sme\model\sme_model_sigfox.h"

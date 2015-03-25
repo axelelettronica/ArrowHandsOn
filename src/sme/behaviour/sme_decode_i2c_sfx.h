@@ -2,7 +2,7 @@
  * sme_decode_i2c_sfx.h
  *
  * Created: 3/7/2015 8:39:45 AM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

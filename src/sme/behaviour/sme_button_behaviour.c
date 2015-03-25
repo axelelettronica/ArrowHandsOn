@@ -7,7 +7,7 @@
 * sme_button_behaviour.c
 *
 * Created: 3/1/2015 9:34:38 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 

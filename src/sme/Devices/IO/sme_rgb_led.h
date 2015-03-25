@@ -2,7 +2,7 @@
  * sme_rgb_led.h
  *
  * Created: 2/7/2015 11:13:50 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

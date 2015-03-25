@@ -2,7 +2,7 @@
 * I2C.c
 *
 * Created: 28/12/2014 22:02:19
-*  Author: mfontane
+*  Author: smkk
 */
 #include "I2C.h"
 #include <asf.h>

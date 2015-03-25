@@ -2,7 +2,7 @@
 * sme_sigfox_execute.c
 *
 * Created: 12/01/2015 20:43:25
-*  Author: mfontane
+*  Author: smkk
 */
 #include <stdlib.h>
 #include "sme_sigfox_execute.h"

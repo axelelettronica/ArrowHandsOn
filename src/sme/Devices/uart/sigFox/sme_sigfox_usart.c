@@ -2,7 +2,7 @@
 * sme_sigfox_usart.c
 *
 * Created: 10/01/2015 22:40:43
-*  Author: mfontane
+*  Author: smkk
 */
 #include <asf.h>
 #include "sme_sigfox_usart.h"

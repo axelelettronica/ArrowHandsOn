@@ -2,7 +2,7 @@
 * sme_sigfox_execute.h
 *
 * Created: 12/01/2015 20:43:40
-*  Author: mfontane
+*  Author: smkk
 *
 * This the file that execute  the command on sigfox component according with
 * the information are present on the sigFoxT structure

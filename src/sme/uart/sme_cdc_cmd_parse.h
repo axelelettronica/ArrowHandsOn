@@ -2,7 +2,7 @@
  * sme_cdc_cmd_parse.h
  *
  * Created: 11/01/2015 12:45:14
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

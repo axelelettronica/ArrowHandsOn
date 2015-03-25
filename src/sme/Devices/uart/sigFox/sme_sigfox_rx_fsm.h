@@ -2,7 +2,7 @@
  * sme_sigfox_rx_fsm.h
  *
  * Created: 1/25/2015 8:43:12 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

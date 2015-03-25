@@ -3,7 +3,7 @@
  * sme_sigfox_usart.h
  *
  * Created: 10/01/2015 22:41:06
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

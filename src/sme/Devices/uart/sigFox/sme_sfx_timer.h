@@ -2,7 +2,7 @@
  * sme_sfx_timer.h
  *
  * Created: 1/31/2015 3:57:42 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

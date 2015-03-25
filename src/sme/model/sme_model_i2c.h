@@ -2,7 +2,7 @@
 * sme_cdc_i2c.h
 *
 * Created: 1/22/2015 8:40:16 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 

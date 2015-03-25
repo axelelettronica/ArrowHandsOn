@@ -2,7 +2,7 @@
 * LSM9DS1.c
 *
 * Created: 05/01/2015 19:49:04
-*  Author: mfontane
+*  Author: smkk
 */
 #include "LSM9DS1.h"
 #include "..\I2C.h"

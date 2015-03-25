@@ -2,7 +2,7 @@
 * sme_pin_definition.h
 *
 * Created: 2/14/2015 7:09:37 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 

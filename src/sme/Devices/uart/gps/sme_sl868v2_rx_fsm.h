@@ -2,7 +2,7 @@
  * sme_sl868v2_rx_fsm.h
  *
  * Created: 2/25/2015 6:42:01 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

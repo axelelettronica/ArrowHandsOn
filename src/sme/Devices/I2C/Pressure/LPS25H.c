@@ -2,7 +2,7 @@
 * LPS25H.c
 *
 * Created: 02/01/2015 20:50:20
-*  Author: mfontane
+*  Author: smkk
 */
 #include "LPS25H.h"
 #include "..\I2C.h"

@@ -2,7 +2,7 @@
  * vl6180_reg.h
  *
  * Created: 3/4/2015 9:44:12 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

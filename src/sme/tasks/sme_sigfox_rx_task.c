@@ -2,7 +2,7 @@
 * sme_sigfox_controller.c
 *
 * Created: 10/01/2015 17:21:08
-*  Author: mfontane
+*  Author: smkk
 */
 
 #include "sme_sigfox_task.h"

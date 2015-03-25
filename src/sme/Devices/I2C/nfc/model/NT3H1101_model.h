@@ -3,7 +3,7 @@
 * NT3H1101_model.h
 *
 * Created: 3/8/2015 11:37:26 AM
-*  Author: mfontane
+*  Author: smkk
 */
 
 

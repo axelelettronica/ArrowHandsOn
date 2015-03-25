@@ -2,7 +2,7 @@
  * sme_timer_define.h
  *
  * Created: 2/14/2015 9:39:03 PM
- *  Author: mfontane
+ *  Author: smkk
  */ 
 
 

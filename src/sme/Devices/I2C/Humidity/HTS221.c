@@ -2,7 +2,7 @@
 * HTS221.c
 *
 * Created: 02/01/2015 20:50:20
-*  Author: mfontane
+*  Author: smkk
 */
 #include "HTS221.h"
 #include "..\I2C.h"

@@ -9,7 +9,7 @@
 * sme_sfx_behaviour.c
 *
 * Created: 3/1/2015 9:54:37 PM
-*  Author: mfontane
+*  Author: smkk
 */
 
 volatile  uint8_t len;
