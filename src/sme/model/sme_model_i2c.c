@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include "../sme_FreeRTOS.h"
 #include "sme_model_i2c.h"
-#include "../Devices/I2C/nfc/nxpNfc.h"
+#include "../Devices/I2C/nfc/NT3H.h"
 #include "../Devices/I2C/Humidity/HTS221.h"
 #include "../Devices/I2C/Pressure/LPS25H.h"
 #include "../Devices/I2C/Accelerometer/LSM9DS1.h"
@@ -130,8 +130,8 @@ void sme_i2c_mgr_init(void) {
     
     memset(sensors, 0, sizeof(sensorTaskStr));
     
-    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)nfc_read_sram_register;
-    sensors[NXPNFC_POS].sensorInit  = nxpInit;
+    sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)NT3HReadSram;
+    sensors[NXPNFC_POS].sensorInit  = NT3HInit;
 
     sensors[LPS25_POS].sensorInit  = LPS25Hnit;
     sensors[LPS25_POS].sensorValue = LPS25HgetValues;

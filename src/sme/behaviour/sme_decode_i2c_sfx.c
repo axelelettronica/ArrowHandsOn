@@ -6,7 +6,7 @@
 */
 #include <string.h>
 #include "sme_decode_i2c_sfx.h"
-#include "Devices\I2C\nfc\nxpNfc.h"
+#include "Devices\I2C\nfc\NT3H.h"
 #include "sme_cdc_io.h"
 #include "Devices\I2C\nfc\model\NT3H1101_model.h"
 #include "Devices\I2C\Pressure\LPS25H.h"

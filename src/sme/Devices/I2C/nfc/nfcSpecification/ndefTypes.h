@@ -13,7 +13,7 @@
 
 
 #define NDEF_TEXT 'T'
-#define NDEF_URI 'U'
+#define NDEF_URI  'U'
 
 typedef union {
 	NDEFTextTypeStr text;

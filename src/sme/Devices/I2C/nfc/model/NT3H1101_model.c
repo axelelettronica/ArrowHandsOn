@@ -8,6 +8,5 @@
 
 #include "NT3H1101_model.h"
 
-uint8_t             nfcPageBuffer[NFC_PAGE_SIZE];
-config_u            configuration;
-manufactoring_u  manuf;
+uint8_t     nfcPageBuffer[NFC_PAGE_SIZE];
+NT3HerrNo   errNo;

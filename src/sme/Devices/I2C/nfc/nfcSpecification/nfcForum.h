@@ -7,8 +7,8 @@
 
 
 
-#ifndef NFCFORUM.H_H_
-#define NFCFORUM.H_H_
+#ifndef  NFCFORUM_H_
+#define  NFCFORUM_H_
 
 #include <stdint-gcc.h>
 #include <stdbool.h>
@@ -17,6 +17,8 @@
 
 #define NDEF_START_BYTE 0x03
 #define NDEF_END_BYTE 	0xFE
+
+#define NTAG_ERASED 	0xD0
 
 typedef struct {
 	uint8_t startByte;
