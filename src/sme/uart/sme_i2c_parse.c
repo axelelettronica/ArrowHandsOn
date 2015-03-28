@@ -9,7 +9,7 @@
 #include "sme_cdc_cmd_parse.h"
 #include "sme_cdc_uart.h"
 #include "..\model\sme_model_i2c.h"
-#include "..\Devices\I2C\nfc\nxpNfc.h"
+#include "..\Devices\I2C\nfc\NT3H.h"
 
 char CDC_HELP_I2C[]   ="Help: i2c [nfc/hex-addressd] [r/w] <hex-register> <hex-data>\r\n";
 static i2cQueueS   i2c_msg; 	// spi_msg

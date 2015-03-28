@@ -908,6 +908,12 @@
     <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\nfcForum.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\NT3H.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\NT3H.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\NT3HText.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1002,12 +1008,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\IOExpander\tca6416a.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nxpNfc.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nxpNfc.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Pressure\LPS25H.c">
