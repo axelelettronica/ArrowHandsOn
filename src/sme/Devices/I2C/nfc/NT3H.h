@@ -6,8 +6,8 @@
  */ 
 
 
-#ifndef NFC_H_
-#define NFC_H_
+#ifndef NT3H_H_
+#define NT3H_H_
 
 #include "model\NT3H1101_model.h"
 #include "stdbool.h"
@@ -34,17 +34,29 @@
 #define SESSION_REG	   0xFE
 
 
-
-#define FIRST   0
-#define ADD     1
+typedef enum {
+    NDEFFirstPos,
+    NDEFMiddlePos,
+    NDEFLastPos
+} RecordPosEnu;
+/*
+ * This strucure is used in the ADD record functionality
+ * to store the last nfc page information, in order to continue from that point.
+ */
+typedef struct {
+    uint8_t page;
+    uint8_t usedBytes;
+} UncompletePageStr;
 
 
 
 typedef struct {
-    uint8_t page;
-    uint8_t extra;
-}UncompletePageStr;
-
+    RecordPosEnu ndefPosition;
+    uint8_t rtdType;
+    uint8_t *rtdPayload;
+    uint8_t rtdPayloadlength;
+    void    *specificRtdData;
+}NDEFDataStr;
 
 bool NT3HReadManufactoringData(manufS *manuf);
 void NT3HGetNxpSerialNumber(char* buffer);
@@ -96,14 +108,10 @@ bool NT3HReadSession(void);
 bool NT3HInit(void);
 bool NT3HReadConfiguration(configS *configuration);
 
-bool NT3HEraseTag(void);
+bool NT3HEraseAllTag(void);
 
-/*
- * Store an NDEFText information
- *
- * param add: it could be the first records or add in queue to the last
- * param text: the text that will be stored
- */
-bool NT3HwriteRecord(uint8_t type, uint8_t add, uint8_t *text, uint8_t textSize);
+bool NT3HReaddManufactoringData(manufS *manuf);
+
+bool NT3HResetUserData(void);
 
 #endif /* NFC_H_ */

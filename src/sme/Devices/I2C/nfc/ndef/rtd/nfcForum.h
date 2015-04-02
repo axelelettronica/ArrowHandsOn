@@ -13,7 +13,8 @@
 #include <stdint-gcc.h>
 #include <stdbool.h>
 
-#include "ndefTypes.h"
+#include "rtdTypes.h"
+#include "..\..\NT3H.h"
 
 #define NDEF_START_BYTE 0x03
 #define NDEF_END_BYTE 	0xFE
@@ -44,10 +45,12 @@ typedef struct {
 	uint8_t     header;
 	uint8_t		typeLength;
 	uint8_t		payloadLength;
-	NDEFTypeStr type;
+	RTDTypeStr type;
 }NDEFRecordStr;
 
-uint8_t composeNDEFText(uint8_t bodyLength, NDEFRecordStr *ndefRecord);
+uint8_t composeRtdText(const NDEFDataStr *ndef,  NDEFRecordStr *ndefRecord, uint8_t *I2CMsg);
+uint8_t composeRtdUri(const NDEFDataStr *ndef,  NDEFRecordStr *ndefRecord, uint8_t *I2CMsg);
+
 void composeNDEFMBME(bool isFirstRecord, bool isLastRecord, NDEFRecordStr *ndefRecord);
 
 #endif /* NFCFORUM.H_H_ */x

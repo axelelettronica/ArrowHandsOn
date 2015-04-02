@@ -5,10 +5,17 @@
  *  Author: smkk
  */
 #include <string.h>
-#include "..\I2C.h"
+#include "../I2C.h"
 #include "NT3H.h"
-#include "nfcSpecification\nfcForum.h"
-#include "NT3HText.h"
+#include "ndef/ndef.h"
+#include "nfc.h"
+#include "ndef/rtd/nfcForum.h"
+
+
+
+// due to the nature of the NT3H a timeout is required to
+// protectd 2 consecutive I2C access
+#define NFC_ACCESS_TIMEOUT 5
 
 
 
@@ -16,15 +23,6 @@ inline const uint8_t* get_last_ncf_page(void) {
     return nfcPageBuffer;
 }
 
-#define DEMO_TEXT  "Mangia "
-#define DEMO_TEXT2 "TUTTA la pizza col pomodoro"
-
-typedef int (*addFunct_T) (uint8_t *text, uint8_t textSize);
-
-
-// due to the nature of the NT3H a timeout is required to
-// protectd 2 consecutive I2C access
-#define NFC_ACCESS_TIMEOUT 5
 
 static bool writeTimeout( const uint8_t *data, uint8_t dataSend) {
     bool received = false;
@@ -102,24 +100,18 @@ bool NT3HWriteHeaderNfc(uint8_t endRecordsPtr, uint8_t ndefHeader) {
     return ret;
 }
 
-
 bool NT3HInit(/*configS *configuration*/){
-    uint8_t recordLength,mbMe;
+    manufS manuf;
 
-    bool    ret=true;
-    ret = NT3HReadHeaderNfc(&recordLength, &mbMe);
-
-
-    if (ret) {
-        ret =  NT3HwriteRecord(NDEF_TEXT, FIRST, DEMO_TEXT, sizeof(DEMO_TEXT)-1);
-        ret &= NT3HwriteRecord(NDEF_TEXT, ADD,  DEMO_TEXT2, sizeof(DEMO_TEXT2)-1);
-    }
+    //not really needed, use for debug the I2C bus and
+    // return false in case of problem
+    bool ret = NT3HReaddManufactoringData(&manuf);
 
     return ret;
 
 }
 
-bool NT3HEraseTag(void) {
+bool NT3HEraseAllTag(void) {
     bool ret = true;
     uint8_t erase[NFC_PAGE_SIZE+1] = {USER_START_REG, 0x03, 0x03, 0xD0, 0x00, 0x00, 0xFE};
     ret = writeTimeout(erase, sizeof(erase));
@@ -209,115 +201,3 @@ void NT3HGetNxpSerialNumber(char* buffer) {
     }
 }
 
-static addFunct_T addFunct[2][2] = {
-                                  {firstTextRecord, addTextRecord},
-                                  {0,0}
-                                 };
-
-
-bool NT3HwriteRecord(uint8_t type, uint8_t add, uint8_t *text, uint8_t textSize) {
-
-    uint8_t addedPayload;
-    uint8_t recordLength=0, mbMe;
-    bool ret = true;
-    UncompletePageStr addPage;
-    addPage.page = 0;
-
-    uint8_t typeFunct=0;
-
-    switch (type){
-    case NDEF_TEXT:
-        typeFunct =0;
-        break;
-
-    case NDEF_URI:
-        typeFunct = 1;
-        break;
-
-    default:
-        errNo = NT3HERROR_TYPE_NOT_SUPPORTED;
-        ret = false;
-        goto end;
-        break;
-    }
-
-
-    // calculate the last used page
-    if (add != FIRST ) {
-        NT3HReadHeaderNfc(&recordLength, &mbMe);
-        addPage.page  = (recordLength+sizeof(NDEFHeaderStr)+1)/NFC_PAGE_SIZE;
-
-        //remove the NDEF_END_BYTE byte because it will overwrite by the new Record
-        addPage.extra = (recordLength+sizeof(NDEFHeaderStr)+1)%NFC_PAGE_SIZE - 1;
-    }
-
-
-    // call the appropriate function and consider the pointer
-    // within the NFC_PAGE_SIZE that need to be used
-    uint8_t payloadPtr = addFunct[typeFunct][add](&addPage, textSize);
-
-    uint8_t finish=payloadPtr+textSize;
-    bool endRecord = false;
-    uint8_t copyByte;
-
-    // if the header is less then the NFC_PAGE_SIZE, fill it with the payload
-    if (NFC_PAGE_SIZE>payloadPtr) {
-        if (textSize > NFC_PAGE_SIZE-payloadPtr)
-            copyByte = NFC_PAGE_SIZE-payloadPtr;
-        else
-            copyByte = textSize;
-
-        memcpy(&nfcPageBuffer[payloadPtr], text, copyByte);
-        addedPayload = copyByte;
-    }
-
-    //if it is sufficient one send add the NDEF_END_BYTE
-    if ((addedPayload >= textSize)&&((payloadPtr+copyByte) < NFC_PAGE_SIZE)) {
-        nfcPageBuffer[(payloadPtr+copyByte)] = NDEF_END_BYTE;
-        endRecord = true;
-    }
-
-    ret = NT3HWriteUserData(addPage.page, nfcPageBuffer);
-
-    while (!endRecord) {
-        addPage.page++; // move to a new register
-        memset(nfcPageBuffer,0,NFC_PAGE_SIZE);
-
-        //special case just the NDEF_END_BYTE remain out
-        if (addedPayload == textSize) {
-            nfcPageBuffer[0] = NDEF_END_BYTE;
-            ret = NT3HWriteUserData(addPage.page, nfcPageBuffer);
-            endRecord = true;
-            if (ret == false) {
-                errNo = NT3HERROR_WRITE_NDEF_TEXT;
-            }
-            goto end;
-        }
-
-        if (addedPayload < textSize) {
-
-            // add the NDEF_END_BYTE if there is enough space
-            if ((textSize-addedPayload) < NFC_PAGE_SIZE){
-                memcpy(nfcPageBuffer, &text[addedPayload], (textSize-addedPayload));
-                nfcPageBuffer[(textSize-addedPayload)] = NDEF_END_BYTE;
-            } else {
-                memcpy(nfcPageBuffer, &text[addedPayload], NFC_PAGE_SIZE);
-            }
-
-            addedPayload += NFC_PAGE_SIZE;
-            ret = NT3HWriteUserData(addPage.page, nfcPageBuffer);
-
-
-            if (ret == false) {
-                errNo = NT3HERROR_WRITE_NDEF_TEXT;
-                goto end;
-            }
-        } else {
-            endRecord = true;
-        }
-
-    }
-
-    end:
-    return ret;
-}

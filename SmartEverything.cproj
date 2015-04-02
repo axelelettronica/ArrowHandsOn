@@ -722,7 +722,8 @@
     <Folder Include="src\sme\Devices\I2C\Accelerometer" />
     <Folder Include="src\sme\Devices\I2C\IOExpander" />
     <Folder Include="src\sme\Devices\I2C\nfc\model" />
-    <Folder Include="src\sme\Devices\I2C\nfc\nfcSpecification" />
+    <Folder Include="src\sme\Devices\I2C\nfc\ndef" />
+    <Folder Include="src\sme\Devices\I2C\nfc\ndef\rtd\" />
     <Folder Include="src\sme\Devices\I2C\proximity_ambient" />
     <Folder Include="src\sme\Devices\I2C\Pressure" />
     <Folder Include="src\sme\Devices\I2C\nfc" />
@@ -890,34 +891,43 @@
     <Compile Include="src\sme\Devices\I2C\nfc\model\NT3H1101_model.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefText.c">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\ndef.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefText.h">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\ndef.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefTypes.h">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\nfcForum.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\ndefUri.h">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\nfcForum.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\nfcForum.c">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\rtdText.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\nfcSpecification\nfcForum.h">
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\rtdText.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\rtdTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\rtdUri.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\ndef\rtd\rtdUri.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\nfc\nfc.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\NT3H.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\nfc\NT3H.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\NT3HText.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\nfc\NT3HText.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180x.c">
