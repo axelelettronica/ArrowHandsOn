@@ -6,7 +6,8 @@
 */
 
 #include "tca6416a.h"
-#include "..\I2C.h"
+#include "../../I2CFreeRtos.h"
+#include <asf.h>
 
 #define CONF_PORT_0     0b01111111
 #define INIT_P0         0b10000000

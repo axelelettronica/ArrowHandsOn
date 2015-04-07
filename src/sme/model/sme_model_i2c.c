@@ -1,9 +1,9 @@
 /*
-* sme_cdc_i2c.c
-*
-* Created: 1/22/2015 8:40:06 PM
-*  Author: smkk
-*/
+ * sme_cdc_i2c.c
+ *
+ * Created: 1/22/2015 8:40:06 PM
+ *  Author: smkk
+ */
 
 
 #include <stdbool.h>
@@ -14,7 +14,7 @@
 #include "../Devices/I2C/Pressure/LPS25H.h"
 #include "../Devices/I2C/Accelerometer/LSM9DS1.h"
 #include "../Devices/I2C/IOExpander/tca6416a.h"
-#include "../Devices/I2C/I2C.h"
+#include "../Devices/I2CFreeRtos.h"
 #include "sme_cdc_io.h"
 #include "sme_cmn.h"
 #include "Devices/I2C/Accelerometer/LSM9DS1.h"
@@ -56,9 +56,9 @@ static void readSensor(uint8_t idx)
 
                 if (read && sensors[idx].decodeCb) {
                     sensors[idx].decodeCb(buffer,
-                    &sensors[idx].decodedData1,
-                    &sensors[idx].decodedData2,
-                    &sensors[idx].decodedData3);
+                            &sensors[idx].decodedData1,
+                            &sensors[idx].decodedData2,
+                            &sensors[idx].decodedData3);
                 }
             }
         }
@@ -71,7 +71,7 @@ static void readSensor(uint8_t idx)
 static void readAllValues(void)
 {
     for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_SENSORS; ++i) {
-         readSensor(i);
+        readSensor(i);
     }
 }
 
@@ -79,7 +79,7 @@ static void readAllValues(void)
 static void readGenericRegister(i2cMessageS command) {
     uint8_t data;
     switch (command.fields.sensorId) {
-        default:
+    default:
         if (readRegister(command.fields.sensorId, command.fields.i2cRegister, &data)){
             print_dbg("I2C READ Register %c - ", data);
         }else {
@@ -93,61 +93,61 @@ static void readGenericRegister(i2cMessageS command) {
 static void readSensorValue(i2cMessageS command){
     uint8_t i2CId=0;
     switch (command.fields.sensorId) {
-        case NXPNFC_ADDRESS:
+    case NXPNFC_ADDRESS:
         i2CId = NXPNFC_POS;
         break;
-        
-        default:
+
+    default:
         return;
     }
-    
+
     sensors[i2CId].sensorValue(buffer);
 }
 
 
 void sme_cdc_i2c(i2cQueueS *current_message) {
     switch (current_message->code) {
-                
-        case allSensorsReadValue:
+
+    case allSensorsReadValue:
         readAllValues();
         break;
-        
-        case sensorReadRegister:
+
+    case sensorReadRegister:
         readGenericRegister(current_message->command);
         break;
-        case sensorReadValue:
+    case sensorReadValue:
         readSensorValue(current_message->command);
         break;
-        
-        case sensorWriteRegister:
+
+    case sensorWriteRegister:
         break;
     }
 }
 
 void sme_i2c_mgr_init(void) {
     /* Configure the I2C master module */
-    configure_i2c_master();
-    
+    configure_i2c_master(SME_I2C_SERCOM_PINMUX_PAD0, SME_I2C_SERCOM_PINMUX_PAD1, SME_I2C_MODULE);
+
     memset(sensors, 0, sizeof(sensorTaskStr));
-    
+
     sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)NT3HReadSram;
     sensors[NXPNFC_POS].sensorInit  = NT3HInit;
 
     sensors[LPS25_POS].sensorInit  = LPS25Hnit;
     sensors[LPS25_POS].sensorValue = LPS25HgetValues;
     sensors[LPS25_POS].decodeCb    = LPS25HDecode;
-    
+
     sensors[TS221_POS].sensorInit  = HTS221nit;
     sensors[TS221_POS].sensorValue = HTS221getValues;
     sensors[TS221_POS].decodeCb    = HTS221Decode;
-    
+
     sensors[TCA6416_POS].sensorInit  = TCA6416a_init;
     sensors[TCA6416_POS].sensorValue = TCA6416a_input_port1_values;
 
     sensors[VL6180X_POS].sensorInit  = vl6180x_init;
     sensors[VL6180X_POS].sensorValue = vl6180x_get_light_range_polling;
     sensors[VL6180X_POS].decodeCb    = vl6180x_decode;
-    
+
     sensors[LSM9DS1_A_POS].sensorInit  = LSM9DS1_A_Init;    
     sensors[LSM9DS1_A_POS].sensorValue = LSM9DS1_A_getValues;
     sensors[LSM9DS1_A_POS].decodeCb    = LSM9DS1_A_Decode;
@@ -159,13 +159,13 @@ void sme_i2c_mgr_init(void) {
     sensors[LSM9DS1_G_POS].sensorInit  = LSM9DS1_G_Init;
     sensors[LSM9DS1_G_POS].sensorValue = LSM9DS1_G_getValues;
     sensors[LSM9DS1_G_POS].decodeCb    = LSM9DS1_G_Decode;
-    
+
     for(int i=0; i<MAX_I2C_SENSORS; i++) {
         if (sensors[i].sensorInit && sensors[i].sensorInit()) {
             sensors[i].sensorInitialized=1;
         }
     }
-    
+
     //if the IO extender as been initialized, reset the Devices
     if (sensors[TCA6416_POS].sensorInitialized)
         TCA6416a_reset_devices();
@@ -185,7 +185,7 @@ int  sme_i2c_get_read_str (sme_i2c_msg_str_E type, char *msg, uint8_t *len, uint
 
     switch (type) {
     case SME_I2C_PRESS_HUM_TEMP_STR:    
-/*
+        /*
         readSensor(LPS25_POS);
         readSensor(TS221_POS);*/
         sme_i2c_get_press_hum_read_str(buffer, msg, len, msg_len);
@@ -205,20 +205,20 @@ int  sme_i2c_get_read_str (sme_i2c_msg_str_E type, char *msg, uint8_t *len, uint
         readSensor(LSM9DS1_M_POS);
         LSM9DS1_get_M_str(msg, len, msg_len, &sensors[LSM9DS1_M_POS]);
         break;
-        
+
     case SME_I2C_PROX_STR:        
         readSensor(VL6180X_POS);
         *len = vl6180x_get_ALS_PROX_str(msg, msg_len, (uint8_t *)&sensors[VL6180X_POS].decodedData1);
         break;
     default:
-    
+
     case SME_I2C_All_SENSOR:
         readAllValues();
-    break;
-    
-         print_err("I2C GET error %d", type);
-    break;
+        break;
+
+        print_err("I2C GET error %d", type);
+        break;
     }
-    
+
     return SME_OK;
 }

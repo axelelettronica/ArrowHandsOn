@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "SmartEverything", "SmartEverything.cproj", "{B8E372CD-CA55-426B-8745-B69289224F97}"
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "nfc", "..\nfc\nfc.cppproj", "{CE4D1EE2-EE15-494A-B878-23773E5230C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -13,6 +15,10 @@ Global
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Debug|ARM.Build.0 = Debug|ARM
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.ActiveCfg = Release|ARM
 		{B8E372CD-CA55-426B-8745-B69289224F97}.Release|ARM.Build.0 = Release|ARM
+		{CE4D1EE2-EE15-494A-B878-23773E5230C4}.Debug|ARM.ActiveCfg = Debug|ARM
+		{CE4D1EE2-EE15-494A-B878-23773E5230C4}.Debug|ARM.Build.0 = Debug|ARM
+		{CE4D1EE2-EE15-494A-B878-23773E5230C4}.Release|ARM.ActiveCfg = Release|ARM
+		{CE4D1EE2-EE15-494A-B878-23773E5230C4}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

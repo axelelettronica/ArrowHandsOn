@@ -5,7 +5,7 @@
  *  Author: smkk
  */
 #include <string.h>
-#include "../I2C.h"
+#include "../../I2CFreeRtos.h"
 #include "NT3H.h"
 #include "ndef/ndef.h"
 #include "nfc.h"

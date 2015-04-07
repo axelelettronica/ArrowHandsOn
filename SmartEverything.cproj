@@ -882,6 +882,9 @@
     <Compile Include="src\sme\behaviour\sme_sfx_behaviour.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\I2CFreeRtos.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
       <SubType>compile</SubType>
     </Compile>
@@ -939,6 +942,9 @@
     <Compile Include="src\sme\Devices\I2C\proximity_ambient\vl6180_reg.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\sme\Devices\I2C\smeI2C.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\sme\Devices\IO\sme_generic_io.c">
       <SubType>compile</SubType>
     </Compile>
@@ -949,6 +955,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\IO\sme_rgb_led.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2CFreeRtos.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\uart\gps\sme_gps_timer.c">
@@ -1002,10 +1011,7 @@
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\I2C.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\I2C.h">
+    <Compile Include="src\sme\Devices\I2C\smeI2C.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Accelerometer\LSM9DS1.c">

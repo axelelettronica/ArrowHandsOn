@@ -5,7 +5,7 @@
 *  Author: smkk
 */
 #include "HTS221.h"
-#include "..\I2C.h"
+#include "..\..\I2CFreeRtos.h"
 
 
 #define HTS221_ADDRESS     0x5F

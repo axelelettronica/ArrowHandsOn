@@ -5,7 +5,7 @@
 *  Author: smkk
 */
 #include "LPS25H.h"
-#include "..\I2C.h"
+#include "../../I2CFreeRtos.h"
 
 
 

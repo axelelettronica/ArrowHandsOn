@@ -8,7 +8,7 @@ https://github.com/kriswiner/VL6180X/blob/master/VL6180Xbasic.ino
 */
 
 #include <stdbool.h>
-#include "..\I2C.h"
+#include "../../I2CFreeRtos.h"
 #include "vl6180_reg.h"
 #include "sme_cmn.h"
 

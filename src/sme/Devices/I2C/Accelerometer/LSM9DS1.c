@@ -5,7 +5,7 @@
 *  Author: smkk
 */
 #include "LSM9DS1.h"
-#include "..\I2C.h"
+#include "../../I2CFreeRtos.h"
 #include "sme_cdc_io.h"
 #include "sme_cmn.h"
 #include "../../../model/sme_model_i2c.h"

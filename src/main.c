@@ -100,9 +100,7 @@ static void componentInit(void) {
     sme_led_rgb_off();
 }
 
-
-
-#define SME_1_0         "SmartEverything 1.1"
+#define SME_1_0         "SmartEverything 1.2"
 #define FEATURE_READY   "Feature Supported: NFC, GPS, Sigfox, Ambient, 9Axis"
 #define WEB             "amel-tech.com"//"amel-tech.com"
 
@@ -111,8 +109,8 @@ static void storeInfoUnitOnNFC(void){
     storeText(NDEFFirstPos, SME_1_0);
     storeUrihttp(NDEFMiddlePos, WEB);
     storeText(NDEFLastPos, FEATURE_READY);
-
-    LPS25Hnit(); // to adjust the I2C Bus NOT CORECT !!!!!!!!!!!!!!!!!!!!
+configS conf;
+NT3HReadConfiguration(&conf);
 }
 
 
