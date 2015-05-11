@@ -50,7 +50,14 @@ static int parseCommandToken(sigFoxT *usartMsg){
     return SME_EINVAL;
     
     memcpy(usartMsg->message.confMode.registerAddr, sme_cli_msg.token[3], 3);
-        
+    
+    if (sme_cli_msg.token[3][0] == 'f') {
+        usartMsg->message.confMode.notAts = 1;
+        sprintf(usartMsg->message.confMode.registerAddr, SFX_SET_FREQ);
+    } else {
+        usartMsg->message.confMode.notAts = 0;
+    }
+            
     // if the command is for write to register should contains something to write
     if (SIGFOX_REGISTER_WRITE==usartMsg->message.confMode.access) {
         if (sme_cli_msg.token_idx < 5) {

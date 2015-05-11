@@ -85,6 +85,20 @@ static void enter_conf_mode(void) {
     executeCDCSigFox(sfModel);
 }
 
+
+static void conf_sfx_freq(char *freq) {
+    port_pin_set_output_level(SME_LED_Y2_PIN, SME_LED_Y2_ACTIVE);
+    sigFoxT *sfModel = getSigFoxModel();
+
+    sfModel->messageType = confCdcMessage;
+    sfModel->message.confMode.access = SIGFOX_REGISTER_WRITE;
+     sfModel->message.confMode.notAts = 1;
+    sprintf(sfModel->message.confMode.registerAddr, SFX_SET_FREQ);
+    sprintf(sfModel->message.confMode.data, freq);
+
+    executeCDCSigFox(sfModel);
+}
+
 static void enter_in_data_mode(void){
     
     port_pin_set_output_level(SME_LED_Y1_PIN, SME_LED_Y1_ACTIVE);
@@ -92,6 +106,7 @@ static void enter_in_data_mode(void){
 
     sfModel->messageType = enterDataMode;
     sfModel->message.dataMode.type = SIGFOX_DATA;
+    
 
     // point 1
     sfModel->message.dataMode.length = sprintf(sfModel->message.dataMode.payload,"Sent by SmartEverything");
@@ -157,7 +172,7 @@ static void sfxTimeOut(void) {
 
 static void control_task(void *params)
 {
-    #ifdef VIRGIN_UNIT
+    #ifdef US_UNIT
     uint8_t initialized=0;
     int timeOut = TWO_SECOND;
     #else
@@ -199,7 +214,7 @@ static void control_task(void *params)
             clearInt(current_message.intE);
         }
         else {
-            #ifdef VIRGIN_UNIT
+            #ifdef US_UNIT
             switch (initialized){
                 case 0:
                 enter_conf_mode();
@@ -207,13 +222,13 @@ static void control_task(void *params)
                 break;
                 
                 case 1:
-                enter_in_data_mode();
+                conf_sfx_freq(SFX_US_FREQ);
                 initialized++;
                 break;
                 
                 case 2:
                 timeOut = CONTROL_TASK_DELAY;
-                sendToSfxKeep();
+                enter_in_data_mode();
                 initialized++;
                 break;
                 

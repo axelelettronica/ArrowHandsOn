@@ -17,7 +17,7 @@
 
 /* ATSxxx=yy<cr>, where ‘xxx’ is the register address and ‘yy’ the register value (up
 to 255, it depends to the available values).*/
-#define  MAX_CONF_CHAR 10 // depend if the value for the register in write is HEX
+#define  MAX_CONF_CHAR SIG_FOX_MAX_REGISTER_LEN+SIG_FOX_MAX_REG_VALUE_LEN+2 // depend if the value for the register in write is HEX
 uint8_t message[sizeof(sigFoxDataMessage)];
 
 
@@ -35,8 +35,12 @@ static void sendSigFoxMsg(const uint8_t *msg, uint8_t len) {
 static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConfT *configuration) {
 
     startSfxCommandTimer();
+    uint16_t regLen;
 
-    int msgLen = sprintf((char *)message, CONF_REGISTER);
+    int msgLen = 0;
+    
+    if (!configuration->notAts)
+        msgLen = sprintf((char *)message, CONF_REGISTER);
 
     // set the RX FSM that SFX is in configuration mode
     setSfxStatus(msgType);
@@ -53,7 +57,8 @@ static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConf
 
         case confCdcMessage:
 
-        for (int i=0; i<SIG_FOX_MAX_REGISTER_LEN; i++) {
+        regLen = strlen(configuration->registerAddr);
+        for (int i=0; i<regLen; i++) {
             message[msgLen++] = configuration->registerAddr[i];
         }
 
@@ -61,7 +66,8 @@ static bool sendSigFoxConfiguration(sigFoxMessageTypeE msgType, const sigFoxConf
             message[msgLen++] = SIGFOX_END_READ;
             } else {
             message[msgLen++] = SIGFOX_EQUAL_CHAR;
-            for (int i=0; i<SIG_FOX_MAX_REG_VALUE_LEN; i++) {
+            regLen = strlen(configuration->data);
+            for (int i=0; i<regLen; i++) {
                 message[msgLen++] = configuration->data[i];
             }
         }

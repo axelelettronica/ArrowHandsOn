@@ -18,9 +18,15 @@
 #define RESET_FAB_MODE     "ATR\r"
 #define ENTER_DATA_MODE     "ATX\r"
 #define CONF_REGISTER       "ATS"
+#define SFX_SET_FREQ        "AT$IF"
+
 #define SIGFOX_END_READ     '?'
 #define SIGFOX_EQUAL_CHAR   '='
 #define SIGFOX_END_MESSAGE  0xd
+
+
+#define SFX_US_FREQ         "902800000"
+                            
 
 #define SFX_MSG_HEADER      0xA5
 #define SFX_MSG_TAILER      0x5A#define SFX_HEADER_POS 0#define SFX_SEQUENCE_POS 3
@@ -74,10 +80,11 @@ typedef enum
     TELIT_SFX_SFX_SEND_ERROR,
     TELIT_SFX_SFX_CLOSE_ERROR} SFX_ACK;
 
-#define SIG_FOX_MAX_REGISTER_LEN 0x3
-#define SIG_FOX_MAX_REG_VALUE_LEN 0x2
+#define SIG_FOX_MAX_REGISTER_LEN 0x6
+#define SIG_FOX_MAX_REG_VALUE_LEN 0x10
 typedef struct {
     uint8_t access; // R/W
+    uint8_t notAts;
     uint8_t registerAddr[SIG_FOX_MAX_REGISTER_LEN];
     uint8_t data[SIG_FOX_MAX_REG_VALUE_LEN];
 }sigFoxConfT;
