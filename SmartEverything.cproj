@@ -296,7 +296,7 @@
         <board id="board.samd21_xplained_pro" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
+    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_edbg>
       <ToolOptions>
@@ -312,7 +312,6 @@
     <com_atmel_avrdbg_tool_samice>
       <ToolOptions>
         <InterfaceProperties>
-          <SwdClock>4000000</SwdClock>
         </InterfaceProperties>
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
@@ -323,6 +322,7 @@
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
+          <SwdClock>2000000</SwdClock>
         </InterfaceProperties>
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
@@ -501,14 +501,15 @@
       <Value>TCC_ASYNC=false</Value>
       <Value>SMARTEVERYTHING</Value>
       <Value>NT3H1101</Value>
-      <Value>DEBUG</Value>
-      <Value>DEBUG_SIGFOX</Value>
       <Value>US_UNIT</Value>
+      <Value>DEBUG</Value>
+      <Value>BARCELLONA_TEST</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>
     <ListValues>
       <Value>NOT_SENSOR</Value>
+      <Value>DEBUG_SIGFOX</Value>
     </ListValues>
   </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>

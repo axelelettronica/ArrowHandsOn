@@ -26,7 +26,9 @@ void button1Execution(void) {
 
     // collect new GPS location and send it with all sensor values
     gpsStartScan(sme_gps_stop_behaviour);
-#else 
+#elif BARCELLONA_TEST
+ sfxSendExecution(SME_SFX_I2C_1_MSG);
+#else
     sfxSendExecution(SME_SFX_I2C_1_MSG);
 
 #endif
@@ -35,6 +37,8 @@ void button1Execution(void) {
 void button2Execution(void) {
 #if DEBUG_SIGFOX
     gpsStartScan(sme_gps_button2_behaviour);
+#elif BARCELLONA_TEST
+ sfxSendExecution(SME_SFX_I2C_1_MSG);
 #else
     // Just send with SFX the gps cached values
     sme_gps_only_behaviour();
