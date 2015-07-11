@@ -504,6 +504,7 @@
       <Value>US_UNIT</Value>
       <Value>DEBUG</Value>
       <Value>BARCELLONA_TEST</Value>
+      <Value>SHA204_I2C</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.preprocessor.UndefSymbols>
@@ -719,6 +720,8 @@
     <Folder Include="src\sme" />
     <Folder Include="src\sme\Devices\" />
     <Folder Include="src\sme\Devices\I2C\" />
+    <Folder Include="src\sme\Devices\I2C\crypto\" />
+    <Folder Include="src\sme\Devices\I2C\crypto\model\" />
     <Folder Include="src\sme\Devices\I2C\Humidity\" />
     <Folder Include="src\sme\Devices\I2C\Accelerometer" />
     <Folder Include="src\sme\Devices\I2C\IOExpander" />
@@ -884,6 +887,48 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2CFreeRtos.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\i2c_phys.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\i2c_phys.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_comm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_comm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_comm_marshaling.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_comm_marshaling.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_lib_return_codes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_physical.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\timer_utilities.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\model\timer_utilities.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\sha204.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\sme\Devices\I2C\crypto\sha204.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sme\Devices\I2C\Humidity\HTS221.c">
