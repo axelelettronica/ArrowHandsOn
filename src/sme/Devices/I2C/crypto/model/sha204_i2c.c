@@ -36,16 +36,23 @@
  *
  * \atsha204_library_license_stop
  */
-//#define SHA204_GPIO_WAKEUP
+#define SHA204_GPIO_WAKEUP
 
-#ifdef SHA204_GPIO_WAKEUP
-#include <avr/io.h>					    // GPIO definitions
-#endif
 
 #include "i2c_phys.h"                   // hardware dependent declarations for I2C
 #include "sha204_physical.h"            // declarations that are common to all interface implementations
 #include "sha204_lib_return_codes.h"    // declarations of function return codes
 #include "timer_utilities.h"            // definitions for delay functions
+#include <string.h>
+#include <stdbool.h>
+#include "Devices\I2CFreeRtos.h"
+#include "sha204_comm.h"
+
+#define SHA204_ADDRESS     (0x64)
+
+#ifdef SMARTEVERYTHING
+uint8_t smeBuffer[SHA204_CMD_SIZE_MAX+1];   // maxBuffer Plus register add
+#endif
 
 /** \defgroup sha204_i2c Module 05: I2C Abstraction Module
  *
@@ -112,39 +119,11 @@ void sha204p_init(void)
  */
 uint8_t sha204p_wakeup(void)
 {
-#ifndef SHA204_GPIO_WAKEUP
-	// Generate wakeup pulse by writing a 0 on the I2C bus.
-	uint8_t dummy_byte = 0;
-	uint8_t i2c_status = i2c_send_start();
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
-
-	// To send eight zero bits it takes 10E6 / I2C clock * 8 us.
-	delay_10us(SHA204_WAKEUP_PULSE_WIDTH - (uint8_t) (1000000.0 / 10.0 / I2C_CLOCK * 8.0));
-
-	// We have to send at least one byte between an I2C Start and an I2C Stop.
-	(void) i2c_send_bytes(1, &dummy_byte);
-	i2c_status = i2c_send_stop();
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
-#else
-	// Generate wakeup pulse by disabling the I2C peripheral and
-	// pulling SDA low. The I2C peripheral gets automatically
-	// re-enabled when calling i2c_send_start().
-	TWCR = 0;           // Disable I2C.
-	DDRD |= _BV(PD1);   // Set SDA as output.
-	PORTD &= ~_BV(PD1); // Set SDA low.
-#ifndef DEBUG_DIAMOND
-	delay_10us(SHA204_WAKEUP_PULSE_WIDTH);
-#else	
-	delay_10us(10);
-#endif	
-	PORTD |= _BV(PD1);  // Set SDA high.
-#endif
-
-	delay_ms(SHA204_WAKEUP_DELAY);
-
-	return SHA204_SUCCESS;
+// wakeup result cannot be test here
+// because it returns a NACK
+       wakeUp(SHA204_ADDRESS,0,00); 
+        return SHA204_SUCCESS;
+       
 }
 
 
@@ -155,6 +134,7 @@ uint8_t sha204p_wakeup(void)
  */
 static uint8_t sha204p_send_slave_address(uint8_t read)
 {
+/*
 	uint8_t sla = device_address | read;
 	uint8_t ret_code = i2c_send_start();
 	if (ret_code != I2C_FUNCTION_RETCODE_SUCCESS)
@@ -165,7 +145,7 @@ static uint8_t sha204p_send_slave_address(uint8_t read)
 	if (ret_code != I2C_FUNCTION_RETCODE_SUCCESS)
 		(void) i2c_send_stop();
 
-	return ret_code;
+	return ret_code;*/
 }
 
 
@@ -183,28 +163,32 @@ expected to be non-zero.
  */
 static uint8_t sha204p_i2c_send(uint8_t word_address, uint8_t count, uint8_t *buffer)
 {
-	uint8_t i2c_status = sha204p_send_slave_address(I2C_WRITE);
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
 
-	i2c_status = i2c_send_bytes(1, &word_address);
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
+        uint8_t *sendBuffer= buffer;
+        uint8_t sendCount = count;
+        
+        #ifdef SMARTEVERYTHING
+        sendBuffer = smeBuffer;
+        memcpy(&sendBuffer[1], buffer, count);
+        sendBuffer[0] = word_address;
+        sendCount = count+1;
+        #endif
+                bool ok = writeBufferRegister(SHA204_ADDRESS, sendBuffer, sendCount, true);
 
-	if (count == 0) {
-		// We are done for packets that are not commands (Sleep, Idle, Reset).
-		(void) i2c_send_stop();
-		return SHA204_SUCCESS;
-	}
+        
+        /*
+        MIK DA STUDIARE  NI CASO DI COMMAND 0
+        if (count == 0) {
+            // We are done for packets that are not commands (Sleep, Idle, Reset).
+            (void) i2c_send_stop();
+            return SHA204_SUCCESS;
+        }
+        */
 
-	i2c_status = i2c_send_bytes(count, buffer);
-
-	(void) i2c_send_stop();
-
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
-	else
-		return SHA204_SUCCESS;
+        if (!ok)
+        return SHA204_COMM_FAIL;
+        else
+        return SHA204_SUCCESS;
 }
 
 
@@ -254,37 +238,23 @@ uint8_t sha204p_reset_io(void)
  */
 uint8_t sha204p_receive_response(uint8_t size, uint8_t *response)
 {
-	uint8_t count;
+	
+    bool ok = readBuffer(SHA204_ADDRESS, response, size);
+        uint8_t count;
 
-	// Address the device and indicate that bytes are to be read.
-	uint8_t i2c_status = sha204p_send_slave_address(I2C_READ);
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS) {
-		// Translate error so that the Communication layer
-		// can distinguish between a real error or the
-		// device being busy executing a command.
-		if (i2c_status == I2C_FUNCTION_RETCODE_NACK)
-			i2c_status = SHA204_RX_NO_RESPONSE;
+       
+       // MIK Stesso problema della write.... capire quando fare STOP
+/*
+        count = response[SHA204_BUFFER_POS_COUNT];
+        if ((count < SHA204_RSP_SIZE_MIN) || (count > size)) {
+            (void) i2c_send_stop();
+            return SHA204_INVALID_SIZE;
+        }*/
 
-		return i2c_status;
-	}
-
-	// Receive count byte.
-	i2c_status = i2c_receive_byte(response);
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
-
-	count = response[SHA204_BUFFER_POS_COUNT];
-	if ((count < SHA204_RSP_SIZE_MIN) || (count > size)) {
-		(void) i2c_send_stop();
-		return SHA204_INVALID_SIZE;
-	}		
-
-	i2c_status = i2c_receive_bytes(count - 1, &response[SHA204_BUFFER_POS_DATA]);
-
-	if (i2c_status != I2C_FUNCTION_RETCODE_SUCCESS)
-		return SHA204_COMM_FAIL;
-	else
-		return SHA204_SUCCESS;
+        if (!ok)
+        return SHA204_COMM_FAIL;
+        else
+        return SHA204_SUCCESS;
 }
 
 

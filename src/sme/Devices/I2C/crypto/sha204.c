@@ -45,13 +45,8 @@ uint8_t sha204_read_config_zone(uint8_t *config_data)
         config_data += SHA204_ZONE_ACCESS_32;
     }
     // Read second 32 bytes. Put a breakpoint after the read and inspect "response" to obtain the data.
-    /*memset(response, 0, sizeof(response));
-    ret_code = sha204c_wakeup(response); IS THIS REALLY NEED ??????
-	if (ret_code != SHA204_SUCCESS)
-		return ret_code;*/
-
     config_address += SHA204_ZONE_ACCESS_32;
-   // memset(response, 0, sizeof(response));
+    memset(response, 0, sizeof(response));
     ret_code = sha204m_read(command, response, SHA204_ZONE_CONFIG | READ_ZONE_MODE_32_BYTES, config_address);
     //sha204p_sleep();IS THIS REALLY NEED ??????
     if (ret_code != SHA204_SUCCESS)
@@ -64,10 +59,10 @@ uint8_t sha204_read_config_zone(uint8_t *config_data)
 
     // Read last 24 bytes in six four-byte junks.
     memset(response, 0, sizeof(response));
-    /*ret_code = sha204c_wakeup(response); IS THIS REALLY NEED ??????
+    ret_code = sha204c_wakeup(response); 
 	if (ret_code != SHA204_SUCCESS)
 		return ret_code;
-     */
+     
     config_address += SHA204_ZONE_ACCESS_32;
     response[SHA204_BUFFER_POS_COUNT] = 0;
     p_response = &response[SHA204_BUFFER_POS_DATA];

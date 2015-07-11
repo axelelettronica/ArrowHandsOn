@@ -20,8 +20,8 @@ volatile int status=9;
  * the SERCOM module to be used and pinmux settings
  */
 void sme_i2c_configure_master(uint32_t pinmux_sda, 
-                          uint32_t pinmux_scl,
-                          Sercom *const sercom)
+        uint32_t pinmux_scl,
+        Sercom *const sercom)
 {
     /* Create and initialize config structure */
     struct i2c_master_config config_i2c;
@@ -41,36 +41,36 @@ void sme_i2c_configure_master(uint32_t pinmux_sda,
 uint8_t sme_i2c_read_register(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *data)
 {
 
-        uint8_t request_token =i2cRegister;
-        uint32_t timeout = 0;
+    uint8_t request_token =i2cRegister;
+    uint32_t timeout = 0;
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 1;
-        master_packet.data            = &request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        while (i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 1;
+    master_packet.data            = &request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    while (i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
+    }
 
-        // if everything is ok continue with next step
+    // if everything is ok continue with next step
 
-        /** Get the register value */
-        master_packet.data_length     = 1;
-        master_packet.data            = data;
-        while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Get the register value */
+    master_packet.data_length     = 1;
+    master_packet.data            = data;
+    while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
+    }
 
     return 1;
 }
@@ -78,38 +78,38 @@ uint8_t sme_i2c_read_register(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *d
 uint8_t sme_i2c_read_register_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *data)
 {
 
-        uint8_t request_token[2];
-        request_token[0] =i2cRegister>>8 & 0xFF;
-        request_token[1] =i2cRegister & 0xFF;
-        uint32_t timeout = 0;
+    uint8_t request_token[2];
+    request_token[0] =i2cRegister>>8 & 0xFF;
+    request_token[1] =i2cRegister & 0xFF;
+    uint32_t timeout = 0;
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 2;
-        master_packet.data            = &request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        while (i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 2;
+    master_packet.data            = &request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    while (i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
+    }
 
-        // if everything is ok continue with next step
+    // if everything is ok continue with next step
 
-        /** Get the register value */
-        master_packet.data_length     = 1;
-        master_packet.data            = data;
-        while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Get the register value */
+    master_packet.data_length     = 1;
+    master_packet.data            = data;
+    while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
+    }
 
     return 1;
 }
@@ -120,34 +120,70 @@ bool sme_i2c_read_buffer_register(uint8_t slaveAddr, uint8_t i2cRegister, uint8_
     uint32_t timeout = 0;
 
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 1;
-        master_packet.data            = &request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        while (i2c_master_write_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 1;
+    master_packet.data            = &request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    while (i2c_master_write_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    }
+
+    // if everything is ok continue with next step
+
+    /** Get the register value */
+    master_packet.data_length     = bufferLen;
+    master_packet.data            = buffer;
+    while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
 
-        // if everything is ok continue with next step
+    }
 
-        /** Get the register value */
-        master_packet.data_length     = bufferLen;
-        master_packet.data            = buffer;
-        while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    return 1;
+}
 
+bool sme_i2c_read_buffer(uint8_t slaveAddr, uint8_t *buffer, uint8_t bufferLen){
+
+    uint32_t timeout = 0;
+
+
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 0;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    while (i2c_master_write_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
+    }
+
+    // if everything is ok continue with next step
+
+    /** Get the register value */
+    master_packet.data_length     = bufferLen;
+    master_packet.data            = buffer;
+    while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+
+    }
 
     return 1;
 }
@@ -160,34 +196,34 @@ bool sme_i2c_read_buffer_register_16Bit(uint8_t slaveAddr, uint16_t i2cRegister,
     uint32_t timeout = 0;
 
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 2;
-        master_packet.data            = &request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        while (i2c_master_write_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 2;
+    master_packet.data            = &request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    while (i2c_master_write_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    }
+
+    // if everything is ok continue with next step
+
+    /** Get the register value */
+    master_packet.data_length     = bufferLen;
+    master_packet.data            = buffer;
+    while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
+            STATUS_OK) {
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
         }
 
-        // if everything is ok continue with next step
-
-        /** Get the register value */
-        master_packet.data_length     = bufferLen;
-        master_packet.data            = buffer;
-        while (i2c_master_read_packet_wait(&i2c_master_instance, &master_packet) !=
-                STATUS_OK) {
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
-
-        }
+    }
 
 }
 
@@ -196,25 +232,25 @@ bool sme_i2c_write_register_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8
     uint32_t timeout = 0;
 
 
-        request_token[0] =i2cRegister>>8 & 0xFF;
-        request_token[1] =i2cRegister & 0xFF;
-        request_token[2] = dataToWrite;
+    request_token[0] =i2cRegister>>8 & 0xFF;
+    request_token[1] =i2cRegister & 0xFF;
+    request_token[2] = dataToWrite;
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 3;
-        master_packet.data            = request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        int err;
-        do {
-            err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
-        } while( err != STATUS_OK);
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 3;
+    master_packet.data            = request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    int err;
+    do {
+        err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    } while( err != STATUS_OK);
 
     return 1;
 }
@@ -225,50 +261,89 @@ bool sme_i2c_write_register(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t data
 
 
 
-        request_token[0] =i2cRegister;
-        request_token[1] = dataToWrite;
+    request_token[0] =i2cRegister;
+    request_token[1] = dataToWrite;
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = 2;
-        master_packet.data            = request_token;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        int err;
-        do {
-            err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
-        } while( err != STATUS_OK);
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = 2;
+    master_packet.data            = request_token;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    int err;
+    do {
+        err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    } while( err != STATUS_OK);
 
     return 1;
 }
 
 
-bool sme_i2c_write_buffer_register(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len){
+bool sme_i2c_write_buffer_register(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len, bool stop){
 
     uint32_t timeout = 0;
 
 
 
-        /** Send the request token */
-        master_packet.address         = slaveAddr;
-        master_packet.data_length     = reg_data_len;
-        master_packet.data            = reg_data_write;
-        master_packet.ten_bit_address = false;
-        master_packet.high_speed      = false;
-        master_packet.hs_master_code  = 0x0;
-        int err;
-        do {
+    /** Send the request token */
+    master_packet.address         = slaveAddr;
+    master_packet.data_length     = reg_data_len;
+    master_packet.data            = reg_data_write;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    int err;
+    do {
+        if (stop)
+            err = i2c_master_write_packet_wait(&i2c_master_instance, &master_packet);
+        else 
             err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
-            /* Increment timeout counter and check if timed out. */
-            if (timeout++ == TIMEOUT) {
-                return 0;
-            }
-        } while( err != STATUS_OK);
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    } while( err != STATUS_OK);
+
+    return 1;
+}
+
+bool sme_i2c_wakeup(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite) {
+    uint8_t request_token[2];
+    uint32_t timeout = 0;
+
+    request_token[0] =i2cRegister;
+    request_token[1] = dataToWrite;
+
+    /** Send the request token */
+//     master_packet.address         = slaveAddr;
+//     master_packet.data_length     = 2;
+//     master_packet.data            = request_token;
+//     master_packet.ten_bit_address = false;
+//     master_packet.high_speed      = false;
+//     master_packet.hs_master_code  = 0x0;
+
+    master_packet.address         = 0;
+    master_packet.data_length     = 1;
+    master_packet.data            = 0;
+    master_packet.ten_bit_address = false;
+    master_packet.high_speed      = false;
+    master_packet.hs_master_code  = 0x0;
+    int err;
+    do {
+        //err = i2c_master_wakeup_slave(&i2c_master_instance, &master_packet);
+        //err = i2c_master_write_packet_wait(&i2c_master_instance, &master_packet);
+        err = i2c_master_write_packet_wait_no_stop(&i2c_master_instance, &master_packet);
+        
+        /* Increment timeout counter and check if timed out. */
+        if (timeout++ == TIMEOUT) {
+            return 0;
+        }
+    } while( err != STATUS_OK);
 
     return 1;
 }

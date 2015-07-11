@@ -28,7 +28,7 @@ static bool writeTimeout( const uint8_t *data, uint8_t dataSend) {
     bool received = false;
     uint8_t timeOut=0;
     do {
-        received = writeBufferRegister(NXPNFC_ADDRESS, data, dataSend);
+        received = writeBufferRegister(NXPNFC_ADDRESS, data, dataSend, false);
         if (received == true) {
             goto end;
         }

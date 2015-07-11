@@ -910,12 +910,6 @@
     <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_helper.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_helper.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\sme\Devices\I2C\crypto\model\sha204_i2c.c">
       <SubType>compile</SubType>
     </Compile>

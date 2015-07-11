@@ -79,6 +79,22 @@ bool readBufferRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *buffer,
     return ret;
 }
 
+
+bool readBuffer(uint8_t slaveAddr,  uint8_t *buffer, uint8_t bufferLen) {
+
+    uint8_t ret = 0;
+
+    // first take the Semaphore
+    BaseType_t ok = xSemaphoreTake(i2c_sem, I2C_SEMAPHORE_DELAY);
+    if (ok) {
+        ret = sme_i2c_read_buffer(slaveAddr, buffer, bufferLen);
+        // release the semaphore
+        xSemaphoreGive(i2c_sem);
+    }
+
+
+    return ret;
+}
 bool readBufferRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *buffer, uint8_t bufferLen) {
 
     uint8_t ret = 0;
@@ -128,14 +144,31 @@ bool writeRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite){
 }
 
 
-bool writeBufferRegister(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len){
+bool writeBufferRegister(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len, bool stop){
 
     uint8_t ret = 0;
 
     // first take the Semaphore
     BaseType_t ok = xSemaphoreTake(i2c_sem, I2C_SEMAPHORE_DELAY);
     if (ok) {
-        ret = sme_i2c_write_buffer_register(slaveAddr, reg_data_write, reg_data_len);
+        ret = sme_i2c_write_buffer_register(slaveAddr, reg_data_write, reg_data_len, stop);
+        // release the semaphore
+        xSemaphoreGive(i2c_sem);
+    }
+
+
+    return ret;
+}
+
+
+bool wakeUp(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite) {
+
+    uint8_t ret = 0;
+    // first take the Semaphore
+    BaseType_t ok = xSemaphoreTake(i2c_sem, I2C_SEMAPHORE_DELAY);
+    if (ok) {
+        ret = sme_i2c_wakeup(slaveAddr, i2cRegister, dataToWrite);
+
         // release the semaphore
         xSemaphoreGive(i2c_sem);
     }

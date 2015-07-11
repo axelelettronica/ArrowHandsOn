@@ -18,17 +18,22 @@ extern xSemaphoreHandle i2c_sem;
  * the SERCOM module to be used and pinmux settings
  */
 void configure_i2c_master(uint32_t pinmux_sda, 
-                          uint32_t pinmux_scl,
-                          Sercom *const sercom);
-                          
+        uint32_t pinmux_scl,
+        Sercom *const sercom);
+
 uint8_t readRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *data);
 uint8_t readRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *data);
 bool readBufferRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t *buffer, uint8_t bufferLen);
+bool readBuffer(uint8_t slaveAddr,  uint8_t *buffer, uint8_t bufferLen);
 bool readBufferRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t *buffer, uint8_t bufferLen);
 
 //void readRegisters(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t * dest, int bytesToRead);
 bool writeRegister(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite);
 bool writeRegister_16Bit(uint8_t slaveAddr, uint16_t i2cRegister, uint8_t dataToWrite);
-bool writeBufferRegister(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len);
+bool writeBufferRegister(uint8_t slaveAddr, const uint8_t* reg_data_write, uint16_t reg_data_len, bool stop);
 
-#endif /* I2C_FREERTOS_H_ */
+
+
+//utilities
+bool wakeUp(uint8_t slaveAddr, uint8_t i2cRegister, uint8_t dataToWrite);
+#endif /* I2C_H_ */

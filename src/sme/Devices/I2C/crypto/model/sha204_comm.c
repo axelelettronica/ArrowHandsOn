@@ -41,7 +41,6 @@
 #include "sha204_comm.h"                // definitions and declarations for the Communication module
 #include "timer_utilities.h"            // definitions for delay functions
 #include "sha204_lib_return_codes.h"    // declarations of function return codes
-#include "sha204_config.h"
 
 
 /** \brief This function calculates CRC.
@@ -97,9 +96,10 @@ uint8_t sha204c_check_crc(uint8_t *response)
  */
 uint8_t sha204c_wakeup(uint8_t *response)
 {
-	uint8_t ret_code = sha204p_wakeup();
-	if (ret_code != SHA204_SUCCESS)
-		return ret_code;
+	uint8_t ret_code;
+	ret_code = sha204p_wakeup(); // ends with NACK
+
+
 
 	ret_code = sha204p_receive_response(SHA204_RSP_SIZE_MIN, response);
 	if (ret_code != SHA204_SUCCESS)
@@ -112,7 +112,7 @@ uint8_t sha204c_wakeup(uint8_t *response)
 		ret_code = SHA204_COMM_FAIL;
 	else {
 		if ((response[SHA204_RSP_SIZE_MIN - SHA204_CRC_SIZE] != 0x33)
-					|| (response[SHA204_RSP_SIZE_MIN + 1 - SHA204_CRC_SIZE] != 0x43))
+					|| (response[SHA204_RSP_SIZE_MIN  - SHA204_CRC_SIZE+ 1] != 0x43))
 			ret_code = SHA204_BAD_CRC;
 	}
 	if (ret_code != SHA204_SUCCESS)
