@@ -20,12 +20,30 @@
 #include "Devices/I2C/Accelerometer/LSM9DS1.h"
 #include "Devices/I2C/proximity_ambient/vl6180x.h"
 #include "behaviour/sme_decode_i2c_sfx.h"
+#include "Devices/I2C/crypto/sha204.h"
 
-#define TCA6416_POS 0
+
+/*
+ *
+ * Define all the I2C components
+ *
+ */
+
+/*
+ *
+ * First list the generic use components.
+ *
+ */
+#define TCA6416_POS 		  0
 #define NXPNFC_POS            1
+#define CRYPTO				  2
+#define FIRST_I2C_SENSOR      CRYPTO+1
 
-/* Sensors list */
-#define FIRST_I2C_SENSOR      2
+/*
+ *
+ * At the end lists all the I2C sensors.
+ *
+ */
 #define LPS25_POS             FIRST_I2C_SENSOR
 #define TS221_POS             (LPS25_POS+1)
 #define VL6180X_POS           (TS221_POS+1)
@@ -34,11 +52,15 @@
 #define LSM9DS1_M_POS         (LSM9DS1_G_POS+1)    // LSM9DS1 - Magnetometer
 
 
-#define MAX_I2C_SENSORS       (LSM9DS1_M_POS+1)  // Postponed other sensors
+#define MAX_I2C_COMPONENT     (LSM9DS1_M_POS+1)  // Postponed other sensors
 
-
+/*
+ *
+ * END Define all the I2C components
+ *
+ */
 #define SME_MAX_I2C_READ_BUF_LEN     10
-static sensorTaskStr sensors[MAX_I2C_SENSORS];
+static sensorTaskStr sensors[MAX_I2C_COMPONENT];
 
 xQueueHandle i2cCommandQueue;
 
@@ -48,7 +70,7 @@ static void readSensor(uint8_t idx)
 {
     bool read = false;
 
-    if ((idx >= FIRST_I2C_SENSOR) && (idx < MAX_I2C_SENSORS)) {
+    if ((idx >= FIRST_I2C_SENSOR) && (idx < MAX_I2C_COMPONENT)) {
         if (sensors[idx].sensorInitialized == true) {
             if (sensors[idx].sensorValue) {
                 memset(buffer, 0, SME_MAX_I2C_READ_BUF_LEN);
@@ -70,7 +92,7 @@ static void readSensor(uint8_t idx)
 
 static void readAllValues(void)
 {
-    for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_SENSORS; ++i) {
+    for(int i=FIRST_I2C_SENSOR; i< MAX_I2C_COMPONENT; ++i) {
         readSensor(i);
     }
 }
@@ -124,11 +146,43 @@ void sme_cdc_i2c(i2cQueueS *current_message) {
     }
 }
 
+
+volatile int data;
+static void wakeUpCrypto(void){
+    struct port_config pin_conf;
+    port_get_config_defaults(&pin_conf);
+
+
+    /* Configure OUTPUT Pin */
+    //first yellow led
+    pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+    port_pin_set_config(SME_SDA_PIN, &pin_conf);
+    port_pin_set_config(SME_SCL_PIN, &pin_conf);
+    
+    for (int i=0; i<10000; i++) {
+        data++;
+    }
+    port_pin_set_output_level(SME_SDA_PIN, true);
+    for (int i=0; i<10000; i++) {
+        data++;
+    }
+    port_pin_set_output_level(SME_SDA_PIN, false);
+    
+
+};
+
+
 void sme_i2c_mgr_init(void) {
+    
+    //wakeUpCrypto();
+    data++;
     /* Configure the I2C master module */
     configure_i2c_master(SME_I2C_SERCOM_PINMUX_PAD0, SME_I2C_SERCOM_PINMUX_PAD1, SME_I2C_MODULE);
 
     memset(sensors, 0, sizeof(sensorTaskStr));
+
+    sensors[CRYPTO].sensorValue = NULL;
+    sensors[CRYPTO].sensorInit  = sha204_init;
 
     sensors[NXPNFC_POS].sensorValue = /*getNxpUserData*/(readValue)NT3HReadSram;
     sensors[NXPNFC_POS].sensorInit  = NT3HInit;
@@ -160,7 +214,7 @@ void sme_i2c_mgr_init(void) {
     sensors[LSM9DS1_G_POS].sensorValue = LSM9DS1_G_getValues;
     sensors[LSM9DS1_G_POS].decodeCb    = LSM9DS1_G_Decode;
 
-    for(int i=0; i<MAX_I2C_SENSORS; i++) {
+    for(int i=0; i<MAX_I2C_COMPONENT; i++) {
         if (sensors[i].sensorInit && sensors[i].sensorInit()) {
             sensors[i].sensorInitialized=1;
         }
