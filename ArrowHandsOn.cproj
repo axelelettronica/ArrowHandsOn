@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>SmartEverything</AssemblyName>
-    <Name>SmartEverything</Name>
+    <Name>ArrowHandsOn</Name>
     <RootNamespace>SmartEverything</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>

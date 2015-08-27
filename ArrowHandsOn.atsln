@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "SmartEverything", "SmartEverything.cproj", "{B8E372CD-CA55-426B-8745-B69289224F97}"
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "ArrowHandsOn", "ArrowHandsOn.cproj", "{B8E372CD-CA55-426B-8745-B69289224F97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
