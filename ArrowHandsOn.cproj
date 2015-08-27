@@ -499,20 +499,10 @@
       <Value>I2C_MASTER_CALLBACK_MODE=false</Value>
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
-      <Value>SMARTEVERYTHING</Value>
       <Value>NT3H1101</Value>
       <Value>US_UNIT</Value>
-      <Value>DEBUG</Value>
-      <Value>BARCELLONA_TEST</Value>
-      <Value>SHA204_I2C</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
-  <armgcc.compiler.preprocessor.UndefSymbols>
-    <ListValues>
-      <Value>NOT_SENSOR</Value>
-      <Value>DEBUG_SIGFOX</Value>
-    </ListValues>
-  </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>

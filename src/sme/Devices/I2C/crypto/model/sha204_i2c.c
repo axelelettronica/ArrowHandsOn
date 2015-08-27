@@ -50,9 +50,9 @@
 
 #define SHA204_ADDRESS     (0x64)
 
-#ifdef SMARTEVERYTHING
+
 uint8_t smeBuffer[SHA204_CMD_SIZE_MAX+1];   // maxBuffer Plus register add
-#endif
+
 
 /** \defgroup sha204_i2c Module 05: I2C Abstraction Module
  *
@@ -167,13 +167,13 @@ static uint8_t sha204p_i2c_send(uint8_t word_address, uint8_t count, uint8_t *bu
         uint8_t *sendBuffer= buffer;
         uint8_t sendCount = count;
         
-        #ifdef SMARTEVERYTHING
+
         sendBuffer = smeBuffer;
         memcpy(&sendBuffer[1], buffer, count);
         sendBuffer[0] = word_address;
         sendCount = count+1;
-        #endif
-                bool ok = writeBufferRegister(SHA204_ADDRESS, sendBuffer, sendCount, true);
+
+        bool ok = writeBufferRegister(SHA204_ADDRESS, sendBuffer, sendCount, true);
 
         
         /*

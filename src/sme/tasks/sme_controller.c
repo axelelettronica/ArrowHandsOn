@@ -122,30 +122,11 @@ static void enter_in_data_mode(void){
 #define A_QUARTER_COUNTER   3
 #define COUNTER_75_MINUTE   15
 
-#if DEBUG_SIGFOX
-char        debugSFXMsg[100];
-uint8_t     msgCounter=0;
-uint8_t     timeoutCounter=2;
-
-static void debugSigFox(void){
-    static uint8_t msg_toggle = 0;
-    timeoutCounter++;
-    if (timeoutCounter >= COUNTER_75_MINUTE) {
-        timeoutCounter =0;
-        
-        button1Execution();
-        
-    }
-}
-#endif
-
 static void sfxTimeOut(void) {
 
     print_dbg("5 minutes timeout \r\n");
 
-    #if DEBUG_SIGFOX
-    debugSigFox();
-    #else
+
     if (sfxIsInDataStatus()) {
         keepTimeout++;
         //every 23 Hours send the KEEP Message
@@ -159,7 +140,6 @@ static void sfxTimeOut(void) {
         print_sfx("no command sent, exit from command mode\r\n");
         sendToSfxExitConf();
     }
-    #endif
 }
 
 /**

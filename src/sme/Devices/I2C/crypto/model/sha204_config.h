@@ -97,7 +97,7 @@
 #define DOXYGEN_DUMMY 0
 // #define SHA204_SWI_BITBANG
 // #define SHA204_SWI_UART
-// #define SHA204_I2C
+#define SHA204_I2C
 
 /** @} */
 

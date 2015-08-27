@@ -8,72 +8,6 @@
 #include "../../I2CFreeRtos.h"
 
 
-
-#if NOT_SENSOR
-// The SparkFun breakout board defaults to 1, set to 0 if SA0 jumper on the bottom of the board is set
-#define LPS25H_ADDRESS 85
-
-//Define a few of the registers that we will be accessing on the LPS25H
-
-#define WHO_AM_I    0x00
-#define WHO_AM_I_RETURN 0x04 // WHO_AM_I should always be 0x2A
-
-/*
- * [7] PD: power down control.
- * Default value: 0
- * (0: power-down mode; 1: active mode)
- *
- * [6:4] ODR2, ODR1, ODR0: output data rate selection.
- * Default value: 00
- * 
- * [3] DIFF_EN: Interrupt circuit enable.
- * Default value: 0
- * (0: interrupt generation disabled; 1: interrupt circuit enabled)
- * 
- * [2] BDU: block data update.
- * Default value: 0
- * (0: continuous update; 1: output registers not updated until MSB and LSB reading)
- BDU bit is used to inhibit the output registers update between the reading of upper and
- lower register parts. In default mode (BDU = ?0?), the lower and upper register parts are
- updated continuously. If it is not sure to read faster than output data rate, it is recommended
- to set BDU bit to ?1?. In this way, after the reading of the lower (upper) register part, the
- content of that output registers is not updated until the upper (lower) part
- * 
- * [1] RESET_AZ: Reset AutoZero function. Reset REF_P reg, set pressure to default value in RPDS
- * register (@0x39/A)
- * (1: Reset. 0: disable)
- * 
- * [0] SIM: SPI Serial Interface Mode selection.
- * Default value: 0
- * (0: 4-wire interface; 1: 3-wire interface)
- */
-#define CTRL_REG1   0x20
-#define POWER_UP    0x80 
-#define BDU_SET     0x04
-
-#define CTRL_REG2   0x21
-#define CTRL_REG3   0x22
-#define REG_DEFAULT 0x00
-
-#define STATUS_REG  0x0D
-#define TEMPERATURE_READY 0xA
-
-#define PRESSURE_L_REG 0x13
-#define PRESSURE_H_REG 0x14
-#define TEMP_L_REG     0x13
-#define TEMP_H_REG     0x14
-/*
-* calibration registry should be read for temperature and humidity calculation.
-* Before the first calculation of temperature and humidity,
-* the master reads out the calibration coefficients.
-* will do at init phase
-*/
-#define CALIB_START        0x10
-#define CALIB_END	       0x1F
-
-
-#else
-
 #define LPS25H_ADDRESS     0x5C
 
 #define WHO_AM_I           0x0F
@@ -169,8 +103,6 @@
 #define PRESSURE_H_REG      0x2A
 #define TEMP_L_REG          0x2B
 #define TEMP_H_REG          0x2C
-
-#endif
 
 
 bool LPS25Hnit(void) {
