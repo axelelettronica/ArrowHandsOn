@@ -500,9 +500,13 @@
       <Value>EXTINT_CALLBACK_MODE=true</Value>
       <Value>TCC_ASYNC=false</Value>
       <Value>NT3H1101</Value>
-      <Value>US_UNIT</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
+  <armgcc.compiler.preprocessor.UndefSymbols>
+    <ListValues>
+      <Value>US_UNIT</Value>
+    </ListValues>
+  </armgcc.compiler.preprocessor.UndefSymbols>
   <armgcc.compiler.directories.DefaultIncludePath>False</armgcc.compiler.directories.DefaultIncludePath>
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
