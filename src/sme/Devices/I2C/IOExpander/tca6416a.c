@@ -81,16 +81,18 @@ bool TCA6416a_init(void) {
 volatile uint8_t resets[4];
 bool TCA6416a_reset_devices(void){
     
-    uint8_t actual;
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, RESET_P1);
-    readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[0] );
-    
-    if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (uint8_t *)&actual) != false) {
-       // writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual&GPS_FORCE_RESET_MASK));
-        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual&(~GPS_RESET_PIN) &(~SFX_WAKEUP_PIN)));
-            readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[1]);
+    uint8_t actual0, actual1;
+
+	if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, (uint8_t *)&actual0) != false) {
+		writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, (actual0&(~BLE_RESET_PIN)));
+		readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[0]);
+	}
+
+    if (readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (uint8_t *)&actual1) != false) {
+        writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, (actual1&(~GPS_RESET_PIN) &(~SFX_WAKEUP_PIN)));
+        readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[1]);
     }
-    
+
     uint8_t delay;
     // wait a while
     for (int i=0; i<1000; i++) {
@@ -98,13 +100,13 @@ bool TCA6416a_reset_devices(void){
     }
 
     // move the reset high
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, ~RESET_P1);
+    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0, actual0);
     readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_0,(uint8_t *)&resets[2] );
-    
-    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, actual);
+
+    writeRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1, actual1);
     readRegister(TCA6416A_ADDRESS, OUTPUT_PORT_1,(uint8_t *)&resets[3] );
-    
-    
+
+
     //ENABLE Interrupt
     extint_chan_enable_callback(SME_INT_IOEXT_EIC_LINE,	EXTINT_CALLBACK_TYPE_DETECT);
     resets[0]=1;
